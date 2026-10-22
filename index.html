@@ -1,0 +1,1850 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="googlebot" content="noindex, nofollow">
+<title>Торговля Россия — Япония</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  /* токены, которые на платформе Claude задаёт оболочка дашборда */
+  :root {
+    --color-fg: #1d1d1f; --color-fg-muted: #66666d; --color-bg: #ffffff; --color-panel: #f7f7f8; --color-border-line: #e2e2e6;
+    --color-ok: #1a7f43; --color-warn: #a35f00; --color-bad: #c0392b;
+    --cds-font-size-caption: 12px; --cds-font-size-body: 14px; --cds-font-size-heading: 16px; --cds-font-size-title: 28px; --cds-font-weight-medium: 500;
+    --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 12px; --cds-gap-lg: 20px; --cds-gap-xl: 32px;
+    --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 16px; --cds-pad-xl: 24px; --cds-radius: 8px;
+    --cds-surface-popover: #ffffff; --cds-border: #dcdce0; --cds-shadow-popover: 0 4px 16px rgba(0, 0, 0, .12); --cds-text-secondary: #66666d;
+    --cds-chart-grid: #ececef; --cds-chart-axis: #b8b8be; --cds-chart-reference: #9a9aa0; --cds-chart-muted: #c8c8cc;
+    --cds-dur-slow: 300ms; --cds-ease-out: cubic-bezier(.2, .8, .2, 1);
+    --font-anthropic-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+    --font-anthropic-serif: Georgia, "Times New Roman", "Hiragino Mincho ProN", serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-fg: #ececef; --color-fg-muted: #a3a3aa; --color-bg: #161618; --color-panel: #1f1f22; --color-border-line: #333338;
+      --color-ok: #4cc27f; --color-warn: #e0a24a; --color-bad: #ef6b5e;
+      --cds-surface-popover: #26262a; --cds-border: #3a3a40; --cds-shadow-popover: 0 4px 16px rgba(0, 0, 0, .5); --cds-text-secondary: #a3a3aa;
+      --cds-chart-grid: #2c2c31; --cds-chart-axis: #55555c; --cds-chart-reference: #77777e; --cds-chart-muted: #4a4a50;
+      color-scheme: dark;
+    }
+  }
+  html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); font-size: 14px; }
+  #dash-root { max-width: 1440px; margin: 0 auto; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 32px max(16px, env(safe-area-inset-left, 0px)); }
+  .dash-skeleton { min-height: 1em; background: var(--color-panel); border-radius: 6px; color: transparent !important; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main id="dash-root">
+<style>
+  /* Layout: OEC-style — control panel on the left, two mirrored treemaps on the right;
+     below them the selected item (trend + card), the port map, and the product table */
+  .rj {
+    --rj-pick: #f6c343;
+    --rj-pick-ink: #1c1a14;
+    --rj-track: color-mix(in srgb, var(--color-fg) 6%, transparent);
+    --rj-sea: color-mix(in srgb, var(--color-fg) 4%, var(--color-panel));
+    --rj-land: var(--color-bg);
+    --rj-land-other: color-mix(in srgb, var(--color-fg) 9%, var(--color-panel));
+    font-family: var(--font-anthropic-sans);
+    display: grid;
+    gap: var(--cds-gap-lg);
+    font-variant-numeric: tabular-nums;
+  }
+  .rj-head { display: grid; gap: var(--cds-gap-xs); }
+  .rj-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+  .rj-take { margin: 0; color: var(--color-fg-muted); max-width: 72ch; }
+  .rj-take b, .rj-sum b { font-weight: 600; color: var(--color-fg); }
+
+  .rj-wrap { container-type: inline-size; }
+  .rj-main { display: grid; gap: var(--cds-gap-lg); grid-template-columns: 1fr; }
+  @container (min-width: 1080px) { .rj-main { grid-template-columns: minmax(240px, 280px) minmax(0, 1fr); } }
+
+  .rj-panel { display: grid; gap: var(--cds-gap-md); align-content: start; min-width: 0; }
+  .rj-panel h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+  .rj-seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--rj-track); border-radius: 999px; padding: 3px; }
+  .rj-seg button { font: inherit; font-size: var(--cds-font-size-body); color: var(--color-fg); background: transparent; border: 0; border-radius: 999px; padding: 6px 8px; cursor: pointer; }
+  .rj-seg button[aria-pressed="true"] { background: var(--rj-pick); color: var(--rj-pick-ink); font-weight: 600; }
+  .rj button:focus-visible, .rj select:focus-visible, .rj input:focus-visible, .rj-tile:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .rj-period { font: inherit; color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 8px 14px; width: 100%; }
+  .rj-crumbs { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: var(--cds-font-size-caption); min-height: 1.6em; }
+  .rj-crumbs button, .rj-link { font: inherit; background: none; border: 0; padding: 2px 0; color: var(--color-fg); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+  .rj-crumbs span[aria-current] { color: var(--color-fg-muted); }
+  .rj-crumbs .sep { color: var(--color-fg-muted); }
+  .rj-sum { margin: 0; line-height: 1.55; color: var(--color-fg-muted); }
+  .rj-hint { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; }
+
+  .rj-maps { container-type: inline-size; min-width: 0; }
+  .rj-maps-grid { display: grid; gap: var(--cds-gap-lg); grid-template-columns: 1fr; }
+  @container (min-width: 620px) { .rj-maps-grid { grid-template-columns: 1fr 1fr; } .rj-legend { grid-column: 1 / -1; } }
+  .rj-map { margin: 0; display: grid; gap: var(--cds-gap-xs); position: relative; min-width: 0; }
+  .rj-map h3 { margin: 0; text-align: center; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); text-wrap: balance; }
+  .rj-total { text-align: center; color: var(--color-fg-muted); }
+  .rj-total b { font-family: var(--font-anthropic-serif); font-weight: 400; color: var(--color-fg); font-size: 1.15em; }
+  .rj-tm { position: relative; min-height: 340px; }
+  .rj-tm svg { display: block; }
+  .rj-tile { cursor: pointer; outline: none; }
+  .rj-tile rect { stroke: transparent; stroke-width: 2; }
+  .rj-tile:hover rect { stroke: var(--color-fg); }
+  .rj-tile.sel rect { stroke: var(--color-fg); stroke-width: 3; }
+  .rj-tm svg.dim .rj-tile:not(.sel) { opacity: .42; }
+  .rj-empty { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); border: 1px dashed var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); text-align: center; }
+  .rj-dot { width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); flex: none; }
+
+  .rj-legend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: var(--cds-font-size-caption); }
+  .rj-legend button { font: inherit; display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; padding: 2px 0; color: var(--color-fg); cursor: pointer; }
+  .rj-legend button[aria-pressed="true"] { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  .rj-legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex: none; }
+  .rj-grad { display: flex; align-items: center; gap: 8px; }
+  .rj-grad i { width: 160px; max-width: 40vw; height: 10px; border-radius: 5px; background: linear-gradient(90deg, #b83232, #9aa0a6, #23864b); }
+
+  .rj-selbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--cds-gap-sm); padding: var(--cds-pad-sm) var(--cds-pad-md); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-panel); }
+  .rj-selbar .what { flex: 1 1 260px; min-width: 0; }
+  .rj-selbar .what b { font-weight: 600; }
+  .rj-btn { font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+  .rj-btn.pick { background: var(--rj-pick); color: var(--rj-pick-ink); border-color: transparent; font-weight: 600; }
+
+  .rj-tip {
+    position: absolute; z-index: 5; pointer-events: none; max-width: 320px;
+    background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius);
+    box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption);
+    display: grid; gap: 2px;
+  }
+  .rj-tip .k { color: var(--cds-text-secondary); }
+  .rj-tip .n { font-weight: 600; }
+  .rj-tip .row { display: flex; justify-content: space-between; gap: 12px; }
+
+  .rj-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-sm); min-width: 0; align-content: start; }
+  .rj-card h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+  .rj-note { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .rj-row2 { container-type: inline-size; }
+  .rj-row2-grid { display: grid; gap: var(--cds-gap-lg); grid-template-columns: 1fr; }
+  @container (min-width: 900px) { .rj-row2-grid { grid-template-columns: minmax(0, 3fr) minmax(280px, 2fr); } }
+  .rj-trend { position: relative; min-height: 300px; }
+  .rj-trend svg { display: block; overflow: visible; }
+
+  .rj-item { display: grid; gap: var(--cds-gap-sm); }
+  .rj-item .code { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .rj-item h3 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: 600; text-wrap: balance; }
+  .rj-item .orig { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .rj-kv { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; margin: 0; font-size: var(--cds-font-size-caption); }
+  .rj-kv dt { color: var(--color-fg-muted); }
+  .rj-kv dd { margin: 0; text-align: right; font-weight: 500; }
+  .rj-flag { margin: 0; padding: var(--cds-pad-xs) var(--cds-pad-sm); border-radius: var(--cds-radius); background: var(--rj-track); font-size: var(--cds-font-size-caption); line-height: 1.5; }
+  .rj-leads { display: grid; gap: 4px; font-size: var(--cds-font-size-caption); line-height: 1.5; }
+  .rj-leads h4 { margin: 0; font-size: var(--cds-font-size-caption); font-weight: 600; }
+  .rj-leads p { margin: 0; }
+  .rj-leads ul { margin: 0; padding-left: 1.1em; }
+  .rj-leads a { color: var(--color-fg); }
+
+  .rj-ports { container-type: inline-size; }
+  .rj-ports-grid { display: grid; gap: var(--cds-gap-lg); grid-template-columns: 1fr; }
+  @container (min-width: 820px) { .rj-ports-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
+  .rj-pmap { position: relative; min-height: 360px; width: 100%; max-width: 580px; justify-self: center; }
+  .rj-pmap svg { display: block; border-radius: var(--cds-radius); }
+  .rj-bubble { cursor: pointer; }
+  .rj-bubble circle { fill-opacity: .5; stroke-width: 1.5; }
+  .rj-bubble:hover circle, .rj-bubble.sel circle { fill-opacity: .85; stroke: var(--color-fg); }
+  .rj-plabel { font-size: 23px; fill: var(--color-fg); paint-order: stroke; stroke: var(--rj-sea); stroke-width: 6px; stroke-linejoin: round; pointer-events: none; }
+  .rj-plist { display: grid; gap: 2px; align-content: start; min-width: 0; }
+  .rj-prow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(60px, 34%) auto; gap: 4px 10px; align-items: center; width: 100%; font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); text-align: left; background: none; border: 0; border-radius: var(--cds-radius); padding: 6px 8px; cursor: pointer; }
+  .rj-prow:hover, .rj-prow[aria-pressed="true"] { background: var(--rj-track); }
+  .rj-prow .nm { min-width: 0; }
+  .rj-prow .nm small { display: block; color: var(--color-fg-muted); }
+  .rj-prow .bar { height: 8px; border-radius: 4px; background: var(--rj-track); overflow: hidden; }
+  .rj-prow .bar i { display: block; height: 100%; border-radius: 4px; }
+  .rj-prow .v { text-align: right; white-space: nowrap; }
+  .rj-prow .v small { display: block; color: var(--color-fg-muted); }
+  .rj-plist-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+  .rj-plist-head h3 { margin: 0; font-size: var(--cds-font-size-body); font-weight: 600; }
+
+  .rj-tools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; justify-content: space-between; }
+  .rj-tabs { display: inline-grid; grid-auto-flow: column; background: var(--rj-track); border-radius: 999px; padding: 3px; }
+  .rj-tabs button { font: inherit; background: transparent; border: 0; border-radius: 999px; padding: 5px 12px; color: var(--color-fg); cursor: pointer; }
+  .rj-tabs button[aria-selected="true"] { background: var(--rj-pick); color: var(--rj-pick-ink); font-weight: 600; }
+  .rj-tabs button:disabled { cursor: default; opacity: .55; }
+  .rj-search { font: inherit; color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 6px 12px; min-width: 0; flex: 1 1 200px; max-width: 320px; }
+  .rj-tablebox { max-height: 560px; overflow: auto; border-top: 1px solid var(--color-border-line); }
+  .rj-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); }
+  .rj-table th { position: sticky; top: 0; background: var(--color-panel); text-align: right; font-weight: var(--cds-font-weight-medium); padding: 0; z-index: 1; }
+  .rj-table th button { font: inherit; width: 100%; text-align: inherit; background: none; border: 0; padding: 8px 6px; color: var(--color-fg-muted); cursor: pointer; white-space: nowrap; }
+  .rj-table th[aria-sort] button { color: var(--color-fg); }
+  .rj-table td { padding: 6px; border-top: 1px solid var(--color-border-line); text-align: right; white-space: nowrap; }
+  .rj-table th.l, .rj-table td.l { text-align: left; }
+  .rj-table td.name { white-space: normal; min-width: 180px; }
+  .rj-table td.name small { display: block; color: var(--color-fg-muted); }
+  .rj-table tbody tr { cursor: pointer; }
+  .rj-table tbody tr:hover td, .rj-table tbody tr.sel td { background: var(--rj-track); }
+  .rj-drill { font: inherit; background: none; border: 1px solid var(--color-border-line); border-radius: 4px; color: var(--color-fg); padding: 0 5px; margin-left: 6px; cursor: pointer; }
+  .rj-sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; vertical-align: baseline; }
+  .rj-pos { color: var(--color-ok); }
+  .rj-neg { color: var(--color-bad); }
+  @media (max-width: 720px) { .rj-table .opt { display: none; } }
+  .rj-foot { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.5; max-width: 110ch; }
+
+  [data-dash-source-state=empty] { color: transparent; }
+  [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+  @media (prefers-reduced-motion: no-preference) {
+    .rj-tm svg.fresh .rj-tile { animation: rj-in var(--cds-dur-slow) var(--cds-ease-out) both; }
+    @keyframes rj-in { from { opacity: 0; } to { opacity: 1; } }
+  }
+</style>
+<style>
+  .rj-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: var(--cds-gap-sm); }
+  .rj-langs { display: inline-grid; grid-auto-flow: column; background: var(--rj-track); border-radius: 999px; padding: 3px; flex: none; }
+  .rj-langs button { font: inherit; font-size: var(--cds-font-size-caption); background: transparent; border: 0; border-radius: 999px; padding: 5px 12px; color: var(--color-fg); cursor: pointer; }
+  .rj-langs button[aria-pressed="true"] { background: var(--rj-pick); color: var(--rj-pick-ink); font-weight: 600; }
+  .rj:lang(ja) { line-break: strict; }
+  .rj [hidden] { display: none !important; }
+  .rj-back { font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 3px 10px; margin-right: 6px; cursor: pointer; }
+  .rj-nav { font-size: var(--cds-font-size-body); }
+  .rj-pages { display: flex; gap: 4px; border-bottom: 1px solid var(--color-border-line); margin-top: var(--cds-gap-sm); }
+  .rj-pages button { font: inherit; background: none; border: 0; border-bottom: 3px solid transparent; padding: 8px 14px; color: var(--color-fg-muted); cursor: pointer; margin-bottom: -1px; }
+  .rj-pages button[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--rj-pick); font-weight: 600; }
+  .rj-page { display: grid; gap: var(--cds-gap-lg); }
+  .rj-about { display: grid; gap: var(--cds-gap-lg); max-width: 78ch; line-height: 1.6; }
+  .rj-about h2 { margin: 0; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); }
+  .rj-about h3 { margin: 0 0 4px; font-size: var(--cds-font-size-heading); font-weight: 600; }
+  .rj-about p { margin: 0; }
+  .rj-about ul { margin: 4px 0 0; padding-left: 1.2em; display: grid; gap: 4px; }
+  .rj-about a { color: var(--color-fg); }
+  .rj-head2 { display: grid; gap: var(--cds-gap-xs); }
+  .rj-head2 h2 { margin: 0; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); }
+  .rj-kpis { display: flex; flex-wrap: wrap; gap: var(--cds-gap-lg); }
+  .rj-kpi { display: grid; gap: 2px; min-width: 120px; }
+  .rj-kpi b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); }
+  .rj-kpi span { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .rj-ctools { justify-content: flex-start; }
+  .rj-csel { width: auto; max-width: 100%; min-width: 0; flex: 0 1 280px; }
+  .rj-ctable td { white-space: normal; vertical-align: top; }
+  .rj-ctable td.nw { white-space: nowrap; }
+  .rj-ctable td small { display: block; color: var(--color-fg-muted); }
+  .rj-chip { display: inline-block; font: inherit; font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); background: var(--color-bg); color: var(--color-fg); border-radius: 999px; padding: 1px 8px; margin: 0 4px 4px 0; cursor: pointer; }
+  .rj-chip i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; }
+  .rj-badge { display: inline-block; font-size: var(--cds-font-size-caption); font-weight: 600; border-radius: 4px; padding: 1px 6px; background: var(--rj-pick); color: var(--rj-pick-ink); }
+  .rj-warn { display: inline-block; font-size: var(--cds-font-size-caption); color: var(--color-warn); }
+  .rj-sources ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: var(--cds-font-size-caption); line-height: 1.5; }
+  .rj-sources b { font-weight: 600; }
+</style>
+
+<div class="rj" lang="ru">
+  <header class="rj-head" id="top">
+    <div class="rj-top">
+      <h1 id="title" data-i18n="title">Торговля Россия — Япония по товарам</h1>
+      <div class="rj-langs" role="group" data-i18n-aria="ariaLang" aria-label="Язык" id="langs">
+        <button type="button" data-v="ru" lang="ru">RU</button>
+        <button type="button" data-v="en" lang="en">EN</button>
+        <button type="button" data-v="ja" lang="ja">日本語</button>
+      </div>
+    </div>
+    <nav class="rj-pages" role="tablist" data-i18n-aria="ariaPages" id="pages">
+      <button type="button" role="tab" data-v="about" id="tab-about" data-i18n="tabAbout">Описание</button>
+      <button type="button" role="tab" data-v="trade" id="tab-trade" data-i18n="tabTrade">Торговля</button>
+      <button type="button" role="tab" data-v="companies" id="tab-companies" data-i18n="tabCompanies">Компании</button>
+    </nav>
+  </header>
+
+  <section class="rj-page" id="about" hidden>
+    <div class="rj-about" id="about-body"></div>
+  </section>
+
+  <section class="rj-page" id="trade">
+  <p class="rj-take" id="takeaway"></p>
+  <div class="rj-wrap"><div class="rj-main">
+    <aside class="rj-panel" id="controls">
+      <h2 data-i18n="panelTitle">Торговля по товарам</h2>
+      <div class="rj-seg" role="group" data-i18n-aria="ariaLevel" id="seg-level">
+        <button type="button" data-v="2">HS2</button>
+        <button type="button" data-v="4">HS4</button>
+        <button type="button" data-v="6">HS6</button>
+        <button type="button" data-v="9">HS9</button>
+      </div>
+      <div class="rj-seg" role="group" data-i18n-aria="ariaMode" id="seg-mode">
+        <button type="button" data-v="value" data-i18n="modeValue">Стоимость</button>
+        <button type="button" data-v="growth" data-i18n="modeGrowth">Рост</button>
+      </div>
+      <div class="rj-seg" role="group" data-i18n-aria="ariaUnit" id="seg-unit">
+        <button type="button" data-v="usd">USD</button>
+        <button type="button" data-v="pct" data-i18n="unitPct">Проценты (%)</button>
+      </div>
+      <select class="rj-period" id="period" data-i18n-aria="ariaPeriod" data-source="periods"></select>
+      <nav class="rj-crumbs" id="crumbs" data-i18n-aria="ariaFilter"></nav>
+      <p class="rj-sum" id="summary"></p>
+      <p class="rj-hint" data-i18n="hint">—</p>
+    </aside>
+
+    <section class="rj-maps" id="maps"><div class="rj-maps-grid">
+      <figure class="rj-map" id="map-ru-jp">
+        <h3 class="m-title">—</h3>
+        <div class="rj-total"><span class="m-total-label" data-i18n="total">Итого:</span> <b class="m-total dash-skeleton" data-source="views" data-field="value">—</b><span class="m-scope"></span></div>
+        <div class="rj-tm" data-source="views"></div>
+      </figure>
+      <figure class="rj-map" id="map-jp-ru">
+        <h3 class="m-title">—</h3>
+        <div class="rj-total"><span class="m-total-label" data-i18n="total">Итого:</span> <b class="m-total dash-skeleton" data-source="views" data-field="value">—</b><span class="m-scope"></span></div>
+        <div class="rj-tm" data-source="views"></div>
+      </figure>
+      <div class="rj-legend" id="legend" data-source="views"></div>
+    </div></section>
+  </div></div>
+
+  <div class="rj-selbar" id="selbar" hidden>
+    <div class="what" id="sel-what"></div>
+    <button type="button" class="rj-btn pick" id="sel-drill">—</button>
+    <button type="button" class="rj-btn" id="sel-clear" data-i18n="clearSel">Снять выбор</button>
+  </div>
+
+  <div class="rj-row2"><div class="rj-row2-grid">
+    <section class="rj-card" id="trend">
+      <h2 id="trend-title">—</h2>
+      <p class="rj-note" id="trend-note">—</p>
+      <div class="rj-trend" id="trend-chart" data-source="trade products"></div>
+    </section>
+    <section class="rj-card" id="item">
+      <h2 data-i18n="cardTitle">Карточка позиции</h2>
+      <div class="rj-item" id="item-body" data-source="trade ports offices products companies"></div>
+    </section>
+  </div></div>
+
+  <section class="rj-card rj-ports" id="ports">
+    <div class="rj-tools">
+      <h2 data-i18n="portsTitle">Порты и таможенные посты Японии</h2>
+      <div class="rj-tabs" role="tablist" data-i18n-aria="ariaPortFlow" id="port-tabs">
+        <button type="button" role="tab" data-v="ru_jp" data-i18n="portTabImp">Импорт из России</button>
+        <button type="button" role="tab" data-v="jp_ru" data-i18n="portTabExp">Экспорт в Россию</button>
+      </div>
+    </div>
+    <p class="rj-note" id="port-note">—</p>
+    <div class="rj-ports-grid">
+      <div class="rj-pmap" id="port-map" data-source="ports offices basemap"></div>
+      <div class="rj-plist" id="port-list" data-source="ports offices products"></div>
+    </div>
+  </section>
+
+  <section class="rj-card" id="products">
+    <div class="rj-tools">
+      <h2 id="table-title">—</h2>
+      <div class="rj-tabs" role="tablist" data-i18n-aria="ariaFlow" id="tabs">
+        <button type="button" role="tab" data-v="ru_jp">—</button>
+        <button type="button" role="tab" data-v="jp_ru">—</button>
+      </div>
+      <input class="rj-search" id="search" type="search" data-i18n-ph="search" data-i18n-aria="search">
+    </div>
+    <nav class="rj-crumbs rj-nav" id="table-crumbs" data-i18n-aria="ariaFilter"></nav>
+    <p class="rj-note" id="table-note">—</p>
+    <div class="rj-tablebox">
+      <table class="rj-table" id="table" data-source="views" data-row-key="key">
+        <thead><tr>
+          <th class="l" data-field="code"><button type="button" data-sort="code" data-i18n="thCode">Код</button></th>
+          <th class="l" data-field="name_ru" id="th-name"><button type="button" data-sort="name" data-i18n="thName">Товар</button></th>
+          <th data-field="value"><button type="button" data-sort="value" data-i18n="thValue">Стоимость</button></th>
+          <th data-field="share"><button type="button" data-sort="share" data-i18n="thShare">Доля</button></th>
+          <th class="opt" data-field="prev"><button type="button" data-sort="prev" data-i18n="thPrev">Пред. период</button></th>
+          <th class="opt" data-field="change"><button type="button" data-sort="change" data-i18n="thChange">Изм., $</button></th>
+          <th data-field="growth"><button type="button" data-sort="growth" data-i18n="thGrowth">Изм., %</button></th>
+          <th class="opt" data-field="kg"><button type="button" data-sort="kg" data-i18n="thKg">Вес, т</button></th>
+          <th class="opt" data-field="price"><button type="button" data-sort="price" data-i18n="thPrice">$/кг</button></th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="rj-foot" id="source-note" data-i18n="footShort">—</p>
+  </section>
+
+  <section class="rj-page" id="companies" hidden>
+    <div class="rj-head2">
+      <h2 data-i18n="compTitle">—</h2>
+      <p class="rj-take" data-i18n="compIntro">—</p>
+    </div>
+    <div class="rj-kpis" id="comp-kpis" data-source="companies"></div>
+    <div class="rj-tools rj-ctools">
+      <select class="rj-period rj-csel" id="comp-cat" data-i18n-aria="compCat" data-source="companies products"></select>
+      <select class="rj-period rj-csel" id="comp-region" data-i18n-aria="compRegion" data-source="companies"></select>
+      <input class="rj-search" id="comp-search" type="search" data-i18n-ph="compSearch" data-i18n-aria="compSearch">
+    </div>
+    <p class="rj-note" id="comp-cat-note" data-source="views">—</p>
+    <div class="rj-tablebox">
+      <table class="rj-table rj-ctable" id="comp-table" data-source="companies" data-row-key="inn">
+        <thead><tr>
+          <th class="l" data-field="name"><button type="button" data-csort="name" data-i18n="cName">Компания</button></th>
+          <th class="l" data-field="inn"><button type="button" data-csort="inn" data-i18n="cInn">ИНН</button></th>
+          <th class="l" data-field="region_code"><button type="button" data-csort="region" data-i18n="cRegion">Регион</button></th>
+          <th class="l" data-field="hs4"><button type="button" data-csort="hs4" data-i18n="cCats">Категории</button></th>
+          <th class="l opt" data-field="okved"><button type="button" data-csort="okved" data-i18n="cOkved">Деятельность</button></th>
+          <th data-field="employees"><button type="button" data-csort="employees" data-i18n="cSize">Размер</button></th>
+          <th class="l" data-field="evidence"><button type="button" data-csort="since" data-i18n="cEvidence">Подтверждение</button></th>
+          <th data-field="level"><button type="button" data-csort="level" data-i18n="cLevel">Уровень</button></th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="rj-card rj-sources" id="comp-sources">
+      <h2 data-i18n="srcTitle">—</h2>
+      <ul id="comp-sources-list"></ul>
+    </div>
+  </section>
+</div>
+
+
+</main>
+<script>
+  // Замена объекта `dash` платформы Claude: те же методы, данные — из файлов site/data/.
+  (function () {
+    const files = {trade: 'trade.csv', products: 'products.csv', ports: 'ports.csv', offices: 'offices.csv', basemap: 'basemap.json', companies: 'companies.csv'};
+    const store = {}, status = {}, calcs = {}, order = [], handlers = [];
+    const run = () => handlers.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
+    window.dash = {
+      colors: ['#2f6fdf', '#e07a1f', '#2a9d8f', '#9b5de5', '#e63946', '#457b9d', '#f4a261', '#6c757d'],
+      data(id) {
+        if (id in store) return { status: 'ok', data: store[id], meta: [], refreshing: false };
+        return { status: status[id] || 'loading', data: [], meta: [], refreshing: false };
+      },
+      calc(id, def) { calcs[id] = def; order.push(id); },
+      loader() {},
+      onData(fn) { handlers.push(fn); try { fn(); } catch (e) { console.error(e); } },
+      params() { return {}; }, setParams() {}, resetParams() {}, refresh() {},
+      setLink(name) { try { history.replaceState(null, '', '#' + name); } catch (e) { /* file:// */ } },
+    };
+    window.__loadDashData = async () => {
+      await Promise.all(Object.entries(files).map(async ([id, f]) => {
+        try {
+          const r = await fetch('data/' + f);
+          if (!r.ok) throw new Error(r.status);
+          const t = await r.text();
+          store[id] = f.endsWith('.json') ? JSON.parse(t) : d3.csvParse(t);
+        } catch (e) { status[id] = 'error'; console.error('data', id, e); }
+      }));
+      // расчёты по порядку объявления: каждый получает строки своих входов
+      for (const id of order) {
+        const c = calcs[id];
+        if (c.inputs.every((i) => i in store)) {
+          try { store[id] = c.fn(...c.inputs.map((i) => store[i])); } catch (e) { status[id] = 'error'; console.error('calc', id, e); }
+        } else status[id] = 'error';
+      }
+      run();
+    };
+  })();
+</script>
+<script>
+  // ---- calculations (visible to readers in Sources) ----
+  dash.calc('periods', {
+    inputs: ['trade'],
+    title: 'Периоды для выбора',
+    description: 'Полные годы, «с начала года» и «последние 12 месяцев» из помесячных данных, с периодом для сравнения.',
+    fn: (trade) => {
+      const months = [...new Set(trade.map((r) => r.month))].sort();
+      const has = new Set(months);
+      const [ly, lm] = months[months.length - 1].split('-').map(Number);
+      const ym = (y, m) => new Date(Date.UTC(y, m - 1, 1)).toISOString().slice(0, 7);
+      const span = (y, m, n) => Array.from({ length: n }, (_, i) => ym(y, m - i)).reverse();
+      const years = [...new Set(months.map((m) => m.slice(0, 4)))].filter((y) => span(+y, 12, 12).every((m) => has.has(m))).sort().reverse();
+      const out = [];
+      const add = (period, kind, src, prev) => {
+        if (src.every((p) => has.has(p))) out.push({ period, kind, src: src.join(','), prev, first: src[0], last: src[src.length - 1] });
+      };
+      add('ytd' + ly, 'ytd', span(ly, lm, lm), 'ytd' + (ly - 1));
+      add('ltm', 'ltm', span(ly, lm, 12), 'ltm_prev');
+      years.forEach((y) => add(y, 'year', span(+y, 12, 12), String(+y - 1)));
+      add('ytd' + (ly - 1), 'ytd', span(ly - 1, lm, lm), null);
+      add('ltm_prev', 'ltm', span(ly - 1, lm, 12), null);
+      const ids = new Set(out.map((p) => p.period));
+      return out.map((p) => ({ ...p, prev: ids.has(p.prev) ? p.prev : '' }));
+    },
+  });
+
+  dash.calc('views', {
+    inputs: ['trade', 'products', 'periods'],
+    title: 'Товары по периодам',
+    description: 'Суммы помесячных строк HS9 по секциям, главам HS2, позициям HS4, HS6 и HS9 за каждый период; доля в потоке, прошлый период и изменение; названия на трёх языках.',
+    fn: (trade, products, periods) => {
+      const prod = new Map(products.map((p) => [p.level === '9' ? p.flow + '|' + p.code : p.code, p]));
+      const sec = (c) => (prod.get(c.slice(0, 2)) || {}).section || '22';
+      const byMonth = new Map();
+      trade.forEach((r) => { if (!byMonth.has(r.month)) byMonth.set(r.month, []); byMonth.get(r.month).push(r); });
+      const acc = new Map();
+      const add = (pid, flow, level, code, v, kg) => {
+        const key = `${pid}|${flow}|${code}`;
+        let o = acc.get(key);
+        if (!o) acc.set(key, (o = { key, period: pid, flow, level, code, value: 0, kg: 0 }));
+        o.value += v;
+        o.kg += kg;
+      };
+      periods.forEach((p) => p.src.split(',').forEach((m) => (byMonth.get(m) || []).forEach((r) => {
+        const v = +r.value, kg = +r.kg, c = r.hs9;
+        add(p.period, r.flow, 0, 'TOTAL', v, kg);
+        add(p.period, r.flow, 1, 'S' + sec(c), v, kg);
+        add(p.period, r.flow, 2, c.slice(0, 2), v, kg);
+        add(p.period, r.flow, 4, c.slice(0, 4), v, kg);
+        add(p.period, r.flow, 6, c.slice(0, 6), v, kg);
+        add(p.period, r.flow, 9, c, v, kg);
+      })));
+      // позиции, которые были в прошлом периоде, но выпали в текущем
+      for (const p of periods) {
+        if (!p.prev) continue;
+        for (const o of [...acc.values()]) {
+          if (o.period !== p.prev) continue;
+          const key = `${p.period}|${o.flow}|${o.code}`;
+          if (!acc.has(key)) acc.set(key, { key, period: p.period, flow: o.flow, level: o.level, code: o.code, value: 0, kg: 0 });
+        }
+      }
+      const prevOf = new Map(periods.map((p) => [p.period, p.prev]));
+      const codeWord = { ru: ' · код ', en: ' · code ', ja: '・コード' };
+      return [...acc.values()].map((o) => {
+        const total = acc.get(`${o.period}|${o.flow}|TOTAL`).value;
+        const pk = prevOf.get(o.period);
+        const prev = pk ? (acc.get(`${pk}|${o.flow}|${o.code}`) || { value: 0 }).value : null;
+        const p = (o.level === 9 ? prod.get(o.flow + '|' + o.code) : prod.get(o.code)) || {};
+        const parent = o.level === 9 ? prod.get(o.code.slice(0, 6)) || {} : {};
+        const name = (l) => p['name_' + l] || (o.level === 9 ? (parent['name_' + l] || o.code.slice(0, 6)) + codeWord[l] + o.code.slice(6) : o.code);
+        return {
+          ...o,
+          section: o.level === 1 ? o.code.slice(1) : o.level === 0 ? '' : sec(o.code),
+          name_ru: name('ru'), name_en: name('en'), name_ja: name('ja'),
+          share: total ? o.value / total : 0,
+          prev,
+          change: prev === null ? null : o.value - prev,
+          growth: prev ? o.value / prev - 1 : null,
+          price: o.kg > 0 ? o.value / o.kg : null,
+        };
+      });
+    },
+  });
+
+  dash.calc('balance', {
+    inputs: ['views'],
+    title: 'Сальдо торговли',
+    description: 'Экспорт России в Японию минус экспорт Японии в Россию за каждый период.',
+    fn: (views) => {
+      const t = views.filter((r) => r.level === 0);
+      const periods = [...new Set(t.map((r) => r.period))];
+      return periods.map((period) => {
+        const ex = (t.find((r) => r.period === period && r.flow === 'ru_jp') || { value: 0 }).value;
+        const im = (t.find((r) => r.period === period && r.flow === 'jp_ru') || { value: 0 }).value;
+        return { period, exports: ex, imports: im, balance: ex - im };
+      });
+    },
+  });
+</script>
+<script>
+  // ---- interface text in three languages ----
+  const SECTIONS = {
+    1: [['Продукты животного происхождения', 'Animal products', '動物性生産品'], '#f2a483'],
+    2: [['Продукты растительного происхождения', 'Vegetable products', '植物性生産品'], '#9ccb4a'],
+    3: [['Жиры и масла', 'Animal and vegetable fats', '動植物性油脂'], '#c9b037'],
+    4: [['Продовольственные товары', 'Foodstuffs', '調製食料品・飲料・たばこ'], '#f6d55c'],
+    5: [['Минеральные продукты', 'Mineral products', '鉱物性生産品'], '#a33c00'],
+    6: [['Химическая продукция', 'Chemical products', '化学工業生産品'], '#e040c8'],
+    7: [['Пластмассы и каучук', 'Plastics and rubber', 'プラスチック・ゴム'], '#f58fd8'],
+    8: [['Кожа и шкуры', 'Hides and leather', '皮革・毛皮'], '#b5835a'],
+    9: [['Древесина и изделия', 'Wood products', '木材・木製品'], '#d7263d'],
+    10: [['Бумага и целлюлоза', 'Paper goods', 'パルプ・紙'], '#e6dc8f'],
+    11: [['Текстиль', 'Textiles', '紡織用繊維・製品'], '#16a34a'],
+    12: [['Обувь и головные уборы', 'Footwear and headwear', '履物・帽子'], '#5dd3c3'],
+    13: [['Камень, керамика, стекло', 'Stone and glass', '石・陶磁・ガラス'], '#8d99ae'],
+    14: [['Драгметаллы и камни', 'Precious metals', '貴金属・宝石'], '#9b3df2'],
+    15: [['Металлы', 'Metals', '卑金属'], '#a87a2a'],
+    16: [['Машины и электроника', 'Machines', '機械・電気機器'], '#2f86e6'],
+    17: [['Транспорт', 'Transportation', '輸送機器'], '#6cc7eb'],
+    18: [['Приборы', 'Instruments', '精密機器'], '#9b0e6b'],
+    19: [['Оружие', 'Weapons', '武器'], '#5b6770'],
+    20: [['Разные товары', 'Miscellaneous', '雑品'], '#f28c28'],
+    21: [['Искусство и антиквариат', 'Arts and antiques', '美術品・骨とう'], '#6b4e9b'],
+    22: [['Реэкспорт и прочее', 'Re-exports and other', '再輸出・その他'], '#b0b0b0'],
+  };
+  const HOUSES = {
+    1: ['Токийская таможня', 'Tokyo Customs', '東京税関'], 2: ['Иокогамская таможня', 'Yokohama Customs', '横浜税関'],
+    3: ['Таможня Кобе', 'Kobe Customs', '神戸税関'], 4: ['Осакская таможня', 'Osaka Customs', '大阪税関'],
+    5: ['Таможня Нагои', 'Nagoya Customs', '名古屋税関'], 6: ['Таможня Модзи', 'Moji Customs', '門司税関'],
+    7: ['Таможня Нагасаки', 'Nagasaki Customs', '長崎税関'], 8: ['Таможня Хакодате', 'Hakodate Customs', '函館税関'],
+    9: ['Таможня Окинавы', 'Okinawa Customs', '沖縄地区税関'],
+  };
+  const KINDS = { 'порт': ['порт', 'port', '港'], 'аэропорт': ['аэропорт', 'airport', '空港'], 'почта': ['почта', 'mail', '郵便'] };
+  const UNITS = {
+    NO: ['шт.', 'units', '台・個'], CM: ['м³', 'm³', 'm³'], KL: ['кл', 'kl', 'kl'], ST: ['компл.', 'sets', 'セット'], DZ: ['дюж.', 'dozen', 'ダース'],
+    PR: ['пар', 'pairs', '組'], SM: ['м²', 'm²', 'm²'], TH: ['тыс. шт.', 'thousand', '千個'], GT: ['GT', 'GT', '総トン'], LT: ['л', 'l', 'l'], CT: ['карат', 'carats', 'カラット'],
+  };
+  const LANGS = ['ru', 'en', 'ja'];
+  const MON = {
+    ru: ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'],
+    en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  };
+  const MONTH_FULL = {
+    ru: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
+    en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  };
+  const T = {
+    ru: {
+      title: 'Торговля Россия — Япония по товарам', panelTitle: 'Торговля по товарам',
+      ariaLang: 'Язык', ariaLevel: 'Уровень детализации', ariaMode: 'Показатель', ariaUnit: 'Единицы', ariaPeriod: 'Период', ariaFilter: 'Фильтр',
+      ariaPortFlow: 'Направление для карты', ariaFlow: 'Направление',
+      modeValue: 'Стоимость', modeGrowth: 'Рост', unitPct: 'Проценты (%)', total: 'Итого:', clearSel: 'Снять выбор',
+      cardTitle: 'Карточка позиции', portsTitle: 'Порты и таможенные посты Японии', portTabImp: 'Импорт из России', portTabExp: 'Экспорт в Россию',
+      search: 'Поиск по коду или названию', thCode: 'Код', thName: 'Товар', thValue: 'Стоимость', thShare: 'Доля', thPrev: 'Пред. период',
+      thChange: 'Изм., $', thGrowth: 'Изм., %', thKg: 'Вес, т', thPrice: '$/кг',
+      hint: 'Клик по прямоугольнику выбирает товар: ниже появятся его динамика, порты и подсказки, где искать контрагентов. Повторный клик снимает выбор. Двойной клик раскрывает главу до HS4, HS6 и HS9.',
+      flows: { ru_jp: 'Россия → Япония', jp_ru: 'Япония → Россия' },
+      mapTitle: (f, p) => (f === 'ru_jp' ? 'Экспорт России в Японию, ' : 'Экспорт Японии в Россию, ') + p,
+      year: (y) => y, ytd: (y, m) => `${y}, ${MON.ru[0]}–${MON.ru[m - 1]}`,
+      ltm: (a, b) => `12 мес.: ${MON.ru[+a.slice(5) - 1]} ${a.slice(0, 4)} – ${MON.ru[+b.slice(5) - 1]} ${b.slice(0, 4)}`,
+      monthLong: (m) => `${MONTH_FULL.ru[+m.slice(5) - 1]} ${m.slice(0, 4)}`,
+      takeaway: (P, ex, exg, im, img) => [P, ': Россия поставила в Японию на ', ex, ' (', exg, ' к прошлому периоду), Япония в Россию — на ', im, ' (', img, ').'],
+      summary: (surplus, P, bal, ex, im) => [surplus ? 'Профицит России' : 'Дефицит России', ' в торговле с Японией за период ', P, ': ', bal, '. Экспорт России составил ', ex, ', импорт из Японии — ', im, '.'],
+      back: '← Назад', backAria: 'Вернуться на предыдущий шаг', allGoods: 'Все товары', na: 'н/д', isNew: 'новое', newItem: 'новая позиция', sep: ' · ',
+      noTrade: 'Нет поставок по этому фильтру в выбранном периоде', gradLo: '−100% и ниже', gradHi: '+100% и выше',
+      drillTo: (l) => `Раскрыть до HS${l}`, clickHint: (d) => (d ? 'Клик — выбрать, двойной клик — раскрыть' : 'Клик — выбрать'),
+      tValue: 'Стоимость', tShare: 'Доля в потоке', tPrev: (p) => `Было (${p})`, tChange: 'Изменение', tKg: 'Вес нетто', tPrice: 'Цена',
+      perKg: (p) => `$${p} за кг`, tons: (v) => `${v} т`,
+      trendAll: 'Помесячная динамика', trendSel: 'Динамика выбранной позиции', perMonth: ', долларов в месяц',
+      cardEmpty: 'Выберите прямоугольник на карте товаров или строку в таблице. Здесь появятся объём в штуках и тоннах, цена за единицу, регулярность поставок, основные порты и подсказки, где искать покупателей и поставщиков.',
+      cValue: (p) => `Стоимость, ${p}`, cShare: 'Доля в потоке', cVsPrev: 'К прошлому периоду', cQty: 'Количество', cUnitPrice: (u) => `Цена за ${u}`,
+      cKg: 'Вес нетто', cKgPrice: 'Цена за кг', cActive: 'Месяцев с поставками из последних 12', cActiveV: (n) => `${n} из 12`,
+      fConf: 'Код засекречен таможней по заявке участника: по нему 1–2 экспортёра или импортёра. Сумма и страна настоящие, скрыт только точный товар внутри главы.',
+      fReexp: 'Реэкспорт: товары не японского производства, ввезённые в Японию и вывезенные в Россию без переработки. Товарный состав таможня не раскрывает.',
+      fReimp: 'Реимпорт: японские товары, вернувшиеся из России.',
+      fContract: 'Поставки каждый месяц через 1–2 поста: похоже на долгосрочный контракт с небольшим числом участников.',
+      fRare: 'Редкие партии: скорее разовые сделки, участников может быть один-два.',
+      fPorts: (top, more) => `Основные посты: ${top}${more ? ` и ещё ${more}` : ''}.`,
+      leadsTitle: 'Где искать контрагентов',
+      leadsDefExp: 'Импортёров в России ищите в реестре деклараций и сертификатов Росаккредитации по коду ТН ВЭД и японскому изготовителю. Конечных заказчиков из госсектора видно на госзакупках по стране происхождения.',
+      leadsDefImp: 'Покупатели в Японии обычно находятся рядом с постом прибытия (карта ниже). Сырьё чаще всего проходит через японские торговые дома.',
+      sanctions: 'Перед контактом проверьте компании по санкционным спискам Японии, ЕС и США.',
+      portNote: (s, f, p) => `${s} · ${f} · ${p}. Размер круга — стоимость за период.`,
+      portsFrom: (y, part) => ` Данные по постам есть с ${y} года${part ? ', часть периода не покрыта' : ''}.`,
+      portsNone: (y) => `Данные по таможенным постам есть с ${y} года. Выберите более поздний период.`,
+      portsEmpty: 'По постам нет данных для этого выбора.', postsN: (n) => `Посты: ${n}`, valueShare: 'стоимость и доля',
+      postX: (c) => `Пост ${c}`, through: (p) => `${p}: что проходит`, allPosts: '← Все посты', portTip: 'Нажмите, чтобы увидеть товары', tShareShort: 'Доля',
+      mapAria: 'Карта таможенных постов', trendAria: 'Помесячная динамика',
+      tableTitle: (l) => `Товары HS${l}`,
+      tableNote: (f, p, n, m, g) => `${f}, ${p}. Показано ${n} из ${m}. Клик по строке выбирает товар, кнопка ▸ раскрывает его.` + (g ? ' В режиме «Рост» в списке есть и позиции, которые выпали из торговли.' : ''),
+      drillAria: (c) => `Раскрыть ${c}`, failed: 'Не удалось загрузить',
+      foot: 'Источник: таможенная статистика Японии (Министерство финансов, Trade Statistics of Japan, портал e-Stat), помесячно по 9-значным кодам: таблицы «товар × страна» с 2017 года и «таможенный пост × товар × страна» с 2021 года. Россия не публикует таможенную статистику с 2022 года, поэтому обе стороны торговли показаны по японским данным: экспорт России — это импорт Японии товаров российского происхождения в ценах CIF, экспорт Японии — вывоз с конечным назначением в Россию в ценах FOB. Иены пересчитаны в доллары по среднемесячному курсу (ФРС США, серия EXJPUS). Импорт за последний месяц — предварительные данные таможни, через месяц их заменяют уточнённые. Первые 6 цифр кода — международный HS (HS2017 до 2021 года, HS2022 с 2022 года), последние 3 — детализация Японии, своя у экспорта и импорта. Коды с «X» — позиции, засекреченные по заявке участника (по коду 1–2 экспортёра или импортёра): сумма публикуется, точный товар скрыт. Коды «00» — реэкспорт, реимпорт и бортовые припасы. OEC строит похожие графики по базе BACI (CEPII), которая собирается из тех же данных через UN Comtrade и обновляется раз в год с отставанием около полутора лет. Названия товаров переведены для этого дашборда. Карта: Natural Earth.',
+      leads: {
+        lng: 'Сырьё по долгосрочным контрактам. Покупатели СПГ, нефти и угля — японские энергокомпании, газовые компании и НПЗ; участники проектов «Сахалин-1» и «Сахалин-2» раскрыты в их годовых отчётах. Порт прибытия на карте указывает на конкретный терминал и, значит, на покупателя.',
+        pgm: 'Драгметаллы обычно идут авиатранспортом (посты аэропортов на карте). В Японии покупатели — торговые дома, аффинажные компании и производители катализаторов, в России — производитель металла и его трейдеры.',
+        metals: 'Металлы обычно покупают японские торговые дома, а дальше металл идёт к литейщикам, прокатчикам и автокомпонентным заводам. Порт прибытия на карте сужает круг до конкретного региона.',
+        fish: 'Морепродукты: поставщики — российские рыбопромышленные компании, держатели квот; их список Росрыболовство публикует при распределении квот. Покупатели — импортёры, оптовики и переработчики рядом с постами прибытия: живой товар обычно идёт на Хоккайдо, мороженый — в крупные порты (карта ниже).',
+        wood: 'Древесина: экспортёров можно найти по сделкам в ЛесЕГАИС (там есть ИНН участников сделок с древесиной). Покупатели — лесоторговые компании и производители домокомплектов в регионах портов прибытия.',
+        cars: 'Почти весь автоэкспорт в Россию — подержанные машины (это видно на уровне HS9). Экспортёры — японские компании, которые покупают авто на аукционах, обычно рядом с портами отгрузки (карта). Покупатели — дилеры и частные лица, чаще всего на Дальнем Востоке.',
+        pharma: 'Лекарства: в Государственном реестре лекарственных средств указаны держатели регистрационных удостоверений японских препаратов. На госзакупках видны конечные заказчики, больницы, по стране происхождения «Япония».',
+        medical: 'Медицинские и измерительные приборы: в реестре медизделий Росздравнадзора указаны производитель и уполномоченный представитель в России. На госзакупках видны конечные заказчики.',
+        equipment: 'Техника, шины, запчасти: в реестре деклараций и сертификатов соответствия ЕАЭС (Росаккредитация) есть заявитель, обычно импортёр, японский изготовитель и код ТН ВЭД. Это самый прямой открытый способ найти импортёров конкретных марок.',
+        consumer: 'Пищевые ингредиенты, косметика, гигиена: в реестре свидетельств о госрегистрации ЕАЭС и в реестре Росаккредитации указаны получатель (импортёр) и производитель.',
+      },
+      links: { ais: 'Отслеживание судов (AIS)', fish: 'Росрыболовство', les: 'ЛесЕГАИС', grls: 'ГРЛС', zakupki: 'Госзакупки', med: 'Реестр медизделий', fsa: 'Реестр Росаккредитации', sgr: 'Реестр СГР ЕАЭС' },
+    },
+    en: {
+      title: 'Russia–Japan trade by product', panelTitle: 'Bilateral trade by product',
+      ariaLang: 'Language', ariaLevel: 'Level of detail', ariaMode: 'Measure', ariaUnit: 'Units', ariaPeriod: 'Period', ariaFilter: 'Filter',
+      ariaPortFlow: 'Direction shown on the map', ariaFlow: 'Direction',
+      modeValue: 'Trade value', modeGrowth: 'Growth', unitPct: 'Percentage (%)', total: 'Total:', clearSel: 'Clear selection',
+      cardTitle: 'Product card', portsTitle: 'Japanese ports and customs offices', portTabImp: 'Imports from Russia', portTabExp: 'Exports to Russia',
+      search: 'Search by code or name', thCode: 'Code', thName: 'Product', thValue: 'Value', thShare: 'Share', thPrev: 'Previous period',
+      thChange: 'Change, $', thGrowth: 'Change, %', thKg: 'Weight, t', thPrice: '$/kg',
+      hint: 'Click a rectangle to select a product: its monthly trend, ports and leads on where to find counterparties appear below. Click it again to clear. Double-click to open a chapter down to HS4, HS6 and HS9.',
+      flows: { ru_jp: 'Russia → Japan', jp_ru: 'Japan → Russia' },
+      mapTitle: (f, p) => (f === 'ru_jp' ? 'Exports from Russia to Japan, ' : 'Exports from Japan to Russia, ') + p,
+      year: (y) => y, ytd: (y, m) => `${y}, ${MON.en[0]}–${MON.en[m - 1]}`,
+      ltm: (a, b) => `12 months: ${MON.en[+a.slice(5) - 1]} ${a.slice(0, 4)} – ${MON.en[+b.slice(5) - 1]} ${b.slice(0, 4)}`,
+      monthLong: (m) => `${MONTH_FULL.en[+m.slice(5) - 1]} ${m.slice(0, 4)}`,
+      takeaway: (P, ex, exg, im, img) => [P, ': Russia shipped ', ex, ' to Japan (', exg, ' vs the previous period); Japan shipped ', im, ' to Russia (', img, ').'],
+      summary: (surplus, P, bal, ex, im) => ['Russia has a trade ', surplus ? 'surplus' : 'deficit', ' of ', bal, ' with Japan in ', P, '. Exports reached ', ex, ' while imports totalled ', im, '.'],
+      back: '← Back', backAria: 'Go back one step', allGoods: 'All products', na: 'n/a', isNew: 'new', newItem: 'new item', sep: ' · ',
+      noTrade: 'No trade for this filter in the selected period', gradLo: '−100% or less', gradHi: '+100% or more',
+      drillTo: (l) => `Open down to HS${l}`, clickHint: (d) => (d ? 'Click to select, double-click to open' : 'Click to select'),
+      tValue: 'Value', tShare: 'Share of flow', tPrev: (p) => `Before (${p})`, tChange: 'Change', tKg: 'Net weight', tPrice: 'Price',
+      perKg: (p) => `$${p} per kg`, tons: (v) => `${v} t`,
+      trendAll: 'Monthly trend', trendSel: 'Trend of the selected product', perMonth: ', US dollars per month',
+      cardEmpty: 'Select a rectangle on the product map or a row in the table. This card will show volume in units and tonnes, unit price, how regular the shipments are, the main ports and leads on where to look for buyers and suppliers.',
+      cValue: (p) => `Value, ${p}`, cShare: 'Share of flow', cVsPrev: 'Vs previous period', cQty: 'Quantity', cUnitPrice: (u) => `Price per ${u === 'units' ? 'unit' : u}`,
+      cKg: 'Net weight', cKgPrice: 'Price per kg', cActive: 'Months with shipments, last 12', cActiveV: (n) => `${n} of 12`,
+      fConf: 'Japanese customs keeps this code confidential at a trader’s request: only 1–2 exporters or importers use it. The value and the country are real; only the exact product within the chapter is hidden.',
+      fReexp: 'Re-exports: goods not made in Japan that were imported into Japan and shipped on to Russia unprocessed. Customs does not disclose what they are.',
+      fReimp: 'Re-imports: Japanese goods returned from Russia.',
+      fContract: 'Shipments every month through 1–2 offices: this looks like a long-term contract with few participants.',
+      fRare: 'Few shipments: likely one-off deals, possibly by one or two traders.',
+      fPorts: (top, more) => `Main customs offices: ${top}${more ? ` and ${more} more` : ''}.`,
+      leadsTitle: 'Where to look for counterparties',
+      leadsDefExp: 'Look for Russian importers in the EAEU register of declarations and certificates of conformity (Rosaccreditation) by HS code and Japanese manufacturer. Public-sector end customers appear in Russian public procurement records by country of origin.',
+      leadsDefImp: 'Buyers in Japan are usually close to the customs office of arrival (map below). Raw materials mostly go through Japanese trading houses.',
+      sanctions: 'Check companies against the Japanese, EU and US sanctions lists before any contact.',
+      portNote: (s, f, p) => `${s} · ${f} · ${p}. Circle size shows value in the period.`,
+      portsFrom: (y, part) => ` Customs office data start in ${y}${part ? '; part of the period is not covered' : ''}.`,
+      portsNone: (y) => `Customs office data start in ${y}. Choose a later period.`,
+      portsEmpty: 'No customs office data for this selection.', postsN: (n) => `Customs offices: ${n}`, valueShare: 'value and share',
+      postX: (c) => `Office ${c}`, through: (p) => `${p}: what goes through`, allPosts: '← All offices', portTip: 'Click to see products', tShareShort: 'Share',
+      mapAria: 'Map of customs offices', trendAria: 'Monthly trend',
+      tableTitle: (l) => `Products, HS${l}`,
+      tableNote: (f, p, n, m, g) => `${f}, ${p}. Showing ${n} of ${m}. Click a row to select a product; ▸ opens it.` + (g ? ' In Growth mode the list also includes products that dropped out of trade.' : ''),
+      drillAria: (c) => `Open ${c}`, failed: 'Failed to load',
+      foot: 'Source: Japanese customs statistics (Ministry of Finance, Trade Statistics of Japan, e-Stat portal), monthly by 9-digit code: “commodity by country” tables from 2017 and “customs office by commodity by country” tables from 2021. Russia has not published customs statistics since 2022, so both sides of the trade come from Japanese data: Russian exports are Japan’s imports of goods of Russian origin (CIF), Japanese exports are shipments with final destination Russia (FOB). Yen are converted to US dollars at the monthly average rate (US Federal Reserve, series EXJPUS). Imports for the latest month are preliminary and are replaced by detailed figures a month later. The first 6 digits are the international HS code (HS2017 until 2021, HS2022 from 2022); the last 3 are Japan’s own detail and differ between exports and imports. Codes with “X” are kept confidential at a trader’s request (1–2 exporters or importers per code): the value is published, the exact product is hidden. Codes starting with “00” are re-exports, re-imports and aircraft stores. OEC draws similar charts from the BACI database (CEPII), which is built from the same data via UN Comtrade and updated once a year with a lag of about 18 months. Product names were translated for this dashboard. Map: Natural Earth.',
+      leads: {
+        lng: 'Raw materials under long-term contracts. Buyers of LNG, crude oil and coal are Japanese power and gas utilities and refiners; participants in Sakhalin-1 and Sakhalin-2 are disclosed in their annual reports. The port of arrival on the map points to a specific terminal and so to the buyer.',
+        pgm: 'Precious metals usually travel by air (airport offices on the map). In Japan the buyers are trading houses, refiners and catalyst makers; in Russia, the metal producer and its traders.',
+        metals: 'Metals are usually bought by Japanese trading houses and then go to foundries, rolling mills and auto-parts plants. The port of arrival on the map narrows the search to a region.',
+        fish: 'Seafood: suppliers are Russian fishing companies holding quotas; the Federal Agency for Fishery publishes them when quotas are allocated. Buyers are importers, wholesalers and processors near the offices of arrival: live product usually goes to Hokkaido, frozen product to the large ports (map below).',
+        wood: 'Timber: exporters can be found through deals in LesEGAIS, the Russian timber register, which lists the tax IDs of the parties. Buyers are timber traders and house-kit makers in the regions of the ports of arrival.',
+        cars: 'Almost all car exports to Russia are used cars (visible at HS9 level). Exporters are Japanese companies buying at auctions, usually near the ports of shipment (map). Buyers are dealers and private individuals, mostly in the Russian Far East.',
+        pharma: 'Medicines: the Russian State Register of Medicines lists the registration holders of Japanese drugs. Public procurement shows the end customers, hospitals, by country of origin “Japan”.',
+        medical: 'Medical and measuring instruments: the Roszdravnadzor register of medical devices lists the manufacturer and its authorised representative in Russia. Public procurement shows the end customers.',
+        equipment: 'Machinery, tyres, parts: the EAEU register of declarations and certificates of conformity (Rosaccreditation) shows the applicant, usually the importer, the Japanese manufacturer and the HS code. This is the most direct open way to find importers of specific brands.',
+        consumer: 'Food ingredients, cosmetics, hygiene products: the EAEU state registration register and the Rosaccreditation register show the recipient (importer) and the manufacturer.',
+      },
+      links: { ais: 'Ship tracking (AIS)', fish: 'Federal Agency for Fishery', les: 'LesEGAIS', grls: 'State Register of Medicines', zakupki: 'Russian public procurement', med: 'Medical device register', fsa: 'Rosaccreditation register', sgr: 'EAEU state registration register' },
+    },
+    ja: {
+      title: '日ロ貿易：品目別', panelTitle: '品目別の二国間貿易',
+      ariaLang: '言語', ariaLevel: '品目の細かさ', ariaMode: '指標', ariaUnit: '単位', ariaPeriod: '期間', ariaFilter: '絞り込み',
+      ariaPortFlow: '地図に表示する方向', ariaFlow: '方向',
+      modeValue: '金額', modeGrowth: '増減', unitPct: '構成比（%）', total: '合計：', clearSel: '選択を解除',
+      cardTitle: '品目カード', portsTitle: '日本の港・税関官署', portTabImp: 'ロシアからの輸入', portTabExp: 'ロシアへの輸出',
+      search: 'コードまたは品名で検索', thCode: 'コード', thName: '品目', thValue: '金額', thShare: '構成比', thPrev: '前期',
+      thChange: '増減額（$）', thGrowth: '増減率', thKg: '重量（t）', thPrice: '$/kg',
+      hint: '四角をクリックすると品目を選択し、下に月次推移・港・取引相手の探し方が表示されます。もう一度クリックで解除。ダブルクリックでHS4・HS6・HS9へ掘り下げます。',
+      flows: { ru_jp: 'ロシア → 日本', jp_ru: '日本 → ロシア' },
+      mapTitle: (f, p) => (f === 'ru_jp' ? 'ロシアの対日輸出（' : '日本の対ロ輸出（') + p + '）',
+      year: (y) => `${y}年`, ytd: (y, m) => `${y}年1〜${m}月`,
+      ltm: (a, b) => `直近12か月（${a.slice(0, 4)}年${+a.slice(5)}月〜${b.slice(0, 4)}年${+b.slice(5)}月）`,
+      monthLong: (m) => `${m.slice(0, 4)}年${+m.slice(5)}月`,
+      takeaway: (P, ex, exg, im, img) => [P, '：ロシアの対日輸出は', ex, '（前期比', exg, '）、日本の対ロ輸出は', im, '（同', img, '）。'],
+      summary: (surplus, P, bal, ex, im) => [P, 'のロシアの対日貿易収支は', bal, 'の', surplus ? '黒字' : '赤字', '。輸出', ex, '、日本からの輸入', im, '。'],
+      back: '← 戻る', backAria: '前の表示に戻る', allGoods: 'すべての品目', na: '—', isNew: '新規', newItem: '新規品目', sep: '・',
+      noTrade: '選択した期間・条件では取引がありません', gradLo: '−100%以下', gradHi: '+100%以上',
+      drillTo: (l) => `HS${l}へ掘り下げ`, clickHint: (d) => (d ? 'クリックで選択、ダブルクリックで掘り下げ' : 'クリックで選択'),
+      tValue: '金額', tShare: '構成比', tPrev: (p) => `前期（${p}）`, tChange: '増減', tKg: '正味重量', tPrice: '単価',
+      perKg: (p) => `1kgあたり$${p}`, tons: (v) => `${v} t`,
+      trendAll: '月次推移', trendSel: '選択品目の月次推移', perMonth: '、米ドル／月',
+      cardEmpty: '品目マップの四角か表の行を選んでください。数量と重量、単価、輸送の頻度、主な港、取引相手の探し方がここに表示されます。',
+      cValue: (p) => `金額（${p}）`, cShare: '構成比', cVsPrev: '前期比', cQty: '数量', cUnitPrice: (u) => `単価（${u}あたり）`,
+      cKg: '正味重量', cKgPrice: '1kgあたり単価', cActive: '直近12か月のうち取引があった月', cActiveV: (n) => `${n}／12`,
+      fConf: '当事者の申請により税関が非公表としたコードです（該当する輸出入者は1〜2者）。金額と相手国は実数で、類の中の具体的な品目だけが伏せられています。',
+      fReexp: '再輸出品：日本以外で生産され、日本に輸入された後、加工されずにロシアへ輸出された貨物。品目の内訳は公表されていません。',
+      fReimp: '再輸入品：ロシアから戻ってきた日本の貨物。',
+      fContract: '毎月1〜2の官署を通じて取引：少数の当事者による長期契約とみられます。',
+      fRare: '取引はまれ：単発の取引で、当事者は1〜2者の可能性があります。',
+      fPorts: (top, more) => `主な官署：${top}${more ? `、ほか${more}` : ''}。`,
+      leadsTitle: '取引相手の探し方',
+      leadsDefExp: 'ロシアの輸入者は、EAEUの適合宣言・認証登録簿（ロシア連邦認定庁）でHSコードと日本のメーカー名から探せます。公共部門の最終顧客は、原産国「日本」でロシアの公共調達サイトから確認できます。',
+      leadsDefImp: '日本の買い手は通常、到着する税関官署の近くにいます（下の地図）。原材料の多くは日本の商社を経由します。',
+      sanctions: '接触の前に、日本・EU・米国の制裁リストで相手企業を確認してください。',
+      portNote: (s, f, p) => `${s}・${f}・${p}。円の大きさは期間中の金額です。`,
+      portsFrom: (y, part) => ` 税関官署別のデータは${y}年からです${part ? '（期間の一部は対象外）' : ''}。`,
+      portsNone: (y) => `税関官署別のデータは${y}年からです。それ以降の期間を選んでください。`,
+      portsEmpty: 'この選択では官署別のデータがありません。', postsN: (n) => `官署：${n}`, valueShare: '金額と構成比',
+      postX: (c) => `官署 ${c}`, through: (p) => `${p}を通る品目`, allPosts: '← すべての官署', portTip: 'クリックで品目を表示', tShareShort: '構成比',
+      mapAria: '税関官署の地図', trendAria: '月次推移',
+      tableTitle: (l) => `品目（HS${l}）`,
+      tableNote: (f, p, n, m, g) => `${f}・${p}。${m}件中${n}件を表示。行をクリックで選択、▸で掘り下げ。` + (g ? '「増減」では取引がなくなった品目も表示します。' : ''),
+      drillAria: (c) => `${c}を掘り下げ`, failed: '読み込めませんでした',
+      foot: '出典：財務省貿易統計（e-Stat）の9桁品目・月次データ。「品別国別表」は2017年から、「税関別品別国別表」は2021年から。ロシアは2022年以降税関統計を公表していないため、双方向とも日本側のデータで示しています。ロシアの対日輸出は日本のロシア原産品の輸入（CIF）、日本の対ロ輸出はロシアを最終仕向地とする輸出（FOB）です。円は米連邦準備制度の月平均レート（EXJPUS）でドル換算しました。直近月の輸入は速報値で、翌月に確報値へ置き換わります。コードの上6桁は国際HS（2021年まではHS2017、2022年からはHS2022）、下3桁は日本独自の細分で輸出と輸入で異なります。「X」を含むコードは当事者の申請による非公表品目（1〜2者）で、金額は公表され品目のみ伏せられています。「00」で始まるコードは再輸出品・再輸入品・機用品です。OECは同じ元データをUN Comtrade経由でまとめたBACI（CEPII）で同様の図を作成しており、更新は年1回・約1年半遅れです。品名はこのダッシュボード用に翻訳したものです。地図：Natural Earth。',
+      leads: {
+        lng: '長期契約による原燃料。LNG・原油・石炭の買い手は日本の電力・ガス会社や製油所で、サハリン1・2の参加企業は各社の年次報告で開示されています。地図上の到着港は特定の受入基地、つまり買い手を示します。',
+        pgm: '貴金属は通常航空輸送です（地図の空港官署）。日本側の買い手は商社、精錬会社、触媒メーカー、ロシア側は金属の生産者とそのトレーダーです。',
+        metals: '金属は通常日本の商社が買い付け、鋳造・圧延・自動車部品メーカーへ流れます。地図の到着港で地域を絞り込めます。',
+        fish: '水産物：供給者は漁獲枠を持つロシアの水産会社で、ロシア連邦漁業庁が割当時に公表しています。買い手は到着官署の近くの輸入業者・卸・加工業者で、活魚介は北海道、冷凍品は大きな港に入るのが一般的です（下の地図）。',
+        wood: '木材：輸出者はロシアの木材取引登録システム（LesEGAIS）で、取引当事者の納税者番号から探せます。買い手は到着港の地域の木材商社やプレカット・住宅部材メーカーです。',
+        cars: '対ロ自動車輸出のほぼすべてが中古車です（HS9で確認できます）。輸出者はオークションで仕入れる日本の輸出業者で、多くは積出港の近くにあります（地図）。買い手はディーラーや個人で、主に極東です。',
+        pharma: '医薬品：ロシアの医薬品国家登録簿に日本の医薬品の登録保有者が載っています。公共調達サイトでは原産国「日本」で最終顧客（病院）がわかります。',
+        medical: '医療・計測機器：ロシア連邦保健監督庁の医療機器登録簿にメーカーとロシアでの正規代理人が載っています。公共調達サイトで最終顧客がわかります。',
+        equipment: '機械・タイヤ・部品：EAEUの適合宣言・認証登録簿（ロシア連邦認定庁）には申請者（通常は輸入者）、日本のメーカー、HSコードが載っています。特定ブランドの輸入者を探す最も直接的な公開情報です。',
+        consumer: '食品原料・化粧品・衛生用品：EAEUの国家登録証明登録簿とロシア連邦認定庁の登録簿に、受取人（輸入者）とメーカーが載っています。',
+      },
+      links: { ais: '船舶動静（AIS）', fish: 'ロシア連邦漁業庁', les: 'LesEGAIS（木材登録）', grls: '医薬品国家登録簿', zakupki: 'ロシア公共調達', med: '医療機器登録簿', fsa: 'ロシア連邦認定庁の登録簿', sgr: 'EAEU国家登録簿' },
+    },
+  };
+  // where to look for counterparties: public registries and logic by chapter and direction
+  const LEADS = [
+    { ch: ['27'], flow: 'ru_jp', key: 'lng', links: [['ais', 'https://www.marinetraffic.com']] },
+    { ch: ['71'], flow: 'ru_jp', key: 'pgm', links: [] },
+    { ch: ['72', '74', '75', '76', '81'], flow: 'ru_jp', key: 'metals', links: [] },
+    { ch: ['03', '16'], flow: 'ru_jp', key: 'fish', links: [['fish', 'https://fish.gov.ru']] },
+    { ch: ['44'], flow: 'ru_jp', key: 'wood', links: [['les', 'https://lesegais.ru']] },
+    { ch: ['87'], flow: 'jp_ru', key: 'cars', links: [] },
+    { ch: ['30'], flow: 'jp_ru', key: 'pharma', links: [['grls', 'https://grls.rosminzdrav.ru'], ['zakupki', 'https://zakupki.gov.ru']] },
+    { ch: ['90'], flow: 'jp_ru', key: 'medical', links: [['med', 'https://roszdravnadzor.gov.ru/services/misearch'], ['zakupki', 'https://zakupki.gov.ru']] },
+    { ch: ['40', '73', '84', '85', '87', '94', '95'], flow: 'jp_ru', key: 'equipment', links: [['fsa', 'https://pub.fsa.gov.ru']] },
+    { ch: ['21', '33', '34', '96'], flow: 'jp_ru', key: 'consumer', links: [['sgr', 'https://nsi.eaeunion.org'], ['fsa', 'https://pub.fsa.gov.ru']] },
+  ];
+  const DEFAULT_LINKS = { jp_ru: [['fsa', 'https://pub.fsa.gov.ru'], ['zakupki', 'https://zakupki.gov.ru']], ru_jp: [] };
+  // ---- texts of the About and Companies pages ----
+  const ruPlural = (n, one, few, many) => { const a = n % 100, b = n % 10; return a > 10 && a < 20 ? many : b === 1 ? one : b >= 2 && b <= 4 ? few : many; };
+  const OKVED_T = {
+    '03.1': ['Рыболовство', 'Fishing', '漁業'], '03.11': ['Рыболовство морское', 'Marine fishing', '海面漁業'],
+    '03.11.1': ['Рыболовство морское промышленное', 'Industrial marine fishing', '海面漁業（産業規模）'],
+    '03.11.2': ['Рыболовство морское прибрежное', 'Coastal marine fishing', '沿岸漁業'],
+    '03.21.1': ['Рыбоводство морское индустриальное', 'Industrial marine aquaculture', '海面養殖'],
+    '10.20': ['Переработка и консервирование рыбы, ракообразных и моллюсков', 'Fish and seafood processing', '水産物の加工・保存'],
+    '10.20.1': ['Переработка и консервирование рыбы', 'Fish processing and preserving', '魚の加工・保存'],
+    '46.38.1': ['Торговля оптовая рыбой и морепродуктами', 'Wholesale of fish and seafood', '水産物卸売'],
+    '46.90': ['Торговля оптовая неспециализированная', 'Non-specialised wholesale', '各種商品卸売'],
+    '46.21.19': ['Торговля оптовая сельскохозяйственным сырьём', 'Wholesale of agricultural raw materials', '農産原料卸売'],
+    '52.10': ['Складирование и хранение', 'Warehousing and storage', '倉庫・保管'],
+    '56.10': ['Рестораны и доставка еды', 'Restaurants and food delivery', '飲食店・配達'],
+    '68.3': ['Операции с недвижимостью за вознаграждение', 'Real estate on a fee basis', '不動産仲介・管理'],
+  };
+  const REGION_T = {
+    16: ['Республика Татарстан', 'Tatarstan', 'タタールスタン共和国'], 25: ['Приморский край', 'Primorsky Krai', '沿海地方'],
+    27: ['Хабаровский край', 'Khabarovsk Krai', 'ハバロフスク地方'], 39: ['Калининградская область', 'Kaliningrad Oblast', 'カリーニングラード州'],
+    41: ['Камчатский край', 'Kamchatka Krai', 'カムチャツカ地方'], 51: ['Мурманская область', 'Murmansk Oblast', 'ムルマンスク州'],
+    65: ['Сахалинская область', 'Sakhalin Oblast', 'サハリン州'], 68: ['Тамбовская область', 'Tambov Oblast', 'タンボフ州'],
+    77: ['Москва', 'Moscow', 'モスクワ'], 78: ['Санкт-Петербург', 'Saint Petersburg', 'サンクトペテルブルク'],
+    49: ['Магаданская область', 'Magadan Oblast', 'マガダン州'], 28: ['Амурская область', 'Amur Oblast', 'アムール州'],
+  };
+  const OBJ_KINDS = {
+    'судно': ['судно', 'vessel', '船舶'], 'склад': ['склад', 'storage', '保管施設'],
+    'рыбоперерабатывающее предприятие': ['рыбоперерабатывающий завод', 'fish processing plant', '水産加工場'],
+    'производство фасованной продукции': ['фасовочное производство', 'packing plant', '包装工場'],
+    'молокоперерабатывающее предприятие': ['молочный завод', 'dairy plant', '乳製品工場'],
+  };
+  const SME = { 1: ['Микро', 'Micro', '零細'], 2: ['Малое', 'Small', '小規模'], 3: ['Среднее', 'Medium', '中規模'] };
+  const PAGE_T = {
+    ru: {
+      tabAbout: 'Описание', tabTrade: 'Торговля', tabCompanies: 'Компании', ariaPages: 'Листы дашборда',
+      footShort: 'Источник: таможенная статистика Японии (Министерство финансов, портал e-Stat), помесячно по 9-значным кодам; обе стороны торговли — по японским данным. Подробнее об источниках и о том, как читать данные, — на листе «Описание».',
+      compTitle: 'Российские компании, торгующие с Японией',
+      compIntro: 'Шаг 1: экспортёры продукции под ветеринарным контролем — предприятия и суда, аттестованные Россельхознадзором на экспорт в Японию. Это прямое подтверждение работы с японским рынком. ИНН, вид деятельности и размер — из ЕГРЮЛ и реестра МСП ФНС.',
+      compCat: 'Категория', compRegion: 'Регион', compSearch: 'Название или ИНН', compAllCats: 'Все категории', compAllRegions: 'Все регионы',
+      chapterAll: (c, n) => `${c} ${n} (вся глава)`,
+      cName: 'Компания', cInn: 'ИНН', cRegion: 'Регион', cCats: 'Категории', cOkved: 'Деятельность (ОКВЭД)', cSize: 'Размер', cEvidence: 'Подтверждение', cLevel: 'Уровень',
+      kCompanies: (n) => ruPlural(n, 'компания', 'компании', 'компаний'), kCats: (n) => ruPlural(n, 'товарная позиция HS4', 'товарные позиции HS4', 'товарных позиций HS4'),
+      kRegions: (n) => ruPlural(n, 'регион', 'региона', 'регионов'), kSme: () => 'из них в реестре МСП',
+      employees: (n) => `${n} чел.`, notSme: 'вне реестра МСП',
+      evid: (r) => `Цербер: ${r.evidence}`, since: (y) => `аттестация с ${y} г.`,
+      levelA: 'A', levelATip: 'Уровень A: прямое подтверждение работы с Японией',
+      innCheck: 'проверить ИНН', innCheckTip: 'Компанию с таким названием в регионе нашли не однозначно: проверьте ИНН по адресу из реестра',
+      innLink: 'Открыть карточку компании на rusprofile.ru',
+      catNote: (cat, v, p) => `${cat}: экспорт России в Японию ${v} за ${p}.`,
+      catNoteAll: (n) => `Показаны все компании (${n}). Выберите категорию, чтобы увидеть её объём в торговле.`,
+      compEmpty: 'Нет компаний по этому фильтру', srcTitle: 'Источники листа',
+      sources: [
+        ['Подключено', 'реестр Россельхознадзора «Цербер» — предприятия и суда, аттестованные на экспорт в Японию; данные компаний — поиск ЕГРЮЛ и реестр МСП ФНС.'],
+        ['Нужен российский IP', 'декларации и сертификаты ЕАЭС (Росаккредитация: импортёры японских марок), госзакупки (поставщики товаров японского происхождения), ЛесЕГАИС (экспортёры древесины). Массовой выгрузки нет, на экране до 25 строк.'],
+        ['Только вручную', 'реестр аккредитованных филиалов и представительств иностранных компаний ФНС (защищён капчей).'],
+        ['Не подходит', 'реестр лекарственных средств: держатели регистраций японских препаратов — иностранные компании, а не российские.'],
+        ['Не входит в дашборд', 'санкционная проверка выполняется отдельно.'],
+      ],
+      compInCat: (n) => `Компании в этой категории: ${n} →`,
+    },
+    en: {
+      tabAbout: 'About', tabTrade: 'Trade', tabCompanies: 'Companies', ariaPages: 'Dashboard pages',
+      footShort: 'Source: Japanese customs statistics (Ministry of Finance, e-Stat), monthly by 9-digit code; both directions come from Japanese data. See the About page for sources and how to read the data.',
+      compTitle: 'Russian companies trading with Japan',
+      compIntro: 'Step 1: exporters of veterinary-controlled products — plants and vessels approved by Rosselkhoznadzor for export to Japan. This is direct evidence of work with the Japanese market. Tax IDs, activity and size come from the Russian tax service registers (EGRUL and the SME register).',
+      compCat: 'Category', compRegion: 'Region', compSearch: 'Name or tax ID', compAllCats: 'All categories', compAllRegions: 'All regions',
+      chapterAll: (c, n) => `${c} ${n} (whole chapter)`,
+      cName: 'Company', cInn: 'Tax ID (INN)', cRegion: 'Region', cCats: 'Categories', cOkved: 'Activity (OKVED)', cSize: 'Size', cEvidence: 'Evidence', cLevel: 'Level',
+      kCompanies: (n) => (n === 1 ? 'company' : 'companies'), kCats: (n) => (n === 1 ? 'HS4 product heading' : 'HS4 product headings'),
+      kRegions: (n) => (n === 1 ? 'region' : 'regions'), kSme: () => 'in the SME register',
+      employees: (n) => `${n} staff`, notSme: 'not in the SME register',
+      evid: (r) => `Cerberus: ${r.objectsText}`, since: (y) => `approved since ${y}`,
+      levelA: 'A', levelATip: 'Level A: direct evidence of work with Japan',
+      innCheck: 'check tax ID', innCheckTip: 'More than one company with this name was found in the region: check the tax ID against the address in the register',
+      innLink: 'Open the company profile on rusprofile.ru',
+      catNote: (cat, v, p) => `${cat}: Russian exports to Japan ${v} in ${p}.`,
+      catNoteAll: (n) => `Showing all companies (${n}). Choose a category to see its trade value.`,
+      compEmpty: 'No companies for this filter', srcTitle: 'Sources of this page',
+      sources: [
+        ['Connected', 'Rosselkhoznadzor Cerberus register — plants and vessels approved for export to Japan; company data from the EGRUL search and the SME register of the Russian tax service.'],
+        ['Needs a Russian IP address', 'EAEU declarations and certificates of conformity (Rosaccreditation: importers of Japanese brands), public procurement (suppliers of goods of Japanese origin), LesEGAIS (timber exporters). No bulk download; up to 25 rows on screen.'],
+        ['Manual only', 'the tax service register of accredited branches and representative offices of foreign companies (protected by a captcha).'],
+        ['Not suitable', 'the register of medicines: holders of registrations of Japanese drugs are foreign companies, not Russian ones.'],
+        ['Not part of the dashboard', 'sanctions screening is done separately.'],
+      ],
+      compInCat: (n) => `Companies in this category: ${n} →`,
+    },
+    ja: {
+      tabAbout: '概要', tabTrade: '貿易', tabCompanies: '企業', ariaPages: 'ダッシュボードのページ',
+      footShort: '出典：財務省貿易統計（e-Stat）の9桁品目・月次データ。双方向とも日本側のデータです。出典とデータの見方は「概要」ページをご覧ください。',
+      compTitle: '日本と取引するロシア企業',
+      compIntro: 'ステップ1：獣医検疫対象品の輸出者。ロシア連邦獣医植物検疫監督庁が対日輸出を認定した工場・船舶で、日本市場との取引の直接的な裏付けです。納税者番号・業種・規模はロシア連邦税務庁の登録簿（EGRUL・中小企業登録簿）から取得しています。',
+      compCat: '品目', compRegion: '地域', compSearch: '企業名または納税者番号', compAllCats: 'すべての品目', compAllRegions: 'すべての地域',
+      chapterAll: (c, n) => `${c} ${n}（類全体）`,
+      cName: '企業', cInn: '納税者番号（INN）', cRegion: '地域', cCats: '品目', cOkved: '業種（OKVED）', cSize: '規模', cEvidence: '裏付け', cLevel: '確度',
+      kCompanies: () => '社', kCats: () => 'HS4品目', kRegions: () => '地域', kSme: () => 'うち中小企業登録簿に掲載',
+      employees: (n) => `${n}人`, notSme: '中小企業登録簿に掲載なし',
+      evid: (r) => `Cerberus：${r.objectsText}`, since: (y) => `${y}年から認定`,
+      levelA: 'A', levelATip: '確度A：日本との取引の直接的な裏付け',
+      innCheck: '納税者番号を要確認', innCheckTip: '同じ名称の企業が地域内に複数あります。登録簿の住所で納税者番号を確認してください',
+      innLink: 'rusprofile.ruで企業情報を開く',
+      catNote: (cat, v, p) => `${cat}：ロシアの対日輸出 ${v}（${p}）。`,
+      catNoteAll: (n) => `すべての企業（${n}社）を表示しています。品目を選ぶと貿易額が表示されます。`,
+      compEmpty: 'この条件に該当する企業はありません', srcTitle: 'このページの出典',
+      sources: [
+        ['接続済み', 'ロシア連邦獣医植物検疫監督庁のCerberus登録簿（対日輸出認定の工場・船舶）。企業情報は税務庁のEGRUL検索と中小企業登録簿。'],
+        ['ロシアのIPが必要', 'EAEUの適合宣言・認証登録簿（日本ブランドの輸入者）、公共調達（日本原産品の供給者）、LesEGAIS（木材輸出者）。一括ダウンロードはなく、画面表示は25行まで。'],
+        ['手作業のみ', '税務庁の外国企業支店・駐在員事務所登録簿（キャプチャで保護）。'],
+        ['対象外', '医薬品登録簿：日本の医薬品の登録保有者は外国企業で、ロシア企業ではありません。'],
+        ['ダッシュボード外', '制裁チェックは別途実施しています。'],
+      ],
+      compInCat: (n) => `この品目の企業：${n}社 →`,
+    },
+  };
+  const ABOUT = {
+    ru: {
+      title: 'О дашборде',
+      intro: 'Дашборд показывает торговлю России и Японии по товарам — по образцу раздела «Bilateral Trade by Products» на oec.world, но с данными до последнего опубликованного месяца, детализацией до 9-значного кода и разбивкой по портам Японии. Лист «Компании» постепенно связывает товарные категории с российскими компаниями, чтобы клиентские менеджеры могли находить потенциальных клиентов.',
+      sections: [
+        ['Листы', ['Торговля — структура торговли за выбранный период: две карты-плитки (экспорт России в Японию и экспорт Японии в Россию), помесячная динамика, карточка выбранного товара, карта таможенных постов Японии и таблица товаров.', 'Компании — российские компании с подтверждённой по открытым реестрам связью с Японией и с привязкой к товарным категориям.']],
+        ['Как пользоваться листом «Торговля»', ['HS2 / HS4 / HS6 / HS9 — уровень детализации: от глав до 9-значных кодов японской статистики.', 'Стоимость / Рост — размер прямоугольника всегда равен стоимости; в режиме «Рост» цвет показывает изменение к такому же периоду годом раньше.', 'USD / Проценты — подписи в долларах или в доле от общего потока.', 'Период — полные годы с 2017 года, текущий год с января и последние 12 месяцев.', 'Клик по прямоугольнику выбирает товар: ниже появляются его динамика, карточка (объём, цена за единицу, регулярность поставок, основные посты, где искать контрагентов) и карта постов. Повторный клик снимает выбор, двойной клик раскрывает уровень ниже, «← Назад» возвращает на шаг.', 'Клик по кругу на карте постов показывает, какие товары через этот пост проходят.']],
+        ['Откуда данные', ['Таможенная статистика Японии (Министерство финансов, портал e-Stat): помесячно по 9-значным кодам, «товар × страна» с 2017 года и «таможенный пост × товар × страна» с 2021 года.', 'Россия не публикует таможенную статистику с 2022 года, поэтому обе стороны показаны по японским данным: экспорт России — импорт Японии товаров российского происхождения в ценах CIF, экспорт Японии — вывоз с конечным назначением в Россию в ценах FOB.', 'Иены пересчитаны в доллары по среднемесячному курсу ФРС США (серия EXJPUS).', 'OEC строит похожие графики по базе BACI (CEPII), собранной из тех же данных через UN Comtrade; она обновляется раз в год с отставанием около полутора лет. Годовые итоги этого дашборда совпадают с UN Comtrade с точностью до 0,2%.']],
+        ['Как читать особые коды', ['Первые 6 цифр кода — международный HS (HS2017 до 2021 года, HS2022 с 2022 года), последние 3 — детализация Японии, своя у экспорта и импорта.', 'Коды с «X» (например, 24XXXXXXA) засекречены по заявке участника, когда по коду 1–2 экспортёра или импортёра. Сумма и страна настоящие, скрыт только точный товар.', 'Коды «00» — реэкспорт (товары не японского производства), реимпорт и бортовые припасы.', 'Названия товаров переведены для этого дашборда с японских справочников таможни.']],
+        ['Обновление', ['Таможня Японии публикует месяц примерно через 4 недели после его окончания. Импорт за последний месяц — предварительный, через месяц его заменяют уточнённые данные; годовые цифры пересматриваются в марте и ноябре следующего года.']],
+        ['Лист «Компании»', ['Компании берутся из открытых реестров, где компания и товар записаны рядом. У каждой связи есть уровень надёжности: A — прямое подтверждение работы с Японией; B — работа с японскими товарами (они могут идти через третьи страны); C — косвенные признаки.', 'Сейчас подключён реестр Россельхознадзора «Цербер»: предприятия и суда, аттестованные на экспорт в Японию. ИНН, ОКВЭД, размер и численность — из ЕГРЮЛ и реестра МСП ФНС. Пометка «проверить ИНН» означает, что компанию с таким названием в регионе нашли не однозначно.', 'Дальше по плану: декларации и сертификаты ЕАЭС, госзакупки и ЛесЕГАИС — они доступны только с российского IP. Санкционная проверка в дашборде не выполняется.']],
+      ],
+      links: [['Trade Statistics of Japan — загрузка данных', 'https://www.customs.go.jp/toukei/info/tsdl_e.htm'], ['Календарь публикаций таможни Японии', 'https://www.customs.go.jp/toukei/calendar/calend_e.htm'], ['Реестр Россельхознадзора «Цербер»', 'https://cerberus.vetrf.ru/cerberus/certified/exporter/pub']],
+      linksTitle: 'Ссылки',
+    },
+    en: {
+      title: 'About this dashboard',
+      intro: 'The dashboard shows Russia–Japan trade by product, modelled on the “Bilateral Trade by Products” section of oec.world but with data up to the latest published month, detail down to the 9-digit code and a breakdown by Japanese port. The Companies page links product categories to Russian companies step by step so that account managers can find potential clients.',
+      sections: [
+        ['Pages', ['Trade — the structure of trade in the selected period: two treemaps (Russian exports to Japan and Japanese exports to Russia), the monthly trend, a card for the selected product, a map of Japanese customs offices and a product table.', 'Companies — Russian companies whose link to Japan is confirmed by open registers, matched to product categories.']],
+        ['How to use the Trade page', ['HS2 / HS4 / HS6 / HS9 — level of detail, from chapters down to the 9-digit codes of Japanese statistics.', 'Trade value / Growth — rectangle size always shows value; in Growth mode the colour shows the change from the same period a year earlier.', 'USD / Percentage — labels in dollars or as a share of the whole flow.', 'Period — full years from 2017, the current year to date and the last 12 months.', 'Click a rectangle to select a product: its trend, a card (volume, unit price, how regular the shipments are, main customs offices, where to look for counterparties) and the port map appear below. Click again to clear, double-click to open the next level, “← Back” to go one step back.', 'Click a circle on the port map to see the products passing through that office.']],
+        ['Where the data come from', ['Japanese customs statistics (Ministry of Finance, e-Stat portal): monthly by 9-digit code, “commodity by country” from 2017 and “customs office by commodity by country” from 2021.', 'Russia has not published customs statistics since 2022, so both directions come from Japanese data: Russian exports are Japan’s imports of goods of Russian origin at CIF prices, Japanese exports are shipments with final destination Russia at FOB prices.', 'Yen are converted to US dollars at the monthly average rate of the US Federal Reserve (series EXJPUS).', 'OEC draws similar charts from the BACI database (CEPII), built from the same data via UN Comtrade and updated once a year with a lag of about 18 months. Annual totals in this dashboard match UN Comtrade within 0.2%.']],
+        ['How to read special codes', ['The first 6 digits are the international HS code (HS2017 until 2021, HS2022 from 2022); the last 3 are Japan’s own detail and differ between exports and imports.', 'Codes with “X” (for example 24XXXXXXA) are kept confidential at a trader’s request when only 1–2 exporters or importers use the code. The value and the country are real; only the exact product is hidden.', 'Codes starting with “00” are re-exports (goods not made in Japan), re-imports and aircraft stores.', 'Product names were translated for this dashboard from the Japanese customs schedules.']],
+        ['Updates', ['Japanese customs publish a month about 4 weeks after it ends. Imports for the latest month are preliminary and are replaced by detailed figures a month later; annual figures are revised again in March and November of the following year.']],
+        ['The Companies page', ['Companies come from open registers that record a company together with a product. Each link has a reliability level: A — direct evidence of work with Japan; B — work with Japanese goods (which may come via third countries); C — indirect signs.', 'Connected now: the Rosselkhoznadzor Cerberus register of plants and vessels approved for export to Japan. Tax IDs, activity codes, size and staff numbers come from the EGRUL and SME registers of the Russian tax service. “Check tax ID” means the company could not be matched unambiguously in its region.', 'Next: EAEU declarations and certificates of conformity, public procurement and LesEGAIS — available only from a Russian IP address. Sanctions screening is not part of this dashboard.']],
+      ],
+      links: [['Trade Statistics of Japan — data download', 'https://www.customs.go.jp/toukei/info/tsdl_e.htm'], ['Japanese customs release calendar', 'https://www.customs.go.jp/toukei/calendar/calend_e.htm'], ['Rosselkhoznadzor Cerberus register', 'https://cerberus.vetrf.ru/cerberus/certified/exporter/pub']],
+      linksTitle: 'Links',
+    },
+    ja: {
+      title: 'このダッシュボードについて',
+      intro: '日ロ間の品目別貿易を表示します。oec.worldの「Bilateral Trade by Products」を参考にしつつ、最新の公表月までのデータ、9桁品目までの詳細、日本の港別の内訳を備えています。「企業」ページでは、品目とロシア企業を段階的に結びつけ、営業担当者が見込み顧客を探せるようにします。',
+      sections: [
+        ['ページ構成', ['貿易：選択期間の貿易構造。2つのツリーマップ（ロシアの対日輸出・日本の対ロ輸出）、月次推移、選択品目のカード、日本の税関官署マップ、品目表。', '企業：公開登録簿で日本との取引が裏付けられたロシア企業を、品目と結びつけて表示します。']],
+        ['「貿易」ページの使い方', ['HS2／HS4／HS6／HS9：類から日本の9桁統計品目まで、品目の細かさを切り替えます。', '金額／増減：四角の大きさは常に金額。「増減」では色が前年同期比の変化を示します。', 'USD／構成比：表示をドルまたは全体に占める割合で切り替えます。', '期間：2017年以降の各年、今年の累計、直近12か月。', '四角をクリックすると品目を選択し、月次推移、カード（数量、単価、取引の頻度、主な官署、取引相手の探し方）、官署マップが表示されます。もう一度クリックで解除、ダブルクリックで下の階層へ、「← 戻る」で一つ前に戻ります。', '官署マップの円をクリックすると、その官署を通る品目が表示されます。']],
+        ['データの出典', ['財務省貿易統計（e-Stat）：9桁品目・月次。「品別国別表」は2017年から、「税関別品別国別表」は2021年から。', 'ロシアは2022年以降税関統計を公表していないため、双方向とも日本側のデータです。ロシアの対日輸出は日本のロシア原産品の輸入（CIF）、日本の対ロ輸出はロシアを最終仕向地とする輸出（FOB）です。', '円は米連邦準備制度の月平均レート（EXJPUS）でドルに換算しています。', 'OECは同じ元データをUN Comtrade経由でまとめたBACI（CEPII）で同様の図を作成しており、更新は年1回・約1年半遅れです。本ダッシュボードの年間合計はUN Comtradeと0.2%以内で一致します。']],
+        ['特殊なコードの見方', ['上6桁は国際HS（2021年まではHS2017、2022年からはHS2022）、下3桁は日本独自の細分で、輸出と輸入で異なります。', '「X」を含むコード（例：24XXXXXXA）は、該当する輸出入者が1〜2者の場合に当事者の申請で非公表とされた品目です。金額と相手国は実数で、品目のみ伏せられています。', '「00」で始まるコードは再輸出品（日本以外で生産された貨物）・再輸入品・機用品です。', '品名は日本の税関の品目表をもとに、このダッシュボード用に翻訳したものです。']],
+        ['更新', ['財務省は月末から約4週間後に月次データを公表します。直近月の輸入は速報値で、翌月に確報値へ置き換わります。年間の数値は翌年3月と11月に改訂されます。']],
+        ['「企業」ページ', ['企業と品目が並んで記録されている公開登録簿から企業を抽出します。各結びつきには確度があります。A：日本との取引の直接的な裏付け、B：日本製品の取扱い（第三国経由の可能性あり）、C：間接的な兆候。', '現在は、ロシア連邦獣医植物検疫監督庁のCerberus登録簿（対日輸出認定の工場・船舶）を接続しています。納税者番号・業種コード・規模・従業員数は税務庁のEGRULと中小企業登録簿から取得。「納税者番号を要確認」は、同名の企業が地域内で一意に特定できなかったことを示します。', '今後：EAEUの適合宣言・認証、公共調達、LesEGAIS（いずれもロシアのIPからのみ利用可能）。制裁チェックは本ダッシュボードの対象外です。']],
+      ],
+      links: [['Trade Statistics of Japan（データダウンロード）', 'https://www.customs.go.jp/toukei/info/tsdl_e.htm'], ['財務省貿易統計の公表日程', 'https://www.customs.go.jp/toukei/calendar/calend_e.htm'], ['Cerberus登録簿（ロシア連邦獣医植物検疫監督庁）', 'https://cerberus.vetrf.ru/cerberus/certified/exporter/pub']],
+      linksTitle: 'リンク',
+    },
+  };
+  LANGS.forEach((l) => Object.assign(T[l], PAGE_T[l]));
+
+  // ---- page ----
+  const st = { lang: 'ru', level: 4, mode: 'value', unit: 'usd', period: null, filter: null, tab: 'ru_jp', sort: 'value', dir: -1, q: '', sel: null, portFlow: 'ru_jp', port: null };
+  const LEVELS = [2, 4, 6, 9];
+  const nextLevel = (n) => (n <= 2 ? 4 : n <= 4 ? 6 : 9);
+  const prevLen = (level) => ({ 2: 0, 4: 2, 6: 4, 9: 6 }[level]);
+  const root = document.querySelector('.rj');
+  const $ = (s) => root.querySelector(s);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+  const L = () => T[st.lang];
+  const li = () => LANGS.indexOf(st.lang);
+  const nm = (r) => (r ? r['name_' + st.lang] || r.name_ru || r.code : '');
+  const secName = (id) => (SECTIONS[id] ? SECTIONS[id][0][li()] : '');
+  const secColor = (id) => (SECTIONS[id] ? SECTIONS[id][1] : '#b0b0b0');
+  const offName = (o) => (o ? o['name_' + st.lang] || o.name_ru : '');
+  const offKind = (o) => (KINDS[o.kind] || [o.kind, o.kind, o.kind])[li()];
+  const offHouse = (o) => (HOUSES[o.custom[0]] || ['', '', ''])[li()];
+  const unitName = (u) => (UNITS[u] ? UNITS[u][li()] : u);
+  const flowName = (f) => L().flows[f];
+  const compose = (container, parts) => container.replaceChildren(...parts.map((x) => (typeof x === 'string' ? document.createTextNode(x) : x)));
+
+  const fmtUsd = (v) => {
+    const a = Math.abs(v);
+    const s = a >= 1e9 ? (a / 1e9).toFixed(a >= 1e10 ? 1 : 2) + 'B' : a >= 1e6 ? (a / 1e6).toFixed(a >= 1e8 ? 0 : a >= 1e7 ? 1 : 2) + 'M' : a >= 1e3 ? (a / 1e3).toFixed(a >= 1e5 ? 0 : 1) + 'K' : a.toFixed(0);
+    return (v < 0 ? '−$' : '$') + s;
+  };
+  const fmtSigned = (v) => (v > 0 ? '+' : '') + fmtUsd(v);
+  const fmtPct = (v, d = 1) => (v * 100).toFixed(d).replace('-', '−') + '%';
+  const fmtGrowth = (g) => (g === null || g === undefined ? L().na : (g > 0 ? '+' : '') + fmtPct(g, Math.abs(g) >= 1 ? 0 : 1));
+  const fmtInt = (v) => { const s = d3.format(',')(Math.round(v)); return st.lang === 'ru' ? s.replace(/,/g, ' ') : s; };
+  const fmtPrice = (p) => (p >= 100 ? fmtInt(p) : p >= 1 ? p.toFixed(2) : p.toFixed(3));
+  const lum = (hex) => { const c = d3.rgb(hex); return (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) / 255; };
+  const growthColor = d3.scaleLinear().domain([-1, -0.5, 0, 0.5, 1]).clamp(true)
+    .range(['#b83232', '#d96a5f', '#9aa0a6', '#4fae74', '#23864b']).interpolate(d3.interpolateRgb);
+  const flowColor = (f) => dash.colors[f === 'ru_jp' ? 0 : 1];
+  const drillable = (code) => code.length < 9 && !code.includes('X') && !code.startsWith('00');
+  const periodLabel = (p) => {
+    if (!p) return '';
+    if (p.kind === 'year') return L().year(p.period);
+    if (p.kind === 'ytd') return L().ytd(p.last.slice(0, 4), +p.last.slice(5));
+    return L().ltm(p.first, p.last);
+  };
+
+  // ---- data indexes, rebuilt when the data changes ----
+  let idx = null, tIdx = null, pIdx = null;
+  function index(views, periods) {
+    if (idx && idx.views === views) return idx;
+    const by = new Map();
+    for (const r of views) {
+      const k = r.period + '|' + r.flow + '|' + r.level;
+      if (!by.has(k)) by.set(k, []);
+      by.get(k).push(r);
+    }
+    idx = { views, by, byKey: new Map(views.map((r) => [r.key, r])), periods: new Map(periods.map((p) => [p.period, p])), list: periods };
+    return idx;
+  }
+  function tradeIndex(rows, products) {
+    if (tIdx && tIdx.rows === rows) return tIdx;
+    const sec = new Map(products.filter((p) => p.level === '2').map((p) => [p.code, p.section]));
+    const prod = new Map(products.map((p) => [p.level === '9' ? p.flow + '|' + p.code : p.code, p]));
+    const months = [...new Set(rows.map((r) => r.month))].sort();
+    tIdx = { rows, sec, prod, months, byFlow: { ru_jp: rows.filter((r) => r.flow === 'ru_jp'), jp_ru: rows.filter((r) => r.flow === 'jp_ru') } };
+    return tIdx;
+  }
+  function portIndex(rows, offices) {
+    if (pIdx && pIdx.rows === rows) return pIdx;
+    pIdx = { rows, off: new Map(offices.map((o) => [o.custom, o])), months: [...new Set(rows.map((r) => r.month))].sort(),
+      byFlow: { ru_jp: rows.filter((r) => r.flow === 'ru_jp'), jp_ru: rows.filter((r) => r.flow === 'jp_ru') } };
+    return pIdx;
+  }
+  const effLevel = () => (!st.filter || st.filter.type !== 'code' ? st.level : Math.max(st.level, nextLevel(st.filter.code.length)));
+  const inFilter = (r) => !st.filter || (st.filter.type === 'code' ? r.code.startsWith(st.filter.code) : r.section === st.filter.id);
+  const rowsFor = (flow, level) => (idx.by.get(st.period + '|' + flow + '|' + level) || []).filter(inFilter);
+  const filterRow = (flow) => {
+    if (!st.filter) return idx.byKey.get(`${st.period}|${flow}|TOTAL`);
+    return idx.byKey.get(`${st.period}|${flow}|${st.filter.type === 'code' ? st.filter.code : 'S' + st.filter.id}`);
+  };
+  // which monthly rows (trade or ports) belong to the current scope: the selected item, else the filter
+  function scopeTest(flowFixed) {
+    const s = st.sel;
+    if (s) return (r) => r.flow === s.flow && r.hs9.startsWith(s.code);
+    const f = st.filter;
+    const flowOk = flowFixed ? (r) => r.flow === flowFixed : () => true;
+    if (!f) return flowOk;
+    if (f.type === 'code') return (r) => flowOk(r) && r.hs9.startsWith(f.code);
+    return (r) => flowOk(r) && tIdx && tIdx.sec.get(r.hs9.slice(0, 2)) === f.id;
+  }
+  const codeName = (code, flow) => {
+    const r = idx && (idx.byKey.get(`${st.period}|${flow || 'ru_jp'}|${code}`) || idx.byKey.get(`${st.period}|${flow === 'ru_jp' ? 'jp_ru' : 'ru_jp'}|${code}`));
+    if (r) return nm(r);
+    const p = tIdx && tIdx.prod.get(code.length === 9 ? `${flow}|${code}` : code);
+    return p ? p['name_' + st.lang] || p.name_ru : '';
+  };
+  const selRow = () => st.sel && idx && idx.byKey.get(`${st.period}|${st.sel.flow}|${st.sel.code}`);
+  const scopeLabel = () => {
+    if (st.sel) return `${st.sel.code} ${codeName(st.sel.code, st.sel.flow)}`;
+    if (!st.filter) return L().allGoods;
+    if (st.filter.type === 'section') return secName(st.filter.id);
+    return `${st.filter.code} ${codeName(st.filter.code)}`;
+  };
+  const setMark = (e, key, field) => { e.dataset.source = 'views'; e.dataset.where = 'key=' + encodeURIComponent(key).replace(/%7C/g, '|'); e.dataset.field = field; };
+
+  // marked figures in the header and the summary keep their elements; only the sentence around them changes
+  const mk = (cls, source, field) => { const b = el('b', cls + ' dash-skeleton', '—'); b.dataset.source = source; b.dataset.field = field; return b; };
+  const M = {
+    tEx: mk('t-ex', 'views', 'value'), tExg: mk('t-exg', 'views', 'growth'), tIm: mk('t-im', 'views', 'value'), tImg: mk('t-img', 'views', 'growth'),
+    sEx: mk('s-ex', 'views', 'value'), sIm: mk('s-im', 'views', 'value'), sBal: mk('s-bal', 'balance', 'balance'),
+  };
+  M.tExg.style.fontWeight = '400'; M.tImg.style.fontWeight = '400';
+
+  // ---- static text ----
+  function applyLang() {
+    root.lang = st.lang;
+    root.querySelectorAll('[data-i18n]').forEach((e) => { e.textContent = L()[e.dataset.i18n]; });
+    root.querySelectorAll('[data-i18n-aria]').forEach((e) => e.setAttribute('aria-label', L()[e.dataset.i18nAria]));
+    root.querySelectorAll('[data-i18n-ph]').forEach((e) => e.setAttribute('placeholder', L()[e.dataset.i18nPh]));
+    $('#tabs').querySelectorAll('button').forEach((b) => { b.textContent = flowName(b.dataset.v); });
+    $('#th-name').dataset.field = 'name_' + st.lang;
+    $('#langs').querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === st.lang)));
+  }
+
+  // ---- controls ----
+  function segs() {
+    for (const [id, keyName] of [['seg-level', 'level'], ['seg-mode', 'mode'], ['seg-unit', 'unit']]) {
+      $('#' + id).querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(String(keyName === 'level' ? effLevel() : st[keyName]) === b.dataset.v)));
+    }
+    $('#tabs').querySelectorAll('button').forEach((b) => b.setAttribute('aria-selected', String(st.tab === b.dataset.v)));
+    const pf = st.sel ? st.sel.flow : st.portFlow;
+    $('#port-tabs').querySelectorAll('button').forEach((b) => { b.setAttribute('aria-selected', String(pf === b.dataset.v)); b.disabled = !!st.sel; });
+  }
+  $('#langs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && b.dataset.v !== st.lang) { st.lang = b.dataset.v; applyLang(); draw(); } });
+  $('#seg-level').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (+b.dataset.v !== effLevel()) remember();
+    st.level = +b.dataset.v;
+    if (st.filter && st.filter.type === 'code' && nextLevel(st.filter.code.length) > st.level) {
+      const up = st.filter.code.slice(0, prevLen(st.level));
+      st.filter = up ? { type: 'code', code: up } : null;
+    }
+    draw();
+  });
+  $('#seg-mode').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.mode = b.dataset.v; draw(); } });
+  $('#seg-unit').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.unit = b.dataset.v; draw(); } });
+  $('#period').addEventListener('change', (e) => { st.period = e.target.value; st.port = null; draw(); });
+  $('#tabs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.tab = b.dataset.v; drawTable(); segs(); } });
+  $('#port-tabs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && !st.sel) { st.portFlow = b.dataset.v; st.port = null; drawPorts(); segs(); } });
+  $('#search').addEventListener('input', (e) => { st.q = e.target.value.trim().toLowerCase(); drawTable(); });
+  $('#table').querySelector('thead').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-sort]'); if (!b) return;
+    if (st.sort === b.dataset.sort) st.dir = -st.dir; else { st.sort = b.dataset.sort; st.dir = ['code', 'name'].includes(st.sort) ? 1 : -1; }
+    drawTable();
+  });
+  $('#table').querySelector('tbody').addEventListener('click', (e) => {
+    const tr = e.target.closest('tr[data-key]');
+    const r = tr && idx && idx.byKey.get(tr.dataset.key);
+    if (!r) return;
+    if (e.target.closest('button.rj-drill')) drill(r.code); else toggleSel(r.flow, r);
+  });
+  $('#sel-clear').addEventListener('click', () => { st.sel = null; st.port = null; draw(); });
+  $('#sel-drill').addEventListener('click', () => { if (st.sel) drill(st.sel.code); });
+
+  function toggleSel(flow, r) {
+    const same = st.sel && st.sel.flow === flow && st.sel.code === r.code;
+    st.sel = same ? null : { flow, level: r.level, code: r.code };
+    st.port = null;
+    if (st.sel) { st.portFlow = flow; st.tab = flow; }
+    draw();
+  }
+  // each change of filter or level remembers the previous view, so «Back» can retrace the path step by step
+  const steps = [];
+  function remember() {
+    steps.push({ filter: st.filter, level: st.level });
+    if (steps.length > 50) steps.shift();
+  }
+  function goBack() {
+    const prev = steps.pop();
+    if (!prev) return;
+    st.filter = prev.filter;
+    st.level = prev.level;
+    st.sel = null;
+    st.port = null;
+    draw();
+  }
+  function drill(code) {
+    if (!drillable(code)) return;
+    remember();
+    st.filter = { type: 'code', code };
+    st.level = Math.max(st.level, nextLevel(code.length));
+    st.sel = null;
+    st.port = null;
+    draw();
+  }
+  // a single click selects, a double click drills down; the short wait tells them apart
+  let clickTimer = null, clickId = null;
+  function onTileClick(flow, r) {
+    const id = flow + '|' + r.code;
+    if (clickTimer && clickId === id) { clearTimeout(clickTimer); clickTimer = null; drill(r.code); return; }
+    clearTimeout(clickTimer);
+    clickId = id;
+    clickTimer = setTimeout(() => { clickTimer = null; toggleSel(flow, r); }, 260);
+  }
+
+  function drawCrumbs() {
+    ['#crumbs', '#table-crumbs'].forEach((id) => drawNav($(id)));
+  }
+  function drawNav(nav) {
+    nav.replaceChildren();
+    if (steps.length) {
+      const back = el('button', 'rj-back', L().back); back.type = 'button';
+      back.setAttribute('aria-label', L().backAria);
+      back.addEventListener('click', goBack);
+      nav.append(back);
+    }
+    let crumbs = 0;
+    const crumb = (label, filter, current) => {
+      if (crumbs++) nav.append(el('span', 'sep', '›'));
+      if (current) { const s = el('span', '', label); s.setAttribute('aria-current', 'true'); nav.append(s); return; }
+      const b = el('button', '', label); b.type = 'button';
+      b.addEventListener('click', () => { remember(); st.filter = filter; st.sel = null; st.level = filter ? nextLevel(filter.code.length) : Math.min(st.level, 4); draw(); });
+      nav.append(b);
+    };
+    crumb(L().allGoods, null, !st.filter);
+    if (!st.filter) return;
+    if (st.filter.type === 'section') { crumb(secName(st.filter.id), st.filter, true); return; }
+    const c = st.filter.code;
+    for (const n of [2, 4, 6]) {
+      if (n > c.length) break;
+      crumb(`${c.slice(0, n)} ${codeName(c.slice(0, n))}`.trim(), { type: 'code', code: c.slice(0, n) }, n === c.length);
+    }
+  }
+
+  // ---- treemap ----
+  const ctx = document.createElement('canvas').getContext('2d');
+  const family = getComputedStyle(root).fontFamily;
+  // measured with a small margin: the SVG may render a hair wider than the canvas estimate
+  const textW = (t, fs, wt) => { ctx.font = `${wt} ${fs}px ${family}`; return ctx.measureText(t).width * 1.07; };
+  // Japanese has no spaces, so it wraps between characters; other languages wrap between words
+  function wrap(text, maxW, fs, wt, maxLines) {
+    const cjk = st.lang === 'ja';
+    const toks = cjk ? Array.from(text) : text.split(/\s+/);
+    const glue = cjk ? '' : ' ';
+    const lines = [];
+    let cur = '', used = 0;
+    for (const w of toks) {
+      const t = cur ? cur + glue + w : w;
+      if (textW(t, fs, wt) <= maxW) { cur = t; used++; continue; }
+      if (cur) lines.push(cur);
+      if (lines.length >= maxLines) { cur = ''; break; }
+      cur = w; used++;
+    }
+    if (cur && lines.length < maxLines) lines.push(cur);
+    else if (cur) used--;
+    if (lines.slice(0, -1).some((l) => textW(l, fs, wt) > maxW)) return null;
+    if (used < toks.length || lines.some((l) => textW(l, fs, wt) > maxW)) {
+      let last = lines[lines.length - 1] || '';
+      if (used < toks.length) last += '…';
+      while (last.length > 1 && textW(last, fs, wt) > maxW) last = last.slice(0, -2) + '…';
+      lines[lines.length - 1] = last;
+      if (textW(last, fs, wt) > maxW) return null;
+    }
+    return lines;
+  }
+  function labelLayout(name, val, w, h) {
+    const pad = Math.max(3, Math.min(8, Math.min(w, h) * 0.05));
+    const iw = w - 2 * pad, ih = h - 2 * pad;
+    if (iw < 16 || ih < 9) return null;
+    for (let fs = Math.min(44, Math.max(8, Math.sqrt(w * h) / 7)); fs >= 7.5; fs = fs > 14 ? fs * 0.88 : fs - 1) {
+      const vfs = Math.max(7.5, fs * 0.9);
+      const vh = vfs * 1.15;
+      if (textW(val, vfs, 400) > iw) continue;
+      const maxLines = Math.floor((ih - vh - fs * 0.25) / (fs * 1.12));
+      if (maxLines >= 1) {
+        const lines = wrap(name, iw, fs, 400, Math.min(maxLines, 4));
+        if (lines && lines[0] !== '…') return { pad, fs, vfs, lines };
+      }
+    }
+    for (let vfs = Math.min(20, Math.max(7.5, Math.sqrt(w * h) / 7)); vfs >= 7.5; vfs -= 1) {
+      if (textW(val, vfs, 400) <= iw && vfs * 1.15 <= ih) return { pad, fs: 0, vfs, lines: [] };
+    }
+    return null;
+  }
+  const tileValue = (r) => {
+    if (st.mode === 'growth') {
+      if (r.prev === null) return L().na;
+      if (!r.prev) return L().isNew;
+      return st.unit === 'pct' ? fmtGrowth(r.growth) : fmtSigned(r.change);
+    }
+    return st.unit === 'pct' ? fmtPct(r.share, r.share >= 0.1 ? 1 : 2) : fmtUsd(r.value);
+  };
+  const tileFill = (r) => (st.mode === 'growth' ? (r.prev ? growthColor(r.growth) : r.prev === 0 ? '#23864b' : '#9aa0a6') : secColor(r.section));
+
+  let firstDraw = true;
+  function drawMap(fig, flow, H) {
+    const box = fig.querySelector('.rj-tm');
+    const W = Math.max(200, Math.floor(box.clientWidth));
+    box.replaceChildren();
+    box.style.minHeight = H + 'px';
+    const rows = rowsFor(flow, effLevel()).filter((r) => r.value > 0);
+    box.classList.remove('dash-skeleton');
+    if (!rows.length) {
+      const e = el('div', 'rj-empty', L().noTrade); e.style.height = H + 'px';
+      box.append(e);
+      return;
+    }
+    const tree = d3.hierarchy({ children: d3.groups(rows, (r) => r.section).map(([section, items]) => ({ section, children: items })) })
+      .sum((d) => (d.children ? 0 : d.value)).sort((a, b) => b.value - a.value);
+    d3.treemap().size([W, H]).paddingInner(1).round(true).tile(d3.treemapSquarify.ratio(1.15))(tree);
+    const selHere = st.sel && st.sel.flow === flow;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`)
+      .attr('role', 'img').attr('aria-label', fig.querySelector('.m-title').textContent)
+      .classed('fresh', firstDraw).classed('dim', !!(selHere && rows.some((r) => r.code === st.sel.code)));
+    const g = svg.selectAll('g').data(tree.leaves()).join('g')
+      .attr('class', (d) => 'rj-tile' + (selHere && d.data.code === st.sel.code ? ' sel' : ''))
+      .attr('transform', (d) => `translate(${d.x0},${d.y0})`)
+      .attr('tabindex', (d, i) => (i < 40 ? 0 : -1)).attr('role', 'button')
+      .attr('aria-label', (d) => `${d.data.code} ${nm(d.data)}: ${tileValue(d.data)}`);
+    g.append('rect').attr('width', (d) => Math.max(0, d.x1 - d.x0)).attr('height', (d) => Math.max(0, d.y1 - d.y0)).attr('fill', (d) => tileFill(d.data));
+    g.each(function (d) {
+      const w = d.x1 - d.x0, h = d.y1 - d.y0;
+      const val = tileValue(d.data);
+      const lay = labelLayout(nm(d.data), val, w, h);
+      if (!lay) return;
+      const ink = lum(tileFill(d.data)) > 0.6 ? '#1c1a14' : '#ffffff';
+      const sel = d3.select(this);
+      if (lay.lines.length) {
+        const t = sel.append('text').attr('fill', ink).attr('font-size', lay.fs).attr('font-family', family);
+        lay.lines.forEach((line, i) => t.append('tspan').attr('x', lay.pad).attr('y', lay.pad + lay.fs * 0.92 + i * lay.fs * 1.12).text(line));
+      }
+      sel.append('text').attr('fill', ink).attr('font-size', lay.vfs).attr('font-family', family).attr('x', lay.pad).attr('y', h - lay.pad - lay.vfs * 0.22).text(val);
+    });
+
+    const tip = el('div', 'rj-tip'); tip.hidden = true; box.append(tip);
+    const show = (event, d) => {
+      const r = d.data;
+      const scale = box.clientWidth / W;
+      const at = event.type === 'focus' ? [d.x0 * scale + 8, d.y0 * scale + 8] : d3.pointer(event, box);
+      tip.replaceChildren();
+      const line = (cls, text) => tip.append(el('div', cls, text));
+      const pair = (k, v) => { const e = el('div', 'row'); e.append(el('span', 'k', k), el('span', '', v)); tip.append(e); };
+      line('k', `HS${r.level}${L().sep}${r.code}${L().sep}${secName(r.section)}`);
+      line('n', nm(r));
+      pair(L().tValue, fmtUsd(r.value));
+      pair(L().tShare, fmtPct(r.share, 2));
+      const pp = idx.periods.get(idx.periods.get(st.period).prev);
+      if (pp) { pair(L().tPrev(periodLabel(pp)), fmtUsd(r.prev || 0)); pair(L().tChange, r.prev ? `${fmtSigned(r.change)} (${fmtGrowth(r.growth)})` : L().newItem); }
+      if (r.kg > 0) { pair(L().tKg, L().tons(fmtInt(r.kg / 1000))); pair(L().tPrice, L().perKg(fmtPrice(r.price))); }
+      line('k', L().clickHint(drillable(r.code)));
+      tip.hidden = false;
+      const bw = box.clientWidth, bh = H * scale, [mx, my] = at;
+      const tw = tip.offsetWidth, th = tip.offsetHeight;
+      tip.style.left = Math.max(0, Math.min(bw - tw, mx + 14 > bw - tw ? mx - tw - 14 : mx + 14)) + 'px';
+      tip.style.top = Math.max(0, Math.min(bh - th, my + 14)) + 'px';
+    };
+    g.on('mousemove', show).on('mouseleave', () => { tip.hidden = true; })
+      .on('focus', show).on('blur', () => { tip.hidden = true; })
+      .on('click', (event, d) => onTileClick(flow, d.data))
+      .on('keydown', (event, d) => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); if (event.shiftKey) drill(d.data.code); else toggleSel(flow, d.data); }
+      });
+  }
+
+  function drawLegend() {
+    const lg = $('#legend');
+    lg.replaceChildren();
+    if (st.mode === 'growth') {
+      const d = el('div', 'rj-grad');
+      d.append(el('span', '', L().gradLo), el('i'), el('span', '', L().gradHi));
+      lg.append(d);
+      return;
+    }
+    const level = effLevel();
+    const present = new Set([...rowsFor('ru_jp', level), ...rowsFor('jp_ru', level)].filter((r) => r.value > 0).map((r) => r.section));
+    Object.keys(SECTIONS).forEach((id) => {
+      if (!present.has(id) && !(st.filter && st.filter.type === 'section' && st.filter.id === id)) return;
+      const b = el('button'); b.type = 'button';
+      b.setAttribute('aria-pressed', String(!!st.filter && st.filter.type === 'section' && st.filter.id === id));
+      const i = el('i'); i.style.background = secColor(id);
+      b.append(i, document.createTextNode(secName(id)));
+      b.addEventListener('click', () => { remember(); st.filter = st.filter && st.filter.id === id ? null : { type: 'section', id }; st.sel = null; draw(); });
+      lg.append(b);
+    });
+  }
+
+  function drawSelbar() {
+    const bar = $('#selbar');
+    bar.hidden = !st.sel;
+    if (!st.sel) return;
+    const what = $('#sel-what');
+    const sw = el('i', 'rj-sw'); sw.style.background = flowColor(st.sel.flow);
+    what.replaceChildren(sw, el('b', '', `${st.sel.code} ${codeName(st.sel.code, st.sel.flow)}`), document.createTextNode(`${L().sep}${flowName(st.sel.flow)}`));
+    const d = $('#sel-drill');
+    d.hidden = !drillable(st.sel.code);
+    d.textContent = L().drillTo(nextLevel(st.sel.code.length));
+  }
+
+  // ---- monthly trend ----
+  function drawTrend() {
+    const box = $('#trend-chart');
+    const t = dash.data('trade'), pr = dash.data('products');
+    box.replaceChildren();
+    $('#trend-title').textContent = st.sel ? L().trendSel : L().trendAll;
+    if (t.status !== 'ok' || pr.status !== 'ok') {
+      if (t.status === 'error' || pr.status === 'error') failed(box); else box.classList.add('dash-skeleton');
+      return;
+    }
+    box.classList.remove('dash-skeleton');
+    tradeIndex(t.data, pr.data);
+    const test = scopeTest(null);
+    const flows = st.sel ? [st.sel.flow] : ['ru_jp', 'jp_ru'];
+    $('#trend-note').textContent = `${scopeLabel()}${st.sel ? L().sep + flowName(st.sel.flow) : ''}${L().perMonth}`;
+    const months = tIdx.months;
+    const sums = Object.fromEntries(flows.map((f) => [f, new Map(months.map((x) => [x, 0]))]));
+    for (const f of flows) for (const r of tIdx.byFlow[f]) if (test(r)) sums[f].set(r.month, sums[f].get(r.month) + +r.value);
+    const parse = (s) => new Date(s + '-01T00:00:00Z');
+    const series = flows.map((f) => ({ f, color: flowColor(f), pts: months.map((x) => ({ d: parse(x), month: x, v: sums[f].get(x) })) }));
+    const W = Math.max(280, box.clientWidth), H = 300;
+    const yMax = d3.max(series, (s) => d3.max(s.pts, (p) => p.v)) || 1;
+    const y = d3.scaleLinear([0, yMax * 1.08], [H - 28, 10]).nice();
+    const yt = y.ticks(5);
+    const left = 8 + Math.max(...yt.map((v) => textW(fmtUsd(v), 12, 400)));
+    const lastLabel = (s) => `${st.sel ? '' : flowName(s.f) + ' '}${fmtUsd(s.pts[s.pts.length - 1].v)}`;
+    const right = 10 + Math.min(W * 0.32, Math.max(...series.map((s) => textW(lastLabel(s), 12, 500))));
+    const x = d3.scaleUtc([parse(months[0]), parse(months[months.length - 1])], [left, W - right]);
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', L().trendAria);
+    const p = idx && idx.periods.get(st.period);
+    if (p) {
+      const xa = Math.max(left, x(parse(p.first)) - 2), xb = Math.min(W - right, x(parse(p.last)) + 2);
+      if (xb > xa) svg.append('rect').attr('x', xa).attr('y', 10).attr('width', xb - xa).attr('height', H - 38).attr('fill', 'var(--rj-pick)').attr('opacity', 0.16);
+    }
+    svg.append('g').selectAll('line').data(yt).join('line').attr('x1', left).attr('x2', W - right).attr('y1', (v) => y(v)).attr('y2', (v) => y(v)).attr('stroke', 'var(--cds-chart-grid)');
+    svg.append('g').selectAll('text').data(yt).join('text').attr('x', left - 6).attr('y', (v) => y(v)).attr('dy', '0.32em')
+      .attr('text-anchor', 'end').attr('fill', 'var(--color-fg-muted)').attr('font-size', 12).text(fmtUsd);
+    const years = d3.utcYear.range(parse(months[0]), d3.utcMonth.offset(parse(months[months.length - 1]), 1));
+    const step = Math.ceil(years.length / Math.max(1, Math.floor((W - left - right) / 48)));
+    svg.append('g').selectAll('text').data(years.filter((_, i) => i % step === 0)).join('text')
+      .attr('x', (d) => x(d)).attr('y', H - 8).attr('text-anchor', (d, i) => (i === 0 ? 'start' : 'middle'))
+      .attr('fill', 'var(--color-fg-muted)').attr('font-size', 12).text((d) => d.getUTCFullYear());
+    svg.append('line').attr('x1', left).attr('x2', W - right).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', 'var(--cds-chart-axis)');
+    const line = d3.line().x((d) => x(d.d)).y((d) => y(d.v));
+    if (st.sel) {
+      const area = d3.area().x((d) => x(d.d)).y0(y(0)).y1((d) => y(d.v));
+      svg.append('path').attr('d', area(series[0].pts)).attr('fill', series[0].color).attr('opacity', 0.12);
+    }
+    series.forEach((s) => svg.append('path').attr('d', line(s.pts)).attr('fill', 'none').attr('stroke', s.color).attr('stroke-width', 2).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round'));
+    const ends = series.map((s) => ({ s, y: y(s.pts[s.pts.length - 1].v) })).sort((a, b) => a.y - b.y);
+    if (ends.length === 2 && ends[1].y - ends[0].y < 16) { const mid = Math.min(H - 42, Math.max(22, (ends[0].y + ends[1].y) / 2)); ends[0].y = mid - 8; ends[1].y = mid + 8; }
+    ends.forEach((e) => { e.y = Math.min(H - 34, Math.max(14, e.y)); });
+    ends.forEach((e) => {
+      const lp = e.s.pts[e.s.pts.length - 1];
+      svg.append('circle').attr('cx', x(lp.d)).attr('cy', y(lp.v)).attr('r', 3.5).attr('fill', e.s.color);
+      const t2 = svg.append('text').attr('x', W - right + 8).attr('y', e.y).attr('dy', '0.32em').attr('font-size', 12).attr('font-weight', 500).attr('fill', e.s.color).text(lastLabel(e.s));
+      let label = lastLabel(e.s);
+      while (t2.node().getComputedTextLength() > right - 10 && label.length > 4) { label = label.slice(0, -2); t2.text(label + '…'); }
+    });
+    const rule = svg.append('line').attr('y1', 10).attr('y2', H - 28).attr('stroke', 'var(--cds-chart-reference)').attr('opacity', 0);
+    const dots = series.map((s) => svg.append('circle').attr('r', 4).attr('fill', s.color).attr('opacity', 0));
+    const tip = el('div', 'rj-tip'); tip.hidden = true; box.append(tip);
+    svg.append('rect').attr('x', left).attr('y', 0).attr('width', W - right - left).attr('height', H).attr('fill', 'transparent')
+      .on('mousemove', (event) => {
+        const [mx] = d3.pointer(event);
+        const i = d3.minIndex(months, (mm) => Math.abs(x(parse(mm)) - mx));
+        const xd = x(series[0].pts[i].d);
+        rule.attr('x1', xd).attr('x2', xd).attr('opacity', 1);
+        dots.forEach((dot, k) => dot.attr('cx', xd).attr('cy', y(series[k].pts[i].v)).attr('opacity', 1));
+        tip.replaceChildren(el('div', 'k', L().monthLong(months[i])));
+        series.forEach((s) => {
+          const r = el('div', 'row');
+          const a = el('span'); const sw = el('i', 'rj-sw'); sw.style.background = s.color;
+          a.append(sw, document.createTextNode(flowName(s.f)));
+          r.append(a, el('span', '', fmtUsd(s.pts[i].v)));
+          tip.append(r);
+        });
+        tip.hidden = false;
+        const bw = box.clientWidth, px = xd * (bw / W), tw = tip.offsetWidth;
+        tip.style.left = (px + 12 + tw > bw ? px - tw - 12 : px + 12) + 'px';
+        tip.style.top = '8px';
+      })
+      .on('mouseleave', () => { tip.hidden = true; rule.attr('opacity', 0); dots.forEach((d) => d.attr('opacity', 0)); });
+  }
+
+  // ---- item card ----
+  function portShares(test, flow, monthsSet) {
+    if (!pIdx) return null;
+    const by = new Map();
+    for (const r of pIdx.byFlow[flow]) if (monthsSet.has(r.month) && test(r)) by.set(r.custom, (by.get(r.custom) || 0) + +r.value);
+    const total = d3.sum(by.values());
+    return { total, list: [...by.entries()].sort((a, b) => b[1] - a[1]).map(([c, v]) => ({ custom: c, v, share: total ? v / total : 0, off: pIdx.off.get(c) })) };
+  }
+  function drawItem() {
+    const body = $('#item-body');
+    body.replaceChildren();
+    if (!st.sel) { body.append(el('p', 'rj-note', L().cardEmpty)); return; }
+    if (!tIdx) return;
+    const s = st.sel, r = selRow();
+    const per = idx.periods.get(st.period), pl = periodLabel(per);
+    body.append(el('div', 'code', `HS${s.level}${L().sep}${s.code}${L().sep}${flowName(s.flow)}`));
+    body.append(el('h3', '', codeName(s.code, s.flow) || s.code));
+    const kv = el('dl', 'rj-kv');
+    const pair = (k, v, mark) => { const dd = el('dd', '', v); if (mark) setMark(dd, mark[0], mark[1]); kv.append(el('dt', '', k), dd); };
+    if (r) {
+      pair(L().cValue(pl), fmtUsd(r.value), [r.key, 'value']);
+      pair(L().cShare, fmtPct(r.share, 2), [r.key, 'share']);
+      if (r.prev !== null) pair(L().cVsPrev, r.prev ? fmtGrowth(r.growth) : L().newItem, r.prev ? [r.key, 'growth'] : null);
+    } else {
+      pair(L().cValue(pl), '$0');
+    }
+    // quantity, unit price and regularity from the monthly rows
+    const test = scopeTest(null);
+    const monthsSet = new Set(per.src.split(','));
+    let qty = 0, kg = 0, val = 0;
+    const units = new Set();
+    for (const t of tIdx.byFlow[s.flow]) {
+      if (!monthsSet.has(t.month) || !test(t)) continue;
+      val += +t.value; kg += +t.kg;
+      if (t.unit) { qty += +t.qty; units.add(t.unit); }
+    }
+    if (units.size === 1 && qty > 0) {
+      const u = unitName([...units][0]);
+      pair(L().cQty, `${fmtInt(qty)} ${u}`);
+      pair(L().cUnitPrice(u), '$' + fmtPrice(val / qty));
+    }
+    if (kg > 0) { pair(L().cKg, L().tons(fmtInt(kg / 1000))); pair(L().cKgPrice, '$' + fmtPrice(val / kg)); }
+    const last12 = tIdx.months.slice(-12);
+    const active = new Set();
+    for (const t of tIdx.byFlow[s.flow]) if (t.month >= last12[0] && test(t) && +t.value > 0) active.add(t.month);
+    pair(L().cActive, L().cActiveV(active.size));
+    body.append(kv);
+    // flags that say something about how many companies stand behind the number
+    const flags = [];
+    if (s.code.includes('X')) flags.push(L().fConf);
+    if (s.code.startsWith('00')) flags.push(s.flow === 'jp_ru' ? L().fReexp : L().fReimp);
+    const ps = portShares(test, s.flow, monthsSet);
+    const nPorts = ps ? ps.list.filter((p) => p.share >= 0.02).length : 0;
+    if (active.size >= 11 && nPorts && nPorts <= 2) flags.push(L().fContract);
+    else if (active.size > 0 && active.size <= 4) flags.push(L().fRare);
+    if (ps && ps.list.length) {
+      const top = ps.list.slice(0, 3).map((p) => `${p.off ? offName(p.off) : p.custom} ${fmtPct(p.share, 0)}`).join(st.lang === 'ja' ? '、' : ', ');
+      flags.push(L().fPorts(top, ps.list.length > 3 ? ps.list.length - 3 : 0));
+    }
+    flags.forEach((f) => body.append(el('p', 'rj-flag', f)));
+    // where to look for counterparties
+    const rule = LEADS.find((l) => l.flow === s.flow && l.ch.includes(s.code.slice(0, 2)));
+    const leads = el('div', 'rj-leads');
+    leads.append(el('h4', '', L().leadsTitle));
+    leads.append(el('p', '', rule ? L().leads[rule.key] : s.flow === 'jp_ru' ? L().leadsDefExp : L().leadsDefImp));
+    const links = rule ? rule.links : DEFAULT_LINKS[s.flow];
+    if (links.length) {
+      const ul = el('ul');
+      links.forEach(([k, u]) => { const item = el('li'); const a = el('a', '', L().links[k]); a.href = u; a.target = '_blank'; a.rel = 'noopener'; item.append(a); ul.append(item); });
+      leads.append(ul);
+    }
+    leads.append(el('p', 'rj-note', L().sanctions));
+    body.append(leads);
+    const comps = companiesFor(s.code, s.flow);
+    if (comps.length) {
+      const b = el('button', 'rj-btn pick', L().compInCat(comps.length)); b.type = 'button';
+      b.addEventListener('click', () => { cst.cat = s.code.length >= 4 ? s.code.slice(0, 4) : s.code.slice(0, 2); cst.region = ''; cst.q = ''; $('#comp-search').value = ''; showPage('companies'); });
+      body.append(b);
+    }
+  }
+
+  // ---- ports ----
+  function drawPorts() {
+    const map = $('#port-map'), list = $('#port-list');
+    const pd = dash.data('ports'), od = dash.data('offices'), bd = dash.data('basemap'), pr = dash.data('products');
+    map.replaceChildren(); list.replaceChildren();
+    if ([pd, od, bd, pr].some((d) => d.status !== 'ok') || !idx) {
+      if ([pd, od, bd, pr].some((d) => d.status === 'error')) { failed(map); failed(list); } else map.classList.add('dash-skeleton');
+      return;
+    }
+    map.classList.remove('dash-skeleton');
+    portIndex(pd.data, od.data);
+    if (!tIdx && dash.data('trade').status === 'ok') tradeIndex(dash.data('trade').data, pr.data);
+    const per = idx.periods.get(st.period);
+    const flow = st.sel ? st.sel.flow : st.portFlow;
+    const monthsSet = new Set(per.src.split(','));
+    const covered = per.src.split(',').filter((m) => m >= pIdx.months[0]).length;
+    const y0 = pIdx.months[0].slice(0, 4);
+    $('#port-note').textContent = L().portNote(scopeLabel(), flowName(flow), periodLabel(per)) + (covered < monthsSet.size ? L().portsFrom(y0, covered > 0) : '');
+    if (!covered) { map.append(el('div', 'rj-empty', L().portsNone(y0))); return; }
+    const test = scopeTest(flow);
+    const ps = portShares(test, flow, monthsSet);
+    // map
+    const proj = bd.data.find((r) => r.country === '_proj');
+    const lon0 = +proj.lon0, lon1 = +proj.lon1, lat0 = +proj.lat0, lat1 = +proj.lat1;
+    const kx = +proj.w / (lon1 - lon0), ky = kx / Math.cos(((lat0 + lat1) / 2) * Math.PI / 180);
+    const P = (lon, lat) => [(lon - lon0) * kx, (lat1 - lat) * ky];
+    // show the main islands only: the basemap also covers the mainland coast, which carries no posts
+    const [vx0, vy0] = P(Math.max(lon0, 128.6), Math.min(lat1, 45.9)), [vx1, vy1] = P(Math.min(lon1, 146.2), Math.max(lat0, 30.6));
+    const svg = d3.select(map).append('svg').attr('width', '100%').attr('viewBox', `${vx0} ${vy0} ${vx1 - vx0} ${vy1 - vy0}`).attr('role', 'img').attr('aria-label', L().mapAria);
+    svg.append('rect').attr('x', vx0).attr('y', vy0).attr('width', vx1 - vx0).attr('height', vy1 - vy0).attr('fill', 'var(--rj-sea)');
+    bd.data.filter((r) => r.country !== '_proj').forEach((r) => svg.append('path').attr('d', r.d)
+      .attr('fill', r.country === 'Япония' ? 'var(--rj-land)' : 'var(--rj-land-other)').attr('stroke', 'var(--color-border-line)').attr('stroke-width', 1.2));
+    const pts = ps.list.filter((p) => p.off && p.off.lat && p.v > 0).map((p) => ({ ...p, xy: P(+p.off.lon, +p.off.lat) }))
+      .filter((p) => p.xy[0] >= vx0 && p.xy[0] <= vx1 && p.xy[1] >= vy0 && p.xy[1] <= vy1);
+    const maxV = d3.max(pts, (p) => p.v) || 1;
+    const rad = (v) => 6 + Math.sqrt(v / maxV) * 58;
+    const color = flowColor(flow);
+    const tip = el('div', 'rj-tip'); tip.hidden = true; map.append(tip);
+    const b = svg.append('g').selectAll('g').data([...pts].sort((a, c) => c.v - a.v)).join('g')
+      .attr('class', (p) => 'rj-bubble' + (st.port === p.custom ? ' sel' : '')).attr('tabindex', 0).attr('role', 'button')
+      .attr('aria-label', (p) => `${offName(p.off)}: ${fmtUsd(p.v)}`);
+    b.append('circle').attr('cx', (p) => p.xy[0]).attr('cy', (p) => p.xy[1]).attr('r', (p) => rad(p.v)).attr('fill', color).attr('stroke', color);
+    // labels for the biggest posts, skipping any that would collide
+    const placed = [];
+    pts.slice(0, 10).forEach((p) => {
+      const label = offName(p.off);
+      const w = textW(label, 23, 400), h = 26;
+      const r0 = rad(p.v);
+      let x0 = p.xy[0] + r0 + 6, anchor = 'start';
+      if (x0 + w > vx1 - 6) { x0 = p.xy[0] - r0 - 6; anchor = 'end'; }
+      const bb = anchor === 'start' ? [x0, p.xy[1] - h / 2, x0 + w, p.xy[1] + h / 2] : [x0 - w, p.xy[1] - h / 2, x0, p.xy[1] + h / 2];
+      if (bb[0] < vx0 + 4 || bb[2] > vx1 - 4 || bb[1] < vy0 + 4 || bb[3] > vy1 - 4) return;
+      if (placed.some((q) => !(bb[2] < q[0] || bb[0] > q[2] || bb[3] < q[1] || bb[1] > q[3]))) return;
+      placed.push(bb);
+      svg.append('text').attr('class', 'rj-plabel').attr('x', x0).attr('y', p.xy[1]).attr('dy', '0.35em').attr('text-anchor', anchor).text(label);
+    });
+    const showTip = (event, p) => {
+      tip.replaceChildren(el('div', 'n', offName(p.off)), el('div', 'k', `${offKind(p.off)}, ${offHouse(p.off)}`));
+      const row = (k, v) => { const e = el('div', 'row'); e.append(el('span', 'k', k), el('span', '', v)); tip.append(e); };
+      row(L().tValue, fmtUsd(p.v)); row(L().tShareShort, fmtPct(p.share, 1));
+      tip.append(el('div', 'k', L().portTip));
+      tip.hidden = false;
+      const scale = map.clientWidth / (vx1 - vx0);
+      const [mx, my] = event.type === 'focus' ? [(p.xy[0] - vx0) * scale, (p.xy[1] - vy0) * scale] : d3.pointer(event, map);
+      const tw = tip.offsetWidth, th = tip.offsetHeight;
+      tip.style.left = Math.max(0, Math.min(map.clientWidth - tw, mx + 14)) + 'px';
+      tip.style.top = Math.max(0, Math.min((vy1 - vy0) * scale - th, my + 14)) + 'px';
+    };
+    const pick = (p) => { st.port = st.port === p.custom ? null : p.custom; drawPorts(); };
+    b.on('mousemove', showTip).on('focus', showTip).on('mouseleave blur', () => { tip.hidden = true; })
+      .on('click', (event, p) => pick(p))
+      .on('keydown', (event, p) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); pick(p); } });
+    // list: posts, or the items going through the selected post
+    const head = el('div', 'rj-plist-head');
+    list.append(head);
+    if (!ps.list.length) { head.append(el('h3', '', L().postsN(0))); list.append(el('p', 'rj-note', L().portsEmpty)); return; }
+    const barRow = (name, sub, v, share, maxv, onClick, pressed, sw) => {
+      const btn = el('button', 'rj-prow'); btn.type = 'button';
+      if (pressed !== undefined) btn.setAttribute('aria-pressed', String(pressed));
+      const nmEl = el('span', 'nm'); nmEl.append(document.createTextNode(name)); if (sub) nmEl.append(el('small', '', sub));
+      const bar = el('span', 'bar'); const i = el('i'); i.style.width = Math.max(2, (v / maxv) * 100) + '%'; i.style.background = sw || color; bar.append(i);
+      const vv = el('span', 'v', fmtUsd(v)); vv.append(el('small', '', fmtPct(share, 1)));
+      btn.append(nmEl, bar, vv);
+      btn.addEventListener('click', onClick);
+      list.append(btn);
+    };
+    if (!st.port) {
+      head.append(el('h3', '', L().postsN(ps.list.length)), el('span', 'rj-note', L().valueShare));
+      const maxv = ps.list[0].v;
+      ps.list.slice(0, 14).forEach((p) => barRow(p.off ? offName(p.off) : L().postX(p.custom), p.off ? `${offKind(p.off)}, ${offHouse(p.off)}` : '', p.v, p.share, maxv,
+        () => { st.port = p.custom; drawPorts(); }, false));
+    } else {
+      const off = pIdx.off.get(st.port);
+      const back = el('button', 'rj-link', L().allPosts); back.type = 'button';
+      back.addEventListener('click', () => { st.port = null; drawPorts(); });
+      head.append(el('h3', '', L().through(off ? offName(off) : st.port)), back);
+      const by = new Map();
+      for (const r of pIdx.byFlow[flow]) if (r.custom === st.port && monthsSet.has(r.month) && test(r)) by.set(r.hs9, (by.get(r.hs9) || 0) + +r.value);
+      const tot = d3.sum(by.values());
+      const items = [...by.entries()].sort((a, c) => c[1] - a[1]).slice(0, 14);
+      const maxv = items.length ? items[0][1] : 1;
+      items.forEach(([code, v]) => {
+        const sec = tIdx && tIdx.sec.get(code.slice(0, 2));
+        barRow(`${code} ${codeName(code, flow)}`, '', v, tot ? v / tot : 0, maxv, () => {
+          const vr = idx.byKey.get(`${st.period}|${flow}|${code}`);
+          if (vr) toggleSel(flow, vr);
+        }, undefined, secColor(sec));
+      });
+    }
+  }
+
+  // ---- table ----
+  function drawTable() {
+    const tb = $('#table').querySelector('tbody');
+    tb.replaceChildren();
+    if (!idx || !st.period) return;
+    const level = effLevel();
+    let rows = rowsFor(st.tab, level).filter((r) => r.value > 0 || st.mode === 'growth');
+    if (st.q) rows = rows.filter((r) => r.code.toLowerCase().includes(st.q) || LANGS.some((l) => (r['name_' + l] || '').toLowerCase().includes(st.q)));
+    const key = st.sort, dir = st.dir;
+    const val = (r) => (key === 'name' ? nm(r) : r[key]);
+    const locale = { ru: 'ru', en: 'en', ja: 'ja' }[st.lang];
+    rows.sort((a, b) => {
+      const va = val(a), vb = val(b);
+      if (va === null || va === undefined) return 1;
+      if (vb === null || vb === undefined) return -1;
+      return typeof va === 'string' ? dir * va.localeCompare(vb, locale) : dir * (va - vb);
+    });
+    const shown = rows.slice(0, 400);
+    for (const r of shown) {
+      const tr = el('tr');
+      tr.dataset.key = r.key;
+      if (st.sel && st.sel.flow === r.flow && st.sel.code === r.code) tr.className = 'sel';
+      const td = (text, cls) => { const c = el('td', cls, text); tr.append(c); return c; };
+      const c0 = td('', 'l');
+      const sw = el('i', 'rj-sw'); sw.style.background = secColor(r.section);
+      c0.append(sw, document.createTextNode(r.code));
+      if (drillable(r.code)) { const d = el('button', 'rj-drill', '▸'); d.type = 'button'; d.setAttribute('aria-label', L().drillAria(r.code)); c0.append(d); }
+      td(nm(r), 'l name');
+      td(fmtUsd(r.value));
+      td(fmtPct(r.share, 2));
+      td(r.prev === null ? L().na : fmtUsd(r.prev), 'opt');
+      const ch = td(r.change === null ? L().na : fmtSigned(r.change), 'opt');
+      const gr = td(r.prev === null ? L().na : r.prev === 0 ? L().isNew : fmtGrowth(r.growth));
+      const sign = r.change > 0 ? 'rj-pos' : r.change < 0 ? 'rj-neg' : '';
+      if (sign) { ch.classList.add(sign); gr.classList.add(sign); }
+      td(r.kg > 0 ? fmtInt(r.kg / 1000) : '—', 'opt');
+      td(r.price ? fmtPrice(r.price) : '—', 'opt');
+      tb.append(tr);
+    }
+    $('#table').querySelectorAll('th').forEach((th) => {
+      const b = th.querySelector('button');
+      if (b.dataset.sort === key) th.setAttribute('aria-sort', dir > 0 ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort');
+    });
+    $('#table-title').textContent = L().tableTitle(level);
+    $('#table-note').textContent = L().tableNote(flowName(st.tab), periodLabel(idx.periods.get(st.period)), fmtInt(shown.length), fmtInt(rows.length), st.mode === 'growth');
+  }
+
+  function failed(e) {
+    e.replaceChildren();
+    const d = el('div', 'rj-empty'); d.style.minHeight = '120px';
+    d.append(el('span', 'rj-dot'), document.createTextNode(L().failed));
+    e.append(d);
+  }
+
+  // ---- trade page ----
+  function drawTrade() {
+    const v = dash.data('views'), p = dash.data('periods'), b = dash.data('balance');
+    const maps = [...root.querySelectorAll('.rj-map')];
+    if (v.status !== 'ok' || p.status !== 'ok') {
+      segs();
+      if (v.status === 'error' || p.status === 'error') maps.forEach((f) => failed(f.querySelector('.rj-tm')));
+      else maps.forEach((f) => f.querySelector('.rj-tm').classList.add('dash-skeleton'));
+      compose($('#takeaway'), L().takeaway('—', M.tEx, M.tExg, M.tIm, M.tImg));
+      drawTrend();
+      return;
+    }
+    index(v.data, p.data);
+    if (dash.data('trade').status === 'ok' && dash.data('products').status === 'ok') tradeIndex(dash.data('trade').data, dash.data('products').data);
+    segs();
+    const sel = $('#period');
+    if (!st.period || !idx.periods.has(st.period)) st.period = p.data[0].period;
+    sel.replaceChildren(...p.data.map((x) => new Option(periodLabel(x), x.period)));
+    sel.value = st.period;
+    const per = idx.periods.get(st.period), pl = periodLabel(per);
+
+    // headline and summary: the same marked figures inside a sentence in the chosen language
+    const tEx = idx.byKey.get(`${st.period}|ru_jp|TOTAL`), tIm = idx.byKey.get(`${st.period}|jp_ru|TOTAL`);
+    const fill = (e, row, field, text) => { e.classList.remove('dash-skeleton'); if (!row) { e.textContent = '—'; return; } setMark(e, row.key, field); e.textContent = text(row); };
+    fill(M.tEx, tEx, 'value', (r) => fmtUsd(r.value)); fill(M.sEx, tEx, 'value', (r) => fmtUsd(r.value));
+    fill(M.tIm, tIm, 'value', (r) => fmtUsd(r.value)); fill(M.sIm, tIm, 'value', (r) => fmtUsd(r.value));
+    fill(M.tExg, tEx, 'growth', (r) => fmtGrowth(r.growth)); fill(M.tImg, tIm, 'growth', (r) => fmtGrowth(r.growth));
+    compose($('#takeaway'), L().takeaway(pl, M.tEx, M.tExg, M.tIm, M.tImg));
+    const bal = b.status === 'ok' ? b.data.find((x) => x.period === st.period) : null;
+    M.sBal.classList.remove('dash-skeleton');
+    if (bal) { M.sBal.dataset.source = 'balance'; M.sBal.dataset.field = 'balance'; M.sBal.dataset.where = 'period=' + encodeURIComponent(st.period); M.sBal.textContent = fmtUsd(Math.abs(bal.balance)); }
+    compose($('#summary'), L().summary(!bal || bal.balance >= 0, pl, M.sBal, M.sEx, M.sIm));
+
+    const W = maps[0].querySelector('.rj-tm').clientWidth || 400;
+    const H = Math.round(Math.max(320, Math.min(560, W * 0.92)));
+    for (const f of maps) {
+      const flow = f.id === 'map-ru-jp' ? 'ru_jp' : 'jp_ru';
+      const fr = filterRow(flow);
+      f.querySelector('.m-title').textContent = L().mapTitle(flow, pl);
+      const tot = f.querySelector('.m-total');
+      tot.classList.remove('dash-skeleton');
+      if (fr) { setMark(tot, fr.key, 'value'); tot.textContent = fmtUsd(fr.value); } else tot.textContent = '—';
+      const scope = !st.filter ? '' : st.filter.type === 'section' ? secName(st.filter.id) : `${st.filter.code} ${codeName(st.filter.code, flow)}`;
+      f.querySelector('.m-scope').textContent = scope ? `${L().sep}${scope}` : '';
+      drawMap(f, flow, H);
+    }
+    firstDraw = false;
+    drawCrumbs();
+    drawLegend();
+    drawSelbar();
+    drawTrend();
+    drawItem();
+    drawPorts();
+    drawTable();
+  }
+  // ---- pages ----
+  const PAGES = ['about', 'trade', 'companies'];
+  st.page = PAGES.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'trade';
+  function setPageVisibility() {
+    PAGES.forEach((p) => { $('#' + p).hidden = p !== st.page; $('#tab-' + p).setAttribute('aria-selected', String(p === st.page)); });
+  }
+  function showPage(id) {
+    st.page = id;
+    setPageVisibility();
+    dash.setLink(id);
+    draw();
+    root.scrollIntoView({ block: 'start' });
+  }
+  $('#pages').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && b.dataset.v !== st.page) showPage(b.dataset.v); });
+  function draw() {
+    setPageVisibility();
+    if (st.page === 'trade') { drawTrade(); return; }
+    const v = dash.data('views'), p = dash.data('periods');
+    if (v.status === 'ok' && p.status === 'ok') {
+      index(v.data, p.data);
+      if (!st.period || !idx.periods.has(st.period)) st.period = p.data[0].period;
+    }
+    if (dash.data('trade').status === 'ok' && dash.data('products').status === 'ok') tradeIndex(dash.data('trade').data, dash.data('products').data);
+    if (st.page === 'about') drawAbout(); else drawCompanies();
+  }
+
+  function drawAbout() {
+    const A = ABOUT[st.lang], body = $('#about-body');
+    body.replaceChildren(el('h2', '', A.title), el('p', '', A.intro));
+    const list = (h, items) => {
+      const sec = el('section'); sec.append(el('h3', '', h));
+      const ul = el('ul'); items.forEach((x) => ul.append(x instanceof Node ? x : el('li', '', x)));
+      sec.append(ul); body.append(sec);
+    };
+    A.sections.forEach(([h, items]) => list(h, items));
+    list(A.linksTitle, A.links.map(([t, u]) => { const item = el('li'); const a = el('a', '', t); a.href = u; a.target = '_blank'; a.rel = 'noopener'; item.append(a); return item; }));
+  }
+
+  // ---- companies page ----
+  const cst = { cat: '', region: '', q: '', sort: 'name', dir: 1 };
+  const compName = (r) => (st.lang === 'ru' ? r.name : r.name_lat || r.name);
+  const regionName = (code) => (REGION_T[+code] ? REGION_T[+code][li()] : code);
+  const okvedName = (r) => (st.lang === 'ru' ? r.okved_name : (OKVED_T[r.okved] || [])[li()] || '');
+  const objectsText = (r) => [...r.evidence.matchAll(/\(([^,()]+), (RU-[^)]+)\)/g)]
+    .map((m) => `${(OBJ_KINDS[m[1]] || [m[1], m[1], m[1]])[li()]} ${m[2]}`).join(st.lang === 'ja' ? '、' : '; ');
+  const codesOf = (r) => r.hs4.split(';').filter(Boolean);
+  function companiesFor(code, flow) {
+    const cd = dash.data('companies');
+    if (cd.status !== 'ok' || code.includes('X') || code.startsWith('00')) return [];
+    return cd.data.filter((r) => r.flow === flow && codesOf(r).some((h) => (code.length >= 4 ? h === code.slice(0, 4) : h.startsWith(code))));
+  }
+  $('#comp-cat').addEventListener('change', (e) => { cst.cat = e.target.value; drawCompanies(); });
+  $('#comp-region').addEventListener('change', (e) => { cst.region = e.target.value; drawCompanies(); });
+  $('#comp-search').addEventListener('input', (e) => { cst.q = e.target.value.trim().toLowerCase(); drawCompanies(); });
+  $('#comp-table').querySelector('thead').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-csort]'); if (!b) return;
+    if (cst.sort === b.dataset.csort) cst.dir = -cst.dir; else { cst.sort = b.dataset.csort; cst.dir = ['employees', 'since'].includes(cst.sort) ? -1 : 1; }
+    drawCompanies();
+  });
+  $('#comp-table').querySelector('tbody').addEventListener('click', (e) => {
+    const chip = e.target.closest('button.rj-chip');
+    if (chip) { cst.cat = chip.dataset.code; drawCompanies(); }
+  });
+  function drawCompanies() {
+    const cd = dash.data('companies');
+    const tb = $('#comp-table').querySelector('tbody');
+    tb.replaceChildren();
+    $('#comp-sources-list').replaceChildren(...L().sources.map(([k, t]) => { const item = el('li'); item.append(el('b', '', k + ': '), document.createTextNode(t)); return item; }));
+    if (cd.status !== 'ok') { if (cd.status === 'error') failed($('#comp-kpis')); return; }
+    const all = cd.data;
+    const codes = [...new Set(all.flatMap(codesOf))].sort();
+    const chapters = [...new Set(codes.map((h) => h.slice(0, 2)))];
+    const opts = [new Option(L().compAllCats, '')];
+    chapters.forEach((ch) => {
+      opts.push(new Option(L().chapterAll(ch, codeName(ch)), ch));
+      codes.filter((h) => h.startsWith(ch)).forEach((h) => opts.push(new Option(`\u2003${h} ${codeName(h)}`, h)));
+    });
+    $('#comp-cat').replaceChildren(...opts);
+    $('#comp-cat').value = cst.cat;
+    const regions = [...new Set(all.map((r) => r.region_code))].sort((a, b) => regionName(a).localeCompare(regionName(b), st.lang));
+    $('#comp-region').replaceChildren(new Option(L().compAllRegions, ''), ...regions.map((c) => new Option(regionName(c), c)));
+    $('#comp-region').value = cst.region;
+    let rows = all.filter((r) => (!cst.cat || codesOf(r).some((h) => h.startsWith(cst.cat))) && (!cst.region || r.region_code === cst.region));
+    if (cst.q) rows = rows.filter((r) => [r.name, r.name_full, r.name_lat, r.inn].some((x) => (x || '').toLowerCase().includes(cst.q)));
+    const key = {
+      name: compName, inn: (r) => r.inn, region: (r) => regionName(r.region_code), hs4: (r) => codesOf(r)[0] || '',
+      okved: (r) => r.okved, employees: (r) => +r.employees || 0, since: (r) => r.since, level: (r) => r.level,
+    }[cst.sort];
+    rows.sort((a, b) => { const va = key(a), vb = key(b); return typeof va === 'number' ? cst.dir * (va - vb) : cst.dir * String(va).localeCompare(String(vb), st.lang); });
+    // headline figures
+    const kpi = (v, label) => { const d = el('div', 'rj-kpi'); d.append(el('b', '', String(v)), el('span', '', label(v))); return d; };
+    $('#comp-kpis').replaceChildren(kpi(rows.length, L().kCompanies), kpi(new Set(rows.flatMap(codesOf)).size, L().kCats),
+      kpi(new Set(rows.map((r) => r.region_code)).size, L().kRegions), kpi(rows.filter((r) => r.sme).length, L().kSme));
+    // how big the chosen category is in trade
+    const vr = cst.cat && idx ? idx.byKey.get(`${st.period}|ru_jp|${cst.cat}`) : null;
+    $('#comp-cat-note').textContent = cst.cat
+      ? L().catNote(`${cst.cat} ${codeName(cst.cat, 'ru_jp')}`, fmtUsd(vr ? vr.value : 0), periodLabel(idx && idx.periods.get(st.period)))
+      : L().catNoteAll(rows.length);
+    if (!rows.length) { const tr = el('tr'); const td = el('td', 'l', L().compEmpty); td.colSpan = 8; tr.append(td); tb.append(tr); return; }
+    for (const r of rows) {
+      const tr = el('tr'); tr.dataset.key = r.inn;
+      const td = (cls) => { const c = el('td', cls); tr.append(c); return c; };
+      const c0 = td('l'); c0.append(document.createTextNode(compName(r)));
+      if (st.lang === 'ru' && r.city) c0.append(el('small', '', r.city));
+      const c1 = td('l nw');
+      if (r.inn) { const a = el('a', '', r.inn); a.href = 'https://www.rusprofile.ru/search?query=' + r.inn; a.target = '_blank'; a.rel = 'noopener'; a.title = L().innLink; c1.append(a); }
+      if (r.inn_check) { const w = el('small', 'rj-warn', L().innCheck); w.title = L().innCheckTip; c1.append(w); }
+      td('l').textContent = regionName(r.region_code);
+      const c3 = td('l');
+      codesOf(r).forEach((h) => {
+        const b = el('button', 'rj-chip'); b.type = 'button'; b.dataset.code = h;
+        const i = el('i'); i.style.background = secColor(tIdx && tIdx.sec.get(h.slice(0, 2)));
+        b.append(i, document.createTextNode(`${h} ${codeName(h, 'ru_jp')}`));
+        c3.append(b);
+      });
+      td('l opt').textContent = r.okved ? `${r.okved} ${okvedName(r)}`.trim() : '—';
+      const c5 = td('nw');
+      c5.append(document.createTextNode(r.sme ? SME[r.sme][li()] : L().notSme));
+      if (+r.employees) c5.append(el('small', '', L().employees(fmtInt(+r.employees))));
+      const c6 = td('l');
+      c6.append(document.createTextNode(L().evid({ ...r, objectsText: objectsText(r) })), el('small', '', L().since(r.since.slice(0, 4))));
+      const c7 = td(''); const badge = el('span', 'rj-badge', L().levelA); badge.title = L().levelATip; c7.append(badge);
+      tb.append(tr);
+    }
+    $('#comp-table').querySelectorAll('th').forEach((th) => {
+      const b = th.querySelector('button');
+      if (b.dataset.csort === cst.sort) th.setAttribute('aria-sort', cst.dir > 0 ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort');
+    });
+  }
+
+  applyLang();
+  setPageVisibility();
+  dash.onData(draw);
+  // labels are fitted by measuring text, so measure again once the page fonts have loaded
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (idx) draw(); });
+</script>
+<script>window.__loadDashData();</script>
+</body>
+</html>
