@@ -1655,7 +1655,7 @@
       if (vb === null || vb === undefined) return -1;
       return typeof va === 'string' ? dir * va.localeCompare(vb, locale) : dir * (va - vb);
     });
-    const shown = rows.slice(0, 400);
+    const shown = rows.slice(0, 1000);
     for (const r of shown) {
       const tr = el('tr');
       tr.dataset.key = r.key;
