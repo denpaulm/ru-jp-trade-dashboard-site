@@ -231,6 +231,41 @@
   .rj-ctable td small.rj-trade.none { color: var(--color-warn); }
   .rj-sources ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: var(--cds-font-size-caption); line-height: 1.5; }
   .rj-sources b { font-weight: 600; }
+  /* четыре листа: на узком экране вкладки ужимаются, а если всё равно не помещаются — переносятся */
+  .rj-pages { flex-wrap: wrap; }
+  @media (max-width: 480px) { .rj-pages button { padding: 8px 8px; } }
+  /* Расчёты: платёжный баланс, прямые инвестиции, валюта расчётов */
+  .rj-cq { container-type: inline-size; }
+  .rj-stcur { flex: 0 0 auto; min-width: 140px; }
+  .rj-keys { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: var(--cds-font-size-caption); }
+  .rj-key { display: inline-flex; align-items: center; gap: 6px; }
+  .rj-key i { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+  .rj-key i.dot { width: 8px; height: 8px; border-radius: 50%; }
+  .rj-chart { position: relative; min-height: 200px; }
+  .rj-chart svg { display: block; overflow: visible; }
+  .rj-chart svg rect[tabindex]:focus-visible { outline: 2px solid var(--color-fg); outline-offset: -2px; }
+  .rj-grid2 { display: grid; gap: var(--cds-gap-lg); grid-template-columns: 1fr; }
+  @container (min-width: 820px) { .rj-grid2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+  .rj-fig { margin: 0; display: grid; gap: var(--cds-gap-xs); align-content: start; min-width: 0; }
+  .rj-fig figcaption { font-size: var(--cds-font-size-caption); font-weight: 600; }
+  .rj-kpi span + span { font-size: var(--cds-font-size-caption); }
+  .rj-dlist { display: grid; gap: 2px; }
+  .rj-dgroup { margin: var(--cds-gap-sm) 0 2px; font-size: var(--cds-font-size-caption); font-weight: 600; color: var(--color-fg-muted); }
+  .rj-drow { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(70px, 1fr) minmax(84px, auto); gap: 4px 12px; align-items: center; padding: 6px 8px; border-radius: var(--cds-radius); font-size: var(--cds-font-size-caption); }
+  .rj-drow:hover { background: var(--rj-track); }
+  .rj-drow small { display: block; color: var(--color-fg-muted); font-weight: 400; }
+  .rj-drow .v { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .rj-drow .v b { font-weight: 600; }
+  .rj-dtrack { position: relative; height: 10px; }
+  .rj-dtrack::before { content: ''; position: absolute; left: 50%; top: -4px; bottom: -4px; width: 1px; background: var(--cds-chart-axis); }
+  .rj-dtrack i { position: absolute; top: 0; bottom: 0; }
+  .rj-crow { display: grid; grid-template-columns: minmax(96px, auto) minmax(0, 1fr); gap: 10px; align-items: center; font-size: var(--cds-font-size-caption); padding: 2px 0; }
+  .rj-crow.world { margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--color-border-line); }
+  .rj-cbar { display: flex; gap: 2px; height: 22px; }
+  .rj-cbar span { display: flex; align-items: center; justify-content: center; min-width: 0; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: default; }
+  .rj-cbar span:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 1px; }
+  .rj-insights ul { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; line-height: 1.55; max-width: 110ch; }
+  .rj-insights b { font-weight: 600; }
 </style>
 
 <div class="rj" lang="ru">
@@ -246,6 +281,7 @@
     <nav class="rj-pages" role="tablist" data-i18n-aria="ariaPages" id="pages">
       <button type="button" role="tab" data-v="about" id="tab-about" data-i18n="tabAbout">Описание</button>
       <button type="button" role="tab" data-v="trade" id="tab-trade" data-i18n="tabTrade">Торговля</button>
+      <button type="button" role="tab" data-v="settlements" id="tab-settlements" data-i18n="tabSettlements">Расчёты</button>
       <button type="button" role="tab" data-v="companies" id="tab-companies" data-i18n="tabCompanies">Компании</button>
     </nav>
   </header>
@@ -363,6 +399,71 @@
   <p class="rj-foot" id="source-note" data-i18n="footShort">—</p>
   </section>
 
+  <section class="rj-page" id="settlements" hidden>
+    <div class="rj-head2">
+      <h2 data-i18n="stTitle">—</h2>
+      <p class="rj-take" data-i18n="stIntro">—</p>
+    </div>
+    <div class="rj-tools rj-ctools">
+      <select class="rj-period rj-csel" id="st-year" data-i18n-aria="ariaYear" data-source="settlements"></select>
+      <div class="rj-seg rj-stcur" role="group" data-i18n-aria="ariaCur" id="st-cur">
+        <button type="button" data-v="usd">USD</button>
+        <button type="button" data-v="jpy">JPY</button>
+      </div>
+    </div>
+    <div class="rj-kpis" id="st-kpis" data-source="settlements"></div>
+    <section class="rj-card" id="st-current">
+      <div class="rj-tools">
+        <h2 data-i18n="c1Title">—</h2>
+        <div class="rj-tabs" role="tablist" data-i18n-aria="ariaGran" id="st-gran">
+          <button type="button" role="tab" data-v="Y" data-i18n="granY">Годы</button>
+          <button type="button" role="tab" data-v="Q" data-i18n="granQ">Кварталы</button>
+        </div>
+      </div>
+      <p class="rj-note" id="st-current-note">—</p>
+      <div class="rj-keys" id="st-current-keys"></div>
+      <div class="rj-chart" id="st-current-chart" data-source="settlements"></div>
+    </section>
+    <section class="rj-card" id="st-items-card">
+      <h2 id="st-items-title">—</h2>
+      <p class="rj-note" data-i18n="c2Note">—</p>
+      <div class="rj-dlist" id="st-items" data-source="settlements"></div>
+    </section>
+    <section class="rj-card rj-cq" id="st-fdi">
+      <h2 data-i18n="c3Title">—</h2>
+      <p class="rj-note" id="st-fdi-note" data-source="settlements">—</p>
+      <div class="rj-grid2">
+        <figure class="rj-fig">
+          <figcaption data-i18n="c3aTitle">—</figcaption>
+          <div class="rj-chart" id="st-fdi-flow" data-source="settlements"></div>
+          <p class="rj-hint" id="st-fdi-hint"></p>
+        </figure>
+        <figure class="rj-fig">
+          <figcaption data-i18n="c3bTitle">—</figcaption>
+          <div class="rj-keys" id="st-pos-keys"></div>
+          <div class="rj-chart" id="st-fdi-pos" data-source="settlements"></div>
+        </figure>
+      </div>
+    </section>
+    <section class="rj-card rj-cq" id="st-ccy-card">
+      <h2 data-i18n="c4Title">—</h2>
+      <p class="rj-note" id="st-ccy-note" data-source="settlements">—</p>
+      <div class="rj-keys" id="st-ccy-keys"></div>
+      <div class="rj-grid2">
+        <figure class="rj-fig"><figcaption data-i18n="c4Imp">—</figcaption><div class="rj-chart" id="st-ccy-imp" data-source="settlements"></div></figure>
+        <figure class="rj-fig"><figcaption data-i18n="c4Exp">—</figcaption><div class="rj-chart" id="st-ccy-exp" data-source="settlements"></div></figure>
+      </div>
+    </section>
+    <section class="rj-card rj-insights" id="st-insights-card">
+      <h2 data-i18n="c5Title">—</h2>
+      <ul id="st-insights" data-source="settlements"></ul>
+    </section>
+    <div class="rj-card rj-sources" id="st-sources">
+      <h2 data-i18n="srcTitleS">—</h2>
+      <ul id="st-sources-list"></ul>
+    </div>
+  </section>
+
   <section class="rj-page" id="companies" hidden>
     <div class="rj-head2">
       <h2 data-i18n="compTitle">—</h2>
@@ -403,11 +504,12 @@
 <script>
   // Замена объекта `dash` платформы Claude: те же методы, данные — из файлов site/data/.
   (function () {
-    const files = {trade: 'trade.csv', products: 'products.csv', ports: 'ports.csv', offices: 'offices.csv', basemap: 'basemap.json', companies: 'companies.csv'};
+    const files = {trade: 'trade.csv', products: 'products.csv', ports: 'ports.csv', offices: 'offices.csv', basemap: 'basemap.json', companies: 'companies.csv', settlements: 'settlements.csv'};
     const store = {}, status = {}, calcs = {}, order = [], handlers = [];
     const run = () => handlers.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
     window.dash = {
-      colors: ['#2f6fdf', '#e07a1f', '#2a9d8f', '#9b5de5', '#e63946', '#457b9d', '#f4a261', '#6c757d'],
+      // в тёмной теме оранжевый на шаг темнее: иначе он светлее допустимого для меток на тёмном фоне
+      colors: ['#2f6fdf', matchMedia('(prefers-color-scheme: dark)').matches ? '#d9701a' : '#e07a1f', '#2a9d8f', '#9b5de5', '#e63946', '#457b9d', '#f4a261', '#6c757d'],
       data(id) {
         if (id in store) return { status: 'ok', data: store[id], meta: [], refreshing: false };
         return { status: status[id] || 'loading', data: [], meta: [], refreshing: false };
@@ -1003,9 +1105,9 @@
       title: 'О дашборде',
       intro: 'Дашборд показывает торговлю России и Японии по товарам — по образцу раздела «Bilateral Trade by Products» на oec.world, но с данными до последнего опубликованного месяца, детализацией до 9-значного кода и разбивкой по портам Японии. Лист «Компании» постепенно связывает товарные категории с российскими компаниями, чтобы клиентские менеджеры могли находить потенциальных клиентов.',
       sections: [
-        ['Листы', ['Торговля — структура торговли за выбранный период: две карты-плитки (экспорт России в Японию и экспорт Японии в Россию), помесячная динамика, карточка выбранного товара, карта таможенных постов Японии и таблица товаров.', 'Компании — российские компании с подтверждённой по открытым реестрам связью с Японией и с привязкой к товарным категориям.']],
+        ['Листы', ['Торговля — структура торговли за выбранный период: две карты-плитки (экспорт России в Японию и экспорт Японии в Россию), помесячная динамика, карточка выбранного товара, карта таможенных постов Японии и таблица товаров.', 'Расчёты — денежные потоки помимо товаров по платёжному балансу Японии: услуги, поездки, доходы от инвестиций, прямые инвестиции японских компаний в Россию и валюта расчётов.', 'Компании — российские компании с подтверждённой по открытым реестрам связью с Японией и с привязкой к товарным категориям.']],
         ['Как пользоваться листом «Торговля»', ['HS2 / HS4 / HS6 / HS9 — уровень детализации: от глав до 9-значных кодов японской статистики.', 'Стоимость / Рост — размер прямоугольника всегда равен стоимости; в режиме «Рост» цвет показывает изменение к такому же периоду годом раньше.', 'USD / JPY — валюта: доллары или исходные иены. Сумма / Проценты — подписи в деньгах или в доле от общего потока.', 'Период — полные годы с 2017 года, текущий год с января и последние 12 месяцев.', 'Клик по прямоугольнику выбирает товар: ниже появляются его динамика, карточка (объём, цена за единицу, регулярность поставок, основные посты, где искать контрагентов) и карта постов. Повторный клик снимает выбор, двойной клик раскрывает уровень ниже, «← Назад» возвращает на шаг.', 'Клик по кругу на карте постов показывает, какие товары через этот пост проходят.']],
-        ['Откуда данные', ['Таможенная статистика Японии (Министерство финансов, портал e-Stat): помесячно по 9-значным кодам, «товар × страна» с 2017 года и «таможенный пост × товар × страна» с 2021 года.', 'Россия не публикует таможенную статистику с 2022 года, поэтому обе стороны показаны по японским данным: экспорт России — импорт Японии товаров российского происхождения в ценах CIF, экспорт Японии — вывоз с конечным назначением в Россию в ценах FOB.', 'Иены — исходная валюта статистики Японии; переключатель USD / JPY показывает суммы в иенах как есть или в долларах по среднемесячному курсу ФРС США (серия EXJPUS). Рост в иенах и в долларах различается из-за изменения курса.', 'OEC строит похожие графики по базе BACI (CEPII), собранной из тех же данных через UN Comtrade; она обновляется раз в год с отставанием около полутора лет. Годовые итоги этого дашборда совпадают с UN Comtrade с точностью до 0,2%.']],
+        ['Откуда данные', ['Таможенная статистика Японии (Министерство финансов, портал e-Stat): помесячно по 9-значным кодам, «товар × страна» с 2017 года и «таможенный пост × товар × страна» с 2021 года.', 'Россия не публикует таможенную статистику с 2022 года, поэтому обе стороны показаны по японским данным: экспорт России — импорт Японии товаров российского происхождения в ценах CIF, экспорт Японии — вывоз с конечным назначением в Россию в ценах FOB.', 'Иены — исходная валюта статистики Японии; переключатель USD / JPY показывает суммы в иенах как есть или в долларах по среднемесячному курсу ФРС США (серия EXJPUS). Рост в иенах и в долларах различается из-за изменения курса.', 'OEC строит похожие графики по базе BACI (CEPII), собранной из тех же данных через UN Comtrade; она обновляется раз в год с отставанием около полутора лет. Годовые итоги этого дашборда совпадают с UN Comtrade с точностью до 0,2%.', 'Лист «Расчёты»: платёжный баланс Японии по странам (сальдо статей по кварталам с 2014 года), прямые инвестиции по странам помесячно и их остатки на конец года — Минфин Японии; валюта расчётов по полугодиям — таможня Японии.']],
         ['Как читать особые коды', ['Первые 6 цифр кода — международный HS (HS2017 до 2021 года, HS2022 с 2022 года), последние 3 — детализация Японии, своя у экспорта и импорта.', 'Коды с «X» (например, 24XXXXXXA) засекречены по заявке участника, когда по коду 1–2 экспортёра или импортёра. Сумма и страна настоящие, скрыт только точный товар.', 'Коды «00» — реэкспорт (товары не японского производства), реимпорт и бортовые припасы.', 'Названия товаров переведены для этого дашборда с японских справочников таможни.']],
         ['Обновление', ['Таможня Японии публикует месяц примерно через 4 недели после его окончания. Импорт за последний месяц — предварительный, через месяц его заменяют уточнённые данные; годовые цифры пересматриваются в марте и ноябре следующего года.']],
         ['Лист «Компании»', ['Компании берутся из открытых реестров, где компания и товар записаны рядом. У каждой связи есть уровень: A — поставки в Японию или из Японии подтверждены документами (таких источников пока нет); B — допуск к рынку: компания аттестована или зарегистрировала товар для Японии, сами поставки не подтверждены; C — косвенные признаки.', 'Сейчас подключён целиком реестр Россельхознадзора «Цербер»: все предприятия и суда, аттестованные на экспорт в Японию (уровень B). У каждой компании показано, открыт ли допуск, и ввозила ли Япония товары её категорий из России за последние 12 месяцев: аттестация есть у многих, кто давно не поставляет. ИНН берётся из поиска ЕГРЮЛ и принимается только после проверки фильтром самого реестра по ИНН; «ИНН не найден» значит, что действующей записи с таким названием, которую реестр подтверждает, нет. ОКВЭД, размер и численность — из реестра МСП ФНС.', 'Дальше по плану: декларации и сертификаты ЕАЭС, госзакупки и ЛесЕГАИС — они доступны только с российского IP. Санкционная проверка в дашборде не выполняется.']],
@@ -1017,9 +1119,9 @@
       title: 'About this dashboard',
       intro: 'The dashboard shows Russia–Japan trade by product, modelled on the “Bilateral Trade by Products” section of oec.world but with data up to the latest published month, detail down to the 9-digit code and a breakdown by Japanese port. The Companies page links product categories to Russian companies step by step so that account managers can find potential clients.',
       sections: [
-        ['Pages', ['Trade — the structure of trade in the selected period: two treemaps (Russian exports to Japan and Japanese exports to Russia), the monthly trend, a card for the selected product, a map of Japanese customs offices and a product table.', 'Companies — Russian companies whose link to Japan is confirmed by open registers, matched to product categories.']],
+        ['Pages', ['Trade — the structure of trade in the selected period: two treemaps (Russian exports to Japan and Japanese exports to Russia), the monthly trend, a card for the selected product, a map of Japanese customs offices and a product table.', 'Payments — money flows beyond goods from Japan’s balance of payments: services, travel, investment income, Japanese direct investment in Russia and invoicing currencies.', 'Companies — Russian companies whose link to Japan is confirmed by open registers, matched to product categories.']],
         ['How to use the Trade page', ['HS2 / HS4 / HS6 / HS9 — level of detail, from chapters down to the 9-digit codes of Japanese statistics.', 'Trade value / Growth — rectangle size always shows value; in Growth mode the colour shows the change from the same period a year earlier.', 'USD / JPY — currency: US dollars or the original yen. Amount / Percentage — labels in money or as a share of the whole flow.', 'Period — full years from 2017, the current year to date and the last 12 months.', 'Click a rectangle to select a product: its trend, a card (volume, unit price, how regular the shipments are, main customs offices, where to look for counterparties) and the port map appear below. Click again to clear, double-click to open the next level, “← Back” to go one step back.', 'Click a circle on the port map to see the products passing through that office.']],
-        ['Where the data come from', ['Japanese customs statistics (Ministry of Finance, e-Stat portal): monthly by 9-digit code, “commodity by country” from 2017 and “customs office by commodity by country” from 2021.', 'Russia has not published customs statistics since 2022, so both directions come from Japanese data: Russian exports are Japan’s imports of goods of Russian origin at CIF prices, Japanese exports are shipments with final destination Russia at FOB prices.', 'Yen is the original currency of Japanese statistics; the USD / JPY switch shows values in yen as published or in US dollars at the monthly average rate of the US Federal Reserve (series EXJPUS). Growth in yen and in dollars differs because the exchange rate changes.', 'OEC draws similar charts from the BACI database (CEPII), built from the same data via UN Comtrade and updated once a year with a lag of about 18 months. Annual totals in this dashboard match UN Comtrade within 0.2%.']],
+        ['Where the data come from', ['Japanese customs statistics (Ministry of Finance, e-Stat portal): monthly by 9-digit code, “commodity by country” from 2017 and “customs office by commodity by country” from 2021.', 'Russia has not published customs statistics since 2022, so both directions come from Japanese data: Russian exports are Japan’s imports of goods of Russian origin at CIF prices, Japanese exports are shipments with final destination Russia at FOB prices.', 'Yen is the original currency of Japanese statistics; the USD / JPY switch shows values in yen as published or in US dollars at the monthly average rate of the US Federal Reserve (series EXJPUS). Growth in yen and in dollars differs because the exchange rate changes.', 'OEC draws similar charts from the BACI database (CEPII), built from the same data via UN Comtrade and updated once a year with a lag of about 18 months. Annual totals in this dashboard match UN Comtrade within 0.2%.', 'The Payments page: Japan’s balance of payments by country (balances by item, quarterly from 2014), direct investment by country (monthly) and its year-end stock — Japanese Ministry of Finance; invoicing currencies by half-year — Japanese customs.']],
         ['How to read special codes', ['The first 6 digits are the international HS code (HS2017 until 2021, HS2022 from 2022); the last 3 are Japan’s own detail and differ between exports and imports.', 'Codes with “X” (for example 24XXXXXXA) are kept confidential at a trader’s request when only 1–2 exporters or importers use the code. The value and the country are real; only the exact product is hidden.', 'Codes starting with “00” are re-exports (goods not made in Japan), re-imports and aircraft stores.', 'Product names were translated for this dashboard from the Japanese customs schedules.']],
         ['Updates', ['Japanese customs publish a month about 4 weeks after it ends. Imports for the latest month are preliminary and are replaced by detailed figures a month later; annual figures are revised again in March and November of the following year.']],
         ['The Companies page', ['Companies come from open registers that record a company together with a product. Each link has a level: A — shipments to or from Japan are documented (no such source yet); B — market access: the company is approved or has registered a product for Japan, shipments themselves are not confirmed; C — indirect signs.', 'Connected now: the whole Rosselkhoznadzor Cerberus register — every plant and vessel approved for export to Japan (level B). Each company shows whether its approval is open and whether Japan imported goods of its categories from Russia in the last 12 months: many approved companies have not shipped for years. Tax IDs come from the EGRUL search and are accepted only after a check against the register’s own tax-ID filter; “tax ID not found” means no active record with this name is confirmed by the register. Activity codes, size and staff numbers come from the SME register of the tax service.', 'Next: EAEU declarations and certificates of conformity, public procurement and LesEGAIS — available only from a Russian IP address. Sanctions screening is not part of this dashboard.']],
@@ -1031,9 +1133,9 @@
       title: 'このダッシュボードについて',
       intro: '日ロ間の品目別貿易を表示します。oec.worldの「Bilateral Trade by Products」を参考にしつつ、最新の公表月までのデータ、9桁品目までの詳細、日本の港別の内訳を備えています。「企業」ページでは、品目とロシア企業を段階的に結びつけ、営業担当者が見込み顧客を探せるようにします。',
       sections: [
-        ['ページ構成', ['貿易：選択期間の貿易構造。2つのツリーマップ（ロシアの対日輸出・日本の対ロ輸出）、月次推移、選択品目のカード、日本の税関官署マップ、品目表。', '企業：公開登録簿で日本との取引が裏付けられたロシア企業を、品目と結びつけて表示します。']],
+        ['ページ構成', ['貿易：選択期間の貿易構造。2つのツリーマップ（ロシアの対日輸出・日本の対ロ輸出）、月次推移、選択品目のカード、日本の税関官署マップ、品目表。', '国際収支：日本の国際収支統計による貿易以外の資金の流れ（サービス、旅行、投資収益、日本企業の対ロ直接投資、貿易取引通貨）。', '企業：公開登録簿で日本との取引が裏付けられたロシア企業を、品目と結びつけて表示します。']],
         ['「貿易」ページの使い方', ['HS2／HS4／HS6／HS9：類から日本の9桁統計品目まで、品目の細かさを切り替えます。', '金額／増減：四角の大きさは常に金額。「増減」では色が前年同期比の変化を示します。', 'USD／JPY：通貨をドルまたは元の円で切り替えます。実額／構成比：表示を金額または全体に占める割合で切り替えます。', '期間：2017年以降の各年、今年の累計、直近12か月。', '四角をクリックすると品目を選択し、月次推移、カード（数量、単価、取引の頻度、主な官署、取引相手の探し方）、官署マップが表示されます。もう一度クリックで解除、ダブルクリックで下の階層へ、「← 戻る」で一つ前に戻ります。', '官署マップの円をクリックすると、その官署を通る品目が表示されます。']],
-        ['データの出典', ['財務省貿易統計（e-Stat）：9桁品目・月次。「品別国別表」は2017年から、「税関別品別国別表」は2021年から。', 'ロシアは2022年以降税関統計を公表していないため、双方向とも日本側のデータです。ロシアの対日輸出は日本のロシア原産品の輸入（CIF）、日本の対ロ輸出はロシアを最終仕向地とする輸出（FOB）です。', '円は日本の統計の元の通貨です。USD／JPYの切り替えで、公表どおりの円建て、または米連邦準備制度の月平均レート（EXJPUS）によるドル建てで表示します。為替の変動により、円建てとドル建ての増減率は異なります。', 'OECは同じ元データをUN Comtrade経由でまとめたBACI（CEPII）で同様の図を作成しており、更新は年1回・約1年半遅れです。本ダッシュボードの年間合計はUN Comtradeと0.2%以内で一致します。']],
+        ['データの出典', ['財務省貿易統計（e-Stat）：9桁品目・月次。「品別国別表」は2017年から、「税関別品別国別表」は2021年から。', 'ロシアは2022年以降税関統計を公表していないため、双方向とも日本側のデータです。ロシアの対日輸出は日本のロシア原産品の輸入（CIF）、日本の対ロ輸出はロシアを最終仕向地とする輸出（FOB）です。', '円は日本の統計の元の通貨です。USD／JPYの切り替えで、公表どおりの円建て、または米連邦準備制度の月平均レート（EXJPUS）によるドル建てで表示します。為替の変動により、円建てとドル建ての増減率は異なります。', 'OECは同じ元データをUN Comtrade経由でまとめたBACI（CEPII）で同様の図を作成しており、更新は年1回・約1年半遅れです。本ダッシュボードの年間合計はUN Comtradeと0.2%以内で一致します。', '「国際収支」ページ：財務省の地域別国際収支（項目別収支、2014年以降の四半期）、国・地域別の直接投資（月次）とその年末残高。貿易取引通貨別比率（半期）は財務省関税局の公表値です。']],
         ['特殊なコードの見方', ['上6桁は国際HS（2021年まではHS2017、2022年からはHS2022）、下3桁は日本独自の細分で、輸出と輸入で異なります。', '「X」を含むコード（例：24XXXXXXA）は、該当する輸出入者が1〜2者の場合に当事者の申請で非公表とされた品目です。金額と相手国は実数で、品目のみ伏せられています。', '「00」で始まるコードは再輸出品（日本以外で生産された貨物）・再輸入品・機用品です。', '品名は日本の税関の品目表をもとに、このダッシュボード用に翻訳したものです。']],
         ['更新', ['財務省は月末から約4週間後に月次データを公表します。直近月の輸入は速報値で、翌月に確報値へ置き換わります。年間の数値は翌年3月と11月に改訂されます。']],
         ['「企業」ページ', ['企業と品目が並んで記録されている公開登録簿から企業を抽出します。各結びつきには確度があります。A：日本との出荷が文書で裏付けられる（該当する情報源はまだなし）、B：市場アクセス — 対日輸出の認定または製品登録あり、出荷自体は未確認、C：間接的な兆候。', '現在は、ロシア連邦獣医植物検疫監督庁のCerberus登録簿の全体（対日輸出認定の全工場・船舶、確度B）を接続しています。各企業について、認定が有効か、過去12か月に日本がその品目をロシアから輸入したかを表示します。認定があっても長年出荷していない企業は多数あります。納税者番号はEGRUL検索から取得し、登録簿自身の納税者番号フィルターで照合できた場合のみ採用。「納税者番号なし」は、登録簿が確認できる同名の有効な記録がないことを示します。業種コード・規模・従業員数は税務庁の中小企業登録簿から取得。', '今後：EAEUの適合宣言・認証、公共調達、LesEGAIS（いずれもロシアのIPからのみ利用可能）。制裁チェックは本ダッシュボードの対象外です。']],
@@ -1042,7 +1144,175 @@
       linksTitle: 'リンク',
     },
   };
-  LANGS.forEach((l) => Object.assign(T[l], PAGE_T[l]));
+  // ---- texts of the Settlements page (Japan's balance of payments with Russia, shown from Russia's side) ----
+  const SETTLE_T = {
+    ru: {
+      tabSettlements: 'Расчёты', stTitle: 'Расчёты России и Японии',
+      stIntro: 'Товары — главная, но не единственная статья расчётов. Платёжный баланс Японии показывает и остальные: услуги, поездки, доходы от инвестиций, прямые инвестиции. Здесь данные Минфина Японии по России показаны со стороны России: плюс — Россия получает от Японии больше, чем платит, минус — платит больше.',
+      ariaYear: 'Год', ariaGran: 'Шаг графика', granY: 'Годы', granQ: 'Кварталы',
+      inYear: (y) => `за ${y} г.`, atEnd: (y) => `на конец ${y} г.`, endOf: (y) => `Конец ${y} г.`,
+      kCurrent: 'Сальдо текущих операций', kGoods: 'Товары', kServices: 'Услуги', kIncome: 'Доходы от инвестиций',
+      kFdi: 'Прямые инвестиции Японии в Россию', kDip: 'Накопленные японские инвестиции в России',
+      c1Title: 'Из чего складывается сальдо текущих операций',
+      c1Note: (u, q) => `Сальдо по статьям со стороны России, ${u}; точка — итог. Последний квартал в данных — ${q}.`,
+      unitWord: { usd: 'в долларах США', jpy: 'в иенах' },
+      series: { goods: 'Товары', services: 'Услуги', primary: 'Доходы от инвестиций', secondary: 'Текущие трансферты', current: 'Итог' },
+      quarter: (p) => `${['I', 'II', 'III', 'IV'][+p.slice(-1) - 1]} кв. ${p.slice(0, 4)}`,
+      half: (p) => `${p.endsWith('1') ? 'I' : 'II'} пол. ${p.slice(0, 4)}`,
+      c2Title: (y) => `Услуги и доходы по статьям, ${y}`,
+      c2Note: 'Полоса вправо — Россия получает больше, чем платит, влево — платит больше. Мелким шрифтом — то же годом раньше.',
+      groupServices: 'Услуги', groupIncome: 'Доходы',
+      items: {
+        travel: ['Поездки', 'траты россиян в Японии минус траты японцев в России'],
+        transport: ['Транспорт', 'перевозка грузов и пассажиров, портовые услуги'],
+        construction: ['Строительство', 'стройки японских компаний в России и российских — в Японии'],
+        ip: ['Роялти и лицензии', 'плата за товарные знаки, патенты, технологии и программы'],
+        business: ['Прочие деловые услуги', 'инжиниринг, консалтинг, исследования, торговое посредничество'],
+        financial: ['Финансовые услуги', 'банковские комиссии и сборы'],
+        maintenance: ['Ремонт и обслуживание', 'ремонт судов, самолётов и оборудования'],
+        insurance: ['Страхование и пенсии', 'страховые премии за вычетом выплат'],
+        telecom: ['Связь и ИТ', 'телеком, компьютерные и информационные услуги'],
+        government: ['Государственные услуги', 'расходы посольств, консульств и других госорганов'],
+        personal: ['Культура и развлечения', 'аудиовизуальные и прочие услуги частным лицам'],
+        manufacturing: ['Переработка сырья заказчика', 'переработка давальческого сырья'],
+        primary: ['Доходы от инвестиций', 'дивиденды, реинвестированная прибыль и проценты; в основном доходы японских компаний от вложений в России'],
+        secondary: ['Текущие трансферты', 'безвозмездные переводы: гранты, помощь, частные переводы'],
+      },
+      c3Title: 'Прямые инвестиции Японии в Россию', c3aTitle: 'Вложено за год, нетто', c3bTitle: 'Накоплено на конец года',
+      c3Note: (v, y) => ['Вложения японских компаний в российские дочерние и совместные предприятия, включая прибыль, оставленную в России. Российские прямые инвестиции в Японии почти нулевые: ', v, ` на конец ${y} г.`],
+      sReinv: 'Реинвестированная прибыль', sOther: 'Капитал и займы', sEquity: 'Капитал', sDebt: 'Займы внутри группы', sDipTotal: 'Всего',
+      tExec: 'Вложено', tWd: 'Изъято', tNet: 'Нетто',
+      c4Title: 'Валюта расчётов в торговле Японии с регионом',
+      c4Note: (imp, exp, p) => ['Таможня Японии не публикует валюты отдельно по России — только по региону «Центральная и Восточная Европа, Россия и др.». Россия — ', imp, ' импорта Японии из региона и ', exp, ` экспорта (${p}). Нижняя строка — весь мир для сравнения.`],
+      c4Imp: 'Импорт Японии из региона', c4Exp: 'Экспорт Японии в регион', world: 'Весь мир',
+      ccy: { JPY: 'Иена', USD: 'Доллар США', EUR: 'Евро', other: 'Прочие' },
+      c5Title: 'Что это значит для поиска клиентов',
+      insights: {
+        subs: ['Дочерние компании японских фирм', (dip, reinv, y, inc, yi) => ['Накопленные японские вложения в России — ', dip, ` на конец ${y} г., из них прибыль, оставленная в России, — `, reinv, `. Доходы японских инвесторов от вложений в России за ${yi} г. — `, inc, '. Это клиенты для расчётов по импорту из Японии, роялти и дивидендам; названий компаний в этих данных нет.']],
+        travel: ['Поездки', (v, y, v0, y0) => ['Россияне тратят в Японии больше, чем японцы в России: перевес ', v, ` за ${y} г. (в ${y0} г. — `, v0, '). Это платежи туроператоров и частных лиц.']],
+        ccy: ['Валюта', (jpy, usd, p) => ['В импорте Японии из региона, куда входит Россия, доля иены — ', jpy, ', доллара — ', usd, ` (${p}); юаня нет среди пяти основных валют. Для экспортёров в Японию это аргумент за расчёты в иенах.`]],
+      },
+      srcTitleS: 'Источники и как читать',
+      stSources: [
+        ['Платёжный баланс Японии по странам', 'Минфин и Банк Японии, таблицы 6a: сальдо статей по кварталам с 2014 года; квартал публикуется примерно через 4–5 месяцев после окончания. Минфин показывает сальдо со стороны Японии, здесь знак обратный — со стороны России. Товары в платёжном балансе учитываются в ценах FOB в обе стороны, поэтому сальдо отличается от таможенного на листе «Торговля».'],
+        ['Прямые инвестиции', 'Минфин Японии, таблицы 6d: по странам помесячно, включая реинвестированную прибыль; последние месяцы — предварительные. Остатки на конец года — статистика внешних активов и обязательств Японии по странам, раз в год в мае.'],
+        ['Валюта расчётов', 'таможня Японии, по полугодиям. По России отдельно не публикуется — только по региону «Центральная и Восточная Европа, Россия и др.»; долю России в торговле с регионом показывает таможенная статистика.'],
+        ['Пересчёт в доллары', 'потоки — по среднему за период курсу ФРС США (EXJPUS), остатки — по курсу последнего рабочего дня года (DEXJPUS). Переключатель JPY показывает исходные цифры в иенах.'],
+        ['Чего здесь нет', 'названий компаний и банков: платёжный баланс — сводная статистика. Финансовый счёт (портфельные инвестиции, займы, депозиты) не показан: по России он нерегулярен и плохо поддаётся толкованию.'],
+      ],
+    },
+    en: {
+      tabSettlements: 'Payments', stTitle: 'Russia–Japan payments',
+      stIntro: 'Goods are the main item of Russia–Japan payments, but not the only one. Japan’s balance of payments also shows services, travel, investment income and direct investment. This page shows the Japanese Ministry of Finance data on Russia from Russia’s side: plus means Russia receives more from Japan than it pays, minus means it pays more.',
+      ariaYear: 'Year', ariaGran: 'Chart step', granY: 'Years', granQ: 'Quarters',
+      inYear: (y) => `in ${y}`, atEnd: (y) => `at end-${y}`, endOf: (y) => `End-${y}`,
+      kCurrent: 'Current account balance', kGoods: 'Goods', kServices: 'Services', kIncome: 'Investment income',
+      kFdi: 'Japanese direct investment in Russia', kDip: 'Japanese direct investment stock in Russia',
+      c1Title: 'What makes up the current account balance',
+      c1Note: (u, q) => `Balance by item from Russia’s side, ${u}; the dot is the total. Latest quarter in the data: ${q}.`,
+      unitWord: { usd: 'US dollars', jpy: 'yen' },
+      series: { goods: 'Goods', services: 'Services', primary: 'Investment income', secondary: 'Current transfers', current: 'Total' },
+      quarter: (p) => `Q${p.slice(-1)} ${p.slice(0, 4)}`,
+      half: (p) => `H${p.slice(-1)} ${p.slice(0, 4)}`,
+      c2Title: (y) => `Services and income by item, ${y}`,
+      c2Note: 'A bar to the right means Russia receives more than it pays; to the left, it pays more. Small print: the same item a year earlier.',
+      groupServices: 'Services', groupIncome: 'Income',
+      items: {
+        travel: ['Travel', 'spending by Russians in Japan minus spending by Japanese in Russia'],
+        transport: ['Transport', 'freight and passenger transport, port services'],
+        construction: ['Construction', 'construction by Japanese firms in Russia and by Russian firms in Japan'],
+        ip: ['Royalties and licences', 'fees for trademarks, patents, technology and software'],
+        business: ['Other business services', 'engineering, consulting, research, trade-related services'],
+        financial: ['Financial services', 'bank fees and commissions'],
+        maintenance: ['Maintenance and repair', 'repair of ships, aircraft and equipment'],
+        insurance: ['Insurance and pensions', 'premiums net of claims'],
+        telecom: ['Telecom and IT', 'telecommunications, computer and information services'],
+        government: ['Government services', 'spending by embassies, consulates and other agencies'],
+        personal: ['Culture and recreation', 'audiovisual and other personal services'],
+        manufacturing: ['Processing of others’ inputs', 'tolling'],
+        primary: ['Investment income', 'dividends, reinvested earnings and interest; mostly income of Japanese companies from their investments in Russia'],
+        secondary: ['Current transfers', 'grants, aid and private transfers'],
+      },
+      c3Title: 'Japanese direct investment in Russia', c3aTitle: 'Invested during the year, net', c3bTitle: 'Stock at end of year',
+      c3Note: (v, y) => ['Investment by Japanese companies in their Russian subsidiaries and joint ventures, including profits kept in Russia. Russian direct investment in Japan is close to zero: ', v, ` at end-${y}.`],
+      sReinv: 'Reinvested earnings', sOther: 'Equity and loans', sEquity: 'Equity', sDebt: 'Intra-group loans', sDipTotal: 'Total',
+      tExec: 'Invested', tWd: 'Withdrawn', tNet: 'Net',
+      c4Title: 'Invoicing currency in Japan’s trade with the region',
+      c4Note: (imp, exp, p) => ['Japanese customs do not publish currencies for Russia alone, only for the region “Central and Eastern Europe, Russia etc.” Russia accounts for ', imp, ' of Japan’s imports from the region and ', exp, ` of its exports to it (${p}). The bottom row shows the whole world for comparison.`],
+      c4Imp: 'Japan’s imports from the region', c4Exp: 'Japan’s exports to the region', world: 'World',
+      ccy: { JPY: 'Yen', USD: 'US dollar', EUR: 'Euro', other: 'Other' },
+      c5Title: 'What this means for finding clients',
+      insights: {
+        subs: ['Subsidiaries of Japanese companies', (dip, reinv, y, inc, yi) => ['Japanese direct investment in Russia stood at ', dip, ` at end-${y}, of which profits kept in Russia: `, reinv, `. Japanese investors earned `, inc, ` from their investments in Russia in ${yi}. These companies need payments for imports from Japan, royalties and dividends; the data do not name them.`]],
+        travel: ['Travel', (v, y, v0, y0) => ['Russians spend more in Japan than Japanese spend in Russia: a gap of ', v, ` in ${y} (`, v0, ` in ${y0}). These are payments by tour operators and individuals.`]],
+        ccy: ['Currency', (jpy, usd, p) => ['In Japan’s imports from the region that includes Russia, the yen has a share of ', jpy, ' and the dollar ', usd, ` (${p}); the yuan is not among the top five currencies. For exporters to Japan this argues for settlement in yen.`]],
+      },
+      srcTitleS: 'Sources and how to read them',
+      stSources: [
+        ['Japan’s balance of payments by country', 'Ministry of Finance and Bank of Japan, tables 6a: balances by item, quarterly from 2014; a quarter is published about 4–5 months after it ends. The ministry shows balances from Japan’s side; this page reverses the sign to Russia’s side. Goods are valued FOB in both directions here, so the balance differs from the customs-based one on the Trade page.'],
+        ['Direct investment', 'Ministry of Finance, tables 6d: monthly by country, including reinvested earnings; the latest months are preliminary. Year-end stock comes from Japan’s international investment position by country, published every May.'],
+        ['Invoicing currency', 'Japanese customs, by half-year. Not published for Russia alone, only for the region “Central and Eastern Europe, Russia etc.”; Russia’s share of trade with the region comes from customs statistics.'],
+        ['Conversion to dollars', 'flows at the period-average US Federal Reserve rate (EXJPUS), stocks at the rate of the last business day of the year (DEXJPUS). The JPY switch shows the original figures in yen.'],
+        ['Not included', 'company or bank names: the balance of payments is aggregate statistics. The financial account (portfolio investment, loans, deposits) is not shown: for Russia it is erratic and hard to interpret.'],
+      ],
+    },
+    ja: {
+      tabSettlements: '国際収支', stTitle: '日ロ間の国際収支',
+      stIntro: '日ロ間の資金の流れの中心は貿易ですが、それだけではありません。日本の国際収支統計からは、サービス、旅行、投資収益、直接投資もわかります。このページでは財務省のロシアとの国際収支をロシア側から見た符号で示しています。プラスはロシアの受取超過、マイナスは支払超過です。',
+      ariaYear: '年', ariaGran: 'グラフの単位', granY: '年', granQ: '四半期',
+      inYear: (y) => `${y}年`, atEnd: (y) => `${y}年末`, endOf: (y) => `${y}年末`,
+      kCurrent: '経常収支', kGoods: '貿易収支', kServices: 'サービス収支', kIncome: '第一次所得収支',
+      kFdi: '日本の対ロ直接投資', kDip: '日本の対ロ直接投資残高',
+      c1Title: '経常収支の内訳',
+      c1Note: (u, q) => `ロシア側から見た項目別収支（${u}）。点は経常収支の合計。データの最新四半期は${q}。`,
+      unitWord: { usd: '米ドル', jpy: '円' },
+      series: { goods: '貿易収支', services: 'サービス収支', primary: '第一次所得収支', secondary: '第二次所得収支', current: '合計' },
+      quarter: (p) => `${p.slice(0, 4)}年${p.slice(-1)}Q`,
+      half: (p) => `${p.slice(0, 4)}年${p.endsWith('1') ? '上期' : '下期'}`,
+      c2Title: (y) => `サービス・所得の項目別収支（${y}）`,
+      c2Note: '右向きの棒はロシアの受取超過、左向きは支払超過。小さい数字は前年の値です。',
+      groupServices: 'サービス', groupIncome: '所得',
+      items: {
+        travel: ['旅行', '訪日ロシア人の支出から訪ロ日本人の支出を差し引いた額'],
+        transport: ['輸送', '貨物・旅客輸送、港湾サービス'],
+        construction: ['建設', '日本企業のロシアでの工事とロシア企業の日本での工事'],
+        ip: ['知的財産権等使用料', '商標・特許・技術・ソフトウェアの使用料'],
+        business: ['その他業務サービス', 'エンジニアリング、コンサルティング、研究開発、貿易関連サービス'],
+        financial: ['金融サービス', '銀行手数料など'],
+        maintenance: ['維持修理', '船舶・航空機・機器の修理'],
+        insurance: ['保険・年金サービス', '保険料から保険金を差し引いた額'],
+        telecom: ['通信・コンピュータ・情報サービス', '通信、データ処理、情報サービス'],
+        government: ['公的サービス等', '大使館・領事館などの支出'],
+        personal: ['個人・文化・娯楽サービス', '音響映像などの個人向けサービス'],
+        manufacturing: ['委託加工サービス', '他者が所有する原材料の加工'],
+        primary: ['第一次所得収支', '配当、再投資収益、利子。主に日本企業のロシアへの投資による収益'],
+        secondary: ['第二次所得収支', '無償資金協力、援助、個人送金など'],
+      },
+      c3Title: '日本の対ロ直接投資', c3aTitle: '年間の投資額（ネット）', c3bTitle: '年末残高',
+      c3Note: (v, y) => ['日本企業によるロシアの子会社・合弁会社への投資で、ロシアに留保された利益（収益の再投資）を含みます。ロシアの対日直接投資はほぼゼロです（', `${y}年末で`, v, '）。'],
+      sReinv: '収益の再投資', sOther: '株式資本・負債性資本', sEquity: '株式資本', sDebt: '負債性資本（グループ内貸付）', sDipTotal: '合計',
+      tExec: '実行', tWd: '回収', tNet: 'ネット',
+      c4Title: '地域別の貿易取引通貨',
+      c4Note: (imp, exp, p) => ['財務省はロシア単独の通貨別比率を公表しておらず、「中東欧・ロシア等」の数値のみです。日本の同地域からの輸入に占めるロシアの割合は', imp, '、同地域への輸出では', exp, `（${p}）。最下行は比較のための世界全体です。`],
+      c4Imp: '同地域からの輸入', c4Exp: '同地域への輸出', world: '世界',
+      ccy: { JPY: '円', USD: '米ドル', EUR: 'ユーロ', other: 'その他' },
+      c5Title: '顧客開拓への示唆',
+      insights: {
+        subs: ['日系企業のロシア子会社', (dip, reinv, y, inc, yi) => [`日本の対ロ直接投資残高は${y}年末で`, dip, '、うちロシアに留保された利益は', reinv, `。${yi}年に日本の投資家がロシアへの投資から得た収益は`, inc, '。輸入代金、ロイヤルティ、配当の決済を必要とする企業ですが、このデータに企業名は含まれません。']],
+        travel: ['旅行', (v, y, v0, y0) => [`ロシア人の訪日支出は日本人の訪ロ支出を上回っています。${y}年の差額は`, v, `（${y0}年は`, v0, '）。旅行会社や個人による支払いです。']],
+        ccy: ['通貨', (jpy, usd, p) => ['ロシアを含む地域からの日本の輸入では、円の比率が', jpy, '、米ドルが', usd, `（${p}）で、人民元は上位5通貨に入っていません。対日輸出企業にとっては円建て決済を選ぶ根拠になります。`]],
+      },
+      srcTitleS: '出典と読み方',
+      stSources: [
+        ['地域別国際収支', '財務省・日本銀行（表6a）：2014年以降の四半期の項目別収支。四半期終了後おおむね4〜5か月で公表されます。財務省は日本側の符号で公表していますが、このページではロシア側の符号に反転しています。貿易収支は輸出入ともFOB建てのため、「貿易」ページの通関ベースの収支とは一致しません。'],
+        ['直接投資', '財務省（表6d）：国・地域別の月次で、収益の再投資を含みます。直近数か月は速報値です。年末残高は本邦対外資産負債残高の地域別統計で、毎年5月に公表されます。'],
+        ['貿易取引通貨', '財務省関税局、半期ごと。ロシア単独の数値はなく、「中東欧・ロシア等」の地域のみです。同地域との貿易に占めるロシアの割合は貿易統計から算出しています。'],
+        ['ドル換算', 'フローは期間平均の米連邦準備制度のレート（EXJPUS）、残高は年末最終営業日のレート（DEXJPUS）で換算。JPYに切り替えると円建ての元の数値を表示します。'],
+        ['含まれないもの', '企業名・銀行名（国際収支は集計統計です）。金融収支（証券投資、貸付、預金）はロシアについては不規則で解釈が難しいため表示していません。'],
+      ],
+    },
+  };
+  LANGS.forEach((l) => Object.assign(T[l], PAGE_T[l], SETTLE_T[l]));
 
   // ---- page ----
   const st = { lang: 'ru', cur: 'usd', level: 4, mode: 'value', unit: 'abs', period: null, filter: null, tab: 'ru_jp', sort: 'value', dir: -1, q: '', sel: null, portFlow: 'ru_jp', port: null };
@@ -1856,7 +2126,7 @@
     drawTable();
   }
   // ---- pages ----
-  const PAGES = ['about', 'trade', 'companies'];
+  const PAGES = ['about', 'trade', 'settlements', 'companies'];
   st.page = PAGES.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'trade';
   function setPageVisibility() {
     PAGES.forEach((p) => { $('#' + p).hidden = p !== st.page; $('#tab-' + p).setAttribute('aria-selected', String(p === st.page)); });
@@ -1872,6 +2142,7 @@
   function draw() {
     setPageVisibility();
     if (st.page === 'trade') { drawTrade(); return; }
+    if (st.page === 'settlements') { drawSettlements(); return; }
     const v = dash.data('views'), p = dash.data('periods');
     if (v.status === 'ok' && p.status === 'ok') {
       index(v.data, p.data);
@@ -2009,6 +2280,332 @@
       const b = th.querySelector('button');
       if (b.dataset.csort === cst.sort) th.setAttribute('aria-sort', cst.dir > 0 ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort');
     });
+  }
+
+  // ---- settlements page: Japan's balance of payments with Russia (Ministry of Finance), shown from Russia's side ----
+  const sst = { year: null, gran: 'Y' };
+  const BOP_SERIES = ['goods', 'services', 'primary', 'secondary'];
+  const SERVICE_ITEMS = ['travel', 'transport', 'construction', 'ip', 'business', 'financial', 'maintenance', 'insurance', 'telecom', 'government', 'personal', 'manufacturing'];
+  const CCYS = ['JPY', 'USD', 'EUR'];
+  let sIdx = null;
+  function settleIndex(rows) {
+    if (sIdx && sIdx.rows === rows) return sIdx;
+    const periods = (test) => [...new Set(rows.filter(test).map((r) => r.period))].sort();
+    sIdx = {
+      rows, by: new Map(rows.map((r) => [r.key, r])),
+      years: periods((r) => r.item === 'current' && r.freq === 'Y'), quarters: periods((r) => r.item === 'current' && r.freq === 'Q'),
+      fdiYears: periods((r) => r.item === 'fdi_out_net' && r.freq === 'Y'), dipYears: periods((r) => r.item === 'dip_assets'),
+      halves: periods((r) => r.group === 'cur' && r.item.includes('_region_')),
+    };
+    return sIdx;
+  }
+  const sRow = (item, period) => (sIdx && sIdx.by.get(item + '|' + period)) || null;
+  const isPct = (r) => r.group === 'cur' || r.group === 'share';
+  // money rows follow the currency switch (value — USD, value_jpy — yen); currency shares are in pct
+  const sNum = (r) => { if (!r) return null; const x = isPct(r) ? r.pct : val(r, 'value'); return x === '' || x === undefined ? null : +x; };
+  const fmtShare = (v) => (+v).toFixed(v >= 10 ? 0 : 1) + '%';
+  // axis ticks without trailing zeros: $5.00B → $5B, $2.50B → $2.5B
+  const fmtTick = (v) => fmtMoney(v).replace(/(\.\d*?)0+(?=[A-Z兆億万円])/, '$1').replace(/\.(?=[A-Z兆億万円])/, '');
+  const cssVar = (name, fallback) => getComputedStyle(root).getPropertyValue(name).trim() || fallback;
+  // text inside a coloured fill: white or ink, whichever contrasts more (WCAG relative luminance)
+  const inkOn = (color) => {
+    const c = d3.rgb(color), lin = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+    const l = 0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b);
+    return (l + 0.05) / 0.062 > 1.05 / (l + 0.05) ? '#1d1d1f' : '#fff';
+  };
+  const sMark = (e, r) => { e.dataset.source = 'settlements'; e.dataset.field = isPct(r) ? 'pct' : F('value'); e.dataset.where = 'key=' + encodeURIComponent(r.key).replace(/%7C/g, '|'); };
+  // a figure from the settlements data, marked with its row and field
+  const sFig = (r, fmt, tag = 'b') => {
+    const e = el(tag), v = sNum(r);
+    if (v === null) { e.textContent = L().na; return e; }
+    sMark(e, r);
+    e.textContent = fmt(v);
+    return e;
+  };
+  const stColors = () => ({ goods: dash.colors[0], services: dash.colors[1], primary: dash.colors[2], secondary: dash.colors[3] });
+  function drawKeys(box, items) {
+    box.replaceChildren(...items.map(([color, label, dot]) => {
+      const s = el('span', 'rj-key'), i = el('i', dot ? 'dot' : '');
+      i.style.background = color;
+      s.append(i, document.createTextNode(label));
+      return s;
+    }));
+  }
+  // one tooltip per chart box; rows: [color, label, value, strong]
+  function stTip(box) { const t = el('div', 'rj-tip'); t.hidden = true; box.append(t); return t; }
+  function showStTip(box, tip, title, rows, px) {
+    tip.replaceChildren(el('div', 'k', title));
+    rows.forEach(([color, label, value, strong]) => {
+      const r = el('div', 'row'), a = el('span');
+      if (color) { const sw = el('i', 'rj-sw'); sw.style.background = color; a.append(sw); }
+      a.append(document.createTextNode(label));
+      r.append(a, el('span', strong ? 'n' : '', value));
+      tip.append(r);
+    });
+    tip.hidden = false;
+    const bw = box.clientWidth, tw = tip.offsetWidth;
+    tip.style.left = Math.max(0, px + 12 + tw > bw ? px - tw - 12 : px + 12) + 'px';
+    tip.style.top = '8px';
+  }
+  // a column from the baseline side y0 to the data end y1: the data end has 4px rounded corners, the baseline side stays square
+  const colPath = (x, w, y0, y1, round) => {
+    const r = round ? Math.min(4, w / 2, Math.abs(y1 - y0)) : 0, up = y1 < y0 ? 1 : -1;
+    if (!r) return `M${x},${y0}V${y1}H${x + w}V${y0}Z`;
+    return `M${x},${y0}V${y1 + up * r}Q${x},${y1} ${x + r},${y1}H${x + w - r}Q${x + w},${y1} ${x + w},${y1 + up * r}V${y0}Z`;
+  };
+  // stacked columns: positive segments grow up from zero and negative ones down, in the given order;
+  // items: { key, label, segs: [{ v, color }], total, tip: [title, rows] }
+  function drawColumns(box, items, o = {}) {
+    box.replaceChildren();
+    if (!items.length) return;
+    const H = o.H || 240, W = Math.max(240, box.clientWidth), top = 20, bottom = 26;
+    items.forEach((d) => {
+      let pos = 0, neg = 0;
+      d.st = d.segs.map((s) => { const a = s.v >= 0 ? pos : neg; if (s.v >= 0) pos += s.v; else neg += s.v; return { ...s, a, b: a + s.v }; });
+      d.pos = pos; d.neg = neg;
+    });
+    const lo = Math.min(0, d3.min(items, (d) => Math.min(d.neg, d.total ?? 0))), hi = Math.max(0, d3.max(items, (d) => Math.max(d.pos, d.total ?? 0)));
+    const y = d3.scaleLinear([lo, hi > lo ? hi : lo + 1], [H - bottom, top]).nice();
+    const yt = y.ticks(4);
+    const left = 8 + Math.max(...yt.map((v) => textW(fmtTick(v), 12, 400)));
+    const x = d3.scaleBand(items.map((d) => d.key), [left, W - 4]).paddingInner(items.length > 24 ? 0.2 : 0.35).paddingOuter(0.1);
+    const bw = Math.min(24, x.bandwidth()), off = (x.bandwidth() - bw) / 2, gap = (x.step() * x.paddingInner()) / 2;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', o.aria || '');
+    const sel = items.filter((d) => o.sel && d.key.startsWith(o.sel));
+    if (sel.length) {
+      const xa = x(sel[0].key) - gap, xb = x(sel[sel.length - 1].key) + x.bandwidth() + gap;
+      svg.append('rect').attr('x', xa).attr('y', 4).attr('width', xb - xa).attr('height', H - bottom - 4).attr('fill', 'var(--rj-pick)').attr('opacity', 0.16);
+    }
+    svg.append('g').selectAll('line').data(yt).join('line').attr('x1', left).attr('x2', W - 4).attr('y1', (v) => y(v)).attr('y2', (v) => y(v)).attr('stroke', 'var(--cds-chart-grid)');
+    svg.append('g').selectAll('text').data(yt).join('text').attr('x', left - 6).attr('y', (v) => y(v)).attr('dy', '0.32em')
+      .attr('text-anchor', 'end').attr('fill', 'var(--color-fg-muted)').attr('font-size', 12).text(fmtTick);
+    const labelled = items.filter((d) => d.label);
+    const every = Math.ceil(labelled.length / Math.max(1, Math.floor((W - left) / 44)));
+    svg.append('g').selectAll('text').data(labelled.filter((_, i) => i % every === 0)).join('text')
+      .attr('x', (d) => x(d.key) + (o.startLabels ? 0 : x.bandwidth() / 2)).attr('y', H - 8).attr('text-anchor', o.startLabels ? 'start' : 'middle')
+      .attr('fill', 'var(--color-fg-muted)').attr('font-size', 12).text((d) => d.label);
+    const g = svg.append('g');
+    for (const d of items) {
+      const x0 = x(d.key) + off;
+      for (const side of [1, -1]) {
+        const segs = d.st.filter((s) => s.v * side > 0);
+        segs.forEach((s, i) => {
+          let ya = y(s.a), yb = y(s.b);
+          if (i > 0) ya -= side; // 2px surface gap between touching segments: 1px off each end
+          if (i < segs.length - 1) yb += side;
+          if ((ya - yb) * side > 0.5) g.append('path').attr('d', colPath(x0, bw, ya, yb, i === segs.length - 1)).attr('fill', s.color);
+        });
+      }
+    }
+    svg.append('line').attr('x1', left).attr('x2', W - 4).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', 'var(--cds-chart-axis)');
+    if (o.dots) {
+      g.selectAll('circle').data(items.filter((d) => d.total !== null)).join('circle')
+        .attr('cx', (d) => x(d.key) + x.bandwidth() / 2).attr('cy', (d) => y(d.total)).attr('r', bw < 10 ? 3 : 4)
+        .attr('fill', 'var(--color-fg)').attr('stroke', 'var(--color-panel)').attr('stroke-width', 2);
+    }
+    for (const k of new Set(o.labelKeys || [])) {
+      const d = items.find((it) => it.key === k);
+      if (!d || d.total === null) continue;
+      const yv = d.total >= 0 ? y(Math.max(d.pos, d.total)) - 6 : y(Math.min(d.neg, d.total)) + 14;
+      svg.append('text').attr('x', x(d.key) + x.bandwidth() / 2).attr('y', yv).attr('text-anchor', 'middle')
+        .attr('font-size', 12).attr('font-weight', 600).attr('fill', 'var(--color-fg)').text(fmtMoney(d.total));
+    }
+    const tip = stTip(box);
+    for (const d of items) {
+      const show = () => showStTip(box, tip, d.tip[0], d.tip[1], (x(d.key) + x.bandwidth() / 2) * (box.clientWidth / W));
+      svg.append('rect').attr('x', x(d.key) - gap).attr('y', 0).attr('width', x.step()).attr('height', H).attr('fill', 'transparent')
+        .attr('tabindex', 0).attr('aria-label', `${d.tip[0]}: ${d.tip[1][0][2]}`)
+        .on('mouseenter focus', show).on('mouseleave blur', () => { tip.hidden = true; });
+    }
+  }
+
+  function segsS() {
+    $('#st-cur').querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === st.cur)));
+    $('#st-gran').querySelectorAll('button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.v === sst.gran)));
+  }
+  $('#st-year').addEventListener('change', (e) => { sst.year = e.target.value; drawSettlements(); });
+  $('#st-cur').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && b.dataset.v !== st.cur) { st.cur = b.dataset.v; draw(); } });
+  $('#st-gran').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && b.dataset.v !== sst.gran) { sst.gran = b.dataset.v; segsS(); drawStCurrent(); } });
+
+  function drawSettlements() {
+    segsS();
+    $('#st-sources-list').replaceChildren(...L().stSources.map(([k, t]) => { const item = el('li'); item.append(el('b', '', k + ': '), document.createTextNode(t)); return item; }));
+    const sd = dash.data('settlements');
+    const boxes = ['#st-kpis', '#st-current-chart', '#st-items', '#st-fdi-flow', '#st-fdi-pos', '#st-ccy-imp', '#st-ccy-exp'];
+    if (sd.status !== 'ok') {
+      boxes.forEach((b) => { if (sd.status === 'error') failed($(b)); else $(b).classList.add('dash-skeleton'); });
+      return;
+    }
+    boxes.forEach((b) => $(b).classList.remove('dash-skeleton'));
+    settleIndex(sd.data);
+    if (!sst.year || !sIdx.years.includes(sst.year)) sst.year = sIdx.years[sIdx.years.length - 1];
+    const sel = $('#st-year');
+    sel.replaceChildren(...sIdx.years.slice().reverse().map((y) => new Option(L().year(y), y)));
+    sel.value = sst.year;
+    drawStKpis();
+    drawStCurrent();
+    drawStItems();
+    drawStFdi();
+    drawStCcy();
+    drawStInsights();
+  }
+
+  function drawStKpis() {
+    const y = sst.year, fdi = sRow('fdi_out_net', y);
+    const kpi = (r, label, sub, signed) => {
+      const d = el('div', 'rj-kpi');
+      d.append(sFig(r, signed ? fmtSigned : fmtMoney), el('span', '', label), el('span', '', sub));
+      return d;
+    };
+    $('#st-kpis').replaceChildren(
+      kpi(sRow('current', y), L().kCurrent, L().inYear(y), true),
+      kpi(sRow('goods', y), L().kGoods, L().inYear(y), true),
+      kpi(sRow('services', y), L().kServices, L().inYear(y), true),
+      kpi(sRow('primary', y), L().kIncome, L().inYear(y), true),
+      kpi(fdi, L().kFdi, fdi && +fdi.months < 12 ? L().ytd(y, +fdi.months) : L().inYear(y), false),
+      kpi(sRow('dip_assets', y), L().kDip, L().atEnd(y), false),
+    );
+  }
+
+  function drawStCurrent() {
+    if (!sIdx) return;
+    const colors = stColors(), quarterly = sst.gran === 'Q';
+    drawKeys($('#st-current-keys'), [...BOP_SERIES.map((s) => [colors[s], L().series[s]]), ['var(--color-fg)', L().series.current, true]]);
+    const lastQ = sIdx.quarters[sIdx.quarters.length - 1];
+    $('#st-current-note').textContent = L().c1Note(L().unitWord[st.cur], lastQ ? L().quarter(lastQ) : L().na);
+    drawColumns($('#st-current-chart'), (quarterly ? sIdx.quarters : sIdx.years).map((p) => {
+      const v = Object.fromEntries(BOP_SERIES.map((s) => [s, sNum(sRow(s, p)) || 0]));
+      const total = sNum(sRow('current', p));
+      return {
+        key: p, label: quarterly ? (p.endsWith('Q1') ? p.slice(0, 4) : '') : p, total,
+        segs: BOP_SERIES.map((s) => ({ v: v[s], color: colors[s] })),
+        tip: [quarterly ? L().quarter(p) : L().year(p),
+          [[null, L().series.current, total === null ? L().na : fmtSigned(total), true], ...BOP_SERIES.map((s) => [colors[s], L().series[s], fmtSigned(v[s])])]],
+      };
+    }), { H: 300, sel: sst.year, dots: true, startLabels: quarterly, aria: L().c1Title });
+  }
+
+  // services and income by item for the chosen year: a diverging bar per item, the previous year in small print
+  function drawStItems() {
+    const box = $('#st-items'), y = sst.year, prev = String(+y - 1), colors = stColors();
+    $('#st-items-title').textContent = L().c2Title(L().year(y));
+    const groups = [[L().groupServices, SERVICE_ITEMS.map((it) => [it, colors.services])], [L().groupIncome, [['primary', colors.primary], ['secondary', colors.secondary]]]];
+    const size = (it) => Math.abs(sNum(sRow(it, y)) || 0);
+    const max = d3.max(groups.flatMap(([, items]) => items.map(([it]) => size(it)))) || 1;
+    box.replaceChildren();
+    for (const [title, items] of groups) {
+      const rows = items.filter(([it]) => sRow(it, y) || sRow(it, prev)).sort((a, b) => size(b[0]) - size(a[0]));
+      if (!rows.length) continue;
+      box.append(el('div', 'rj-dgroup', title));
+      for (const [it, color] of rows) {
+        const v = sNum(sRow(it, y)) || 0, w = (Math.abs(v) / max) * 50;
+        const row = el('div', 'rj-drow');
+        const name = el('div', 'nm', L().items[it][0]);
+        name.append(el('small', '', L().items[it][1]));
+        const track = el('div', 'rj-dtrack'), bar = el('i');
+        Object.assign(bar.style, { width: w + '%', left: (v >= 0 ? 50 : 50 - w) + '%', background: color, borderRadius: v >= 0 ? '0 4px 4px 0' : '4px 0 0 4px' });
+        track.append(bar);
+        const vEl = el('div', 'v');
+        vEl.append(sFig(sRow(it, y), fmtSigned));
+        const pv = el('small');
+        pv.append(document.createTextNode(L().year(prev) + ': '), sFig(sRow(it, prev), fmtSigned, 'span'));
+        vEl.append(pv);
+        row.append(name, track, vEl);
+        box.append(row);
+      }
+    }
+  }
+
+  function drawStFdi() {
+    const ly = sIdx.dipYears[sIdx.dipYears.length - 1];
+    compose($('#st-fdi-note'), ly ? L().c3Note(sFig(sRow('dip_liab', ly), fmtMoney), ly) : []);
+    const fy = sIdx.fdiYears, last = sRow('fdi_out_net', fy[fy.length - 1]);
+    drawColumns($('#st-fdi-flow'), fy.map((y) => {
+      const r = sRow('fdi_out_net', y), m = +r.months, v = sNum(r) || 0;
+      return {
+        key: y, label: m < 12 ? y + '*' : y, total: v, segs: [{ v, color: dash.colors[0] }],
+        tip: [m < 12 ? L().ytd(y, m) : L().year(y), [[null, L().tNet, fmtMoney(v), true],
+          [null, L().tExec, fmtMoney(sNum(sRow('fdi_out_exec', y)) || 0)], [null, L().tWd, fmtMoney(sNum(sRow('fdi_out_wd', y)) || 0)]]],
+      };
+    }), { sel: sst.year, labelKeys: [sst.year], aria: L().c3aTitle });
+    $('#st-fdi-hint').textContent = last && +last.months < 12 ? '* ' + L().ytd(last.period, +last.months) : '';
+    // the stock: profits kept in Russia (the accent) against everything else (gray)
+    const muted = cssVar('--cds-chart-muted', '#c8c8cc'), reinvC = dash.colors[1];
+    drawKeys($('#st-pos-keys'), [[reinvC, L().sReinv], [muted, L().sOther]]);
+    drawColumns($('#st-fdi-pos'), sIdx.dipYears.map((y) => {
+      const n = (it) => sNum(sRow(it, y)) || 0, re = n('dip_assets_reinv'), eq = n('dip_assets_equity'), debt = n('dip_assets_debt');
+      const total = sNum(sRow('dip_assets', y));
+      return {
+        key: y, label: y, total, segs: [{ v: re, color: reinvC }, { v: eq + debt, color: muted }],
+        tip: [L().endOf(y), [[null, L().sDipTotal, total === null ? L().na : fmtMoney(total), true],
+          [reinvC, L().sReinv, fmtMoney(re)], [muted, L().sEquity, fmtMoney(eq)], [muted, L().sDebt, fmtMoney(debt)]]],
+      };
+    }), { sel: sst.year, labelKeys: [sIdx.dipYears[0], ly, sst.year], aria: L().c3bTitle });
+  }
+
+  // invoicing currencies: one 100% bar per half-year for the region, the world in the last row
+  function drawStCcy() {
+    const halves = sIdx.halves, last = halves[halves.length - 1];
+    if (!last) return;
+    const muted = cssVar('--cds-chart-muted', '#c8c8cc');
+    const colors = { JPY: dash.colors[0], USD: dash.colors[1], EUR: dash.colors[2], other: muted };
+    drawKeys($('#st-ccy-keys'), [...CCYS, 'other'].map((c) => [colors[c], L().ccy[c]]));
+    // Russia's share of Japan's trade with the region: the same half-year, else the latest period available
+    const share = (f) => sRow('share_' + f, last) || sIdx.rows.filter((r) => r.item === 'share_' + f).sort((a, b) => a.period.localeCompare(b.period)).pop() || null;
+    const sImp = share('imp'), sExp = share('exp');
+    const pl = !sImp ? L().na : sImp.freq === 'H' ? L().half(sImp.period) : L().year(sImp.period);
+    compose($('#st-ccy-note'), L().c4Note(sFig(sImp, fmtShare), sFig(sExp, fmtShare), pl));
+    for (const [id, flow] of [['#st-ccy-imp', 'imp'], ['#st-ccy-exp', 'exp']]) {
+      const box = $(id);
+      box.replaceChildren();
+      const tip = stTip(box), placed = [];
+      const lines = [...halves.map((h) => ({ p: h, area: 'region', label: L().half(h) })), { p: last, area: 'world', label: `${L().world}, ${L().half(last)}`, world: true }];
+      for (const ln of lines) {
+        const rows = sIdx.rows.filter((r) => r.group === 'cur' && r.period === ln.p && r.item.startsWith(`cur_${flow}_${ln.area}_`));
+        const of = (c) => rows.find((r) => r.item.endsWith('_' + c));
+        const segs = [...CCYS.map((c) => ({ c, r: of(c), v: of(c) ? +of(c).pct : 0 })),
+          { c: 'other', r: null, v: d3.sum(rows.filter((r) => !CCYS.some((c) => r.item.endsWith('_' + c))), (r) => +r.pct) }].filter((s) => s.v > 0);
+        const line = el('div', 'rj-crow' + (ln.world ? ' world' : '')), bar = el('div', 'rj-cbar');
+        segs.forEach((s, i) => {
+          const seg = el('span'), label = fmtShare(s.v);
+          Object.assign(seg.style, { flex: `${s.v} 1 0`, background: colors[s.c], color: inkOn(colors[s.c]) });
+          if (i === segs.length - 1) seg.style.borderRadius = '0 4px 4px 0';
+          seg.tabIndex = 0;
+          seg.setAttribute('aria-label', `${ln.label}, ${L().ccy[s.c]}: ${label}`);
+          const show = () => showStTip(box, tip, ln.label, [[colors[s.c], L().ccy[s.c], label, true]], seg.offsetLeft + seg.offsetWidth / 2);
+          seg.addEventListener('mouseenter', show); seg.addEventListener('focus', show);
+          seg.addEventListener('mouseleave', () => { tip.hidden = true; }); seg.addEventListener('blur', () => { tip.hidden = true; });
+          bar.append(seg);
+          placed.push([seg, s, label]);
+        });
+        line.append(el('span', '', ln.label), bar);
+        box.append(line);
+      }
+      // a share is written inside its segment only when it fits
+      for (const [seg, s, label] of placed) {
+        if (textW(label, 12, 600) + 8 > seg.clientWidth) continue;
+        seg.textContent = label;
+        if (s.r) sMark(seg, s.r);
+      }
+    }
+  }
+
+  function drawStInsights() {
+    const ul = $('#st-insights'), I = L().insights, y = sst.year;
+    ul.replaceChildren();
+    const item = (lead, parts) => {
+      const li = el('li');
+      li.append(el('b', '', lead + (st.lang === 'ja' ? '：' : '. ')));
+      parts.forEach((x) => li.append(typeof x === 'string' ? document.createTextNode(x) : x));
+      ul.append(li);
+    };
+    const abs = (v) => fmtMoney(Math.abs(v));
+    const ly = sIdx.dipYears[sIdx.dipYears.length - 1];
+    if (ly) item(I.subs[0], I.subs[1](sFig(sRow('dip_assets', ly), fmtMoney), sFig(sRow('dip_assets_reinv', ly), fmtMoney), ly, sFig(sRow('primary', y), abs), y));
+    const base = +y > 2019 ? '2019' : String(+y - 1);
+    item(I.travel[0], I.travel[1](sFig(sRow('travel', y), abs), y, sFig(sRow('travel', base), abs), base));
+    const last = sIdx.halves[sIdx.halves.length - 1];
+    if (last) item(I.ccy[0], I.ccy[1](sFig(sRow('cur_imp_region_JPY', last), fmtShare), sFig(sRow('cur_imp_region_USD', last), fmtShare), L().half(last)));
   }
 
   applyLang();
