@@ -186,6 +186,10 @@
   .rj-status { display: block; font-size: var(--cds-font-size-caption); margin-top: 2px; white-space: nowrap; }
   .rj-status.open { color: var(--color-ok); } .rj-status.pending { color: var(--color-warn); } .rj-status.limited { color: var(--color-fg-muted); }
   .rj-ctable td small.rj-trade.none { color: var(--color-warn); }
+  .rj-status.rep { color: var(--color-ok); } .rj-status.importer { color: var(--color-fg-muted); } .rj-status.pp353 { color: var(--color-warn); }
+  .rj-ctable td small.rj-morecats { display: inline-block; cursor: help; }
+  .rj-more { display: block; margin: 10px auto 0; }
+  #comp-flow { flex: 0 1 auto; }
   .rj-sources ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: var(--cds-font-size-caption); line-height: 1.5; }
   .rj-sources b { font-weight: 600; }
   /* четыре листа: на узком экране вкладки ужимаются, а если всё равно не помещаются — переносятся */

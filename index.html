@@ -319,6 +319,11 @@
     </div>
     <div class="rj-kpis" id="comp-kpis" data-source="companies"></div>
     <div class="rj-tools rj-ctools">
+      <div class="rj-seg" role="group" data-i18n-aria="compDir" id="comp-flow" data-source="companies">
+        <button type="button" data-v="all">—</button>
+        <button type="button" data-v="ru_jp">—</button>
+        <button type="button" data-v="jp_ru">—</button>
+      </div>
       <select class="rj-period rj-csel" id="comp-cat" data-i18n-aria="compCat" data-source="companies products"></select>
       <select class="rj-period rj-csel" id="comp-region" data-i18n-aria="compRegion" data-source="companies"></select>
       <input class="rj-search" id="comp-search" type="search" data-i18n-ph="compSearch" data-i18n-aria="compSearch">
@@ -339,6 +344,7 @@
         <tbody></tbody>
       </table>
     </div>
+    <button type="button" class="rj-btn rj-more" id="comp-more" data-source="companies" hidden>—</button>
     <div class="rj-card rj-sources" id="comp-sources">
       <h2 data-i18n="srcTitle">—</h2>
       <ul id="comp-sources-list"></ul>
@@ -1087,7 +1093,10 @@
     const comps = companiesFor(s.code, s.flow);
     if (comps.length) {
       const b = el('button', 'rj-btn pick', L().compInCat(comps.length)); b.type = 'button';
-      b.addEventListener('click', () => { cst.cat = s.code.length >= 4 ? s.code.slice(0, 4) : s.code.slice(0, 2); cst.region = ''; cst.q = ''; $('#comp-search').value = ''; showPage('companies'); });
+      b.addEventListener('click', () => {
+        Object.assign(cst, { flow: s.flow, cat: s.code.length >= 4 ? s.code.slice(0, 4) : s.code.slice(0, 2), region: '', q: '', limit: COMP_PAGE });
+        $('#comp-search').value = ''; showPage('companies');
+      });
       body.append(b);
     }
   }
@@ -1359,7 +1368,8 @@
   }
 
   // ---- companies page ----
-  const cst = { cat: '', region: '', q: '', sort: 'name', dir: 1 };
+  const COMP_PAGE = 300;  // строк таблицы за раз: импортёров тысячи
+  const cst = { flow: 'all', cat: '', region: '', q: '', sort: 'name', dir: 1, limit: COMP_PAGE };
   const compName = (r) => (st.lang === 'ru' ? r.name : r.name_lat || r.name);
   const regionName = (code) => (REGION_T[+code] ? REGION_T[+code][li()] : code);
   const okvedName = (r) => (st.lang === 'ru' ? r.okved_name : (OKVED_T[r.okved] || [])[li()] || '');
@@ -1371,17 +1381,37 @@
     if (all.length > max) shown.push(L().more(all.length - max));
     return shown.join(st.lang === 'ja' ? '、' : '; ');
   };
+  // изготовители из деклараций Росаккредитации: «название (деклараций)», «+N» — ещё N изготовителей; в EN/JA — без кириллицы:
+  // русские пояснения в скобках убираются, названия только по-русски уходят в «ещё N»
+  const makersText = (r, max = 3) => {
+    let rest = 0;
+    const all = [];
+    for (const s of r.evidence.split('; ')) {
+      const plus = s.match(/^\+(\d+)$/), m = s.match(/^(.*) \((\d+)\)$/);
+      if (plus) { rest += +plus[1]; continue; }
+      if (!m) continue;
+      const name = st.lang === 'ru' ? m[1] : m[1].replace(/\s*\([^)]*[А-Яа-яЁё][^)]*\)/g, '').trim();
+      if (!name || (st.lang !== 'ru' && /[А-Яа-яЁё]/.test(name))) { rest += 1; continue; }
+      all.push(`${name} (${m[2]})`);
+    }
+    const shown = all.slice(0, max);
+    rest += all.length - shown.length;
+    if (rest > 0) shown.push(L().moreMakers(rest));
+    return shown.join(st.lang === 'ja' ? '、' : '; ');
+  };
   const codesOf = (r) => r.hs4.split(';').filter(Boolean);
+  const hasFlag = (r, f) => (r.flags || '').split(';').includes(f);
   // код компании может быть главой (03 — «рыба и морепродукты» без уточнения): такая компания входит в любую категорию главы
   const hasCat = (r, cat) => !cat || codesOf(r).some((h) => (h.length === 2 ? cat.startsWith(h) : h.startsWith(cat)));
-  // ввоз в Японию товаров категорий компании за последние 12 месяцев (null, если торговые данные ещё не загружены)
+  // торговля товарами категорий компании за последние 12 месяцев в её направлении: у экспортёра — ввоз в Японию из России,
+  // у импортёра — вывоз из Японии в Россию (null, если торговые данные ещё не загружены)
   const tradeOf = (r) => {
     if (!idx || !idx.periods.has('ltm')) return null;
     const codes = codesOf(r), chapters = codes.filter((h) => h.length === 2);
     let v = 0;
     for (const h of codes) {
       if (h.length === 4 && chapters.includes(h.slice(0, 2))) continue;
-      const row = idx.byKey.get(`ltm|ru_jp|${h}`);
+      const row = idx.byKey.get(`ltm|${r.flow}|${h}`);
       if (row) v += row.value;
     }
     return v;
@@ -1391,9 +1421,11 @@
     if (cd.status !== 'ok' || code.includes('X') || code.startsWith('00')) return [];
     return cd.data.filter((r) => r.flow === flow && hasCat(r, code.length >= 4 ? code.slice(0, 4) : code));
   }
-  $('#comp-cat').addEventListener('change', (e) => { cst.cat = e.target.value; drawCompanies(); });
-  $('#comp-region').addEventListener('change', (e) => { cst.region = e.target.value; drawCompanies(); });
-  $('#comp-search').addEventListener('input', (e) => { cst.q = e.target.value.trim().toLowerCase(); drawCompanies(); });
+  $('#comp-flow').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { cst.flow = b.dataset.v; cst.limit = COMP_PAGE; drawCompanies(); } });
+  $('#comp-cat').addEventListener('change', (e) => { cst.cat = e.target.value; cst.limit = COMP_PAGE; drawCompanies(); });
+  $('#comp-region').addEventListener('change', (e) => { cst.region = e.target.value; cst.limit = COMP_PAGE; drawCompanies(); });
+  $('#comp-search').addEventListener('input', (e) => { cst.q = e.target.value.trim().toLowerCase(); cst.limit = COMP_PAGE; drawCompanies(); });
+  $('#comp-more').addEventListener('click', () => { cst.limit += COMP_PAGE; drawCompanies(); });
   $('#comp-table').querySelector('thead').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-csort]'); if (!b) return;
     if (cst.sort === b.dataset.csort) cst.dir = -cst.dir; else { cst.sort = b.dataset.csort; cst.dir = ['employees', 'since'].includes(cst.sort) ? -1 : 1; }
@@ -1401,46 +1433,65 @@
   });
   $('#comp-table').querySelector('tbody').addEventListener('click', (e) => {
     const chip = e.target.closest('button.rj-chip');
-    if (chip) { cst.cat = chip.dataset.code; drawCompanies(); }
+    if (chip) { cst.cat = chip.dataset.code; cst.limit = COMP_PAGE; drawCompanies(); }
   });
   function drawCompanies() {
     const cd = dash.data('companies');
     const tb = $('#comp-table').querySelector('tbody');
     tb.replaceChildren();
+    $('#comp-more').hidden = true;
     $('#comp-sources-list').replaceChildren(...L().sources.map(([k, t]) => { const item = el('li'); item.append(el('b', '', k + ': '), document.createTextNode(t)); return item; }));
     if (cd.status !== 'ok') { if (cd.status === 'error') failed($('#comp-kpis')); return; }
     const all = cd.data;
-    const codes = [...new Set(all.flatMap(codesOf))].sort();
+    // direction: the buttons count companies of each kind; the lists below come from the chosen kind only
+    $('#comp-flow').querySelectorAll('button').forEach((b) => {
+      const v = b.dataset.v;
+      b.textContent = `${L().compFlowT[v]} \u00b7 ${fmtInt(v === 'all' ? all.length : all.filter((r) => r.flow === v).length)}`;
+      b.setAttribute('aria-pressed', String(v === cst.flow));
+    });
+    const pool = cst.flow === 'all' ? all : all.filter((r) => r.flow === cst.flow);
+    const codes = [...new Set(pool.flatMap(codesOf))].sort();
     const chapters = [...new Set(codes.map((h) => h.slice(0, 2)))];
     const opts = [new Option(L().compAllCats, '')];
     chapters.forEach((ch) => {
       opts.push(new Option(L().chapterAll(ch, codeName(ch)), ch));
       codes.filter((h) => h.length === 4 && h.startsWith(ch)).forEach((h) => opts.push(new Option(`\u2003${h} ${codeName(h)}`, h)));
     });
+    // a category or region picked for the other direction stays chosen (and gives an empty list) rather than silently vanishing
+    if (cst.cat && !opts.some((o) => o.value === cst.cat)) opts.splice(1, 0, new Option(`${cst.cat} ${codeName(cst.cat)}`, cst.cat));
     $('#comp-cat').replaceChildren(...opts);
     $('#comp-cat').value = cst.cat;
-    const regions = [...new Set(all.map((r) => r.region_code))].sort((a, b) => regionName(a).localeCompare(regionName(b), st.lang));
+    const regions = [...new Set(pool.map((r) => r.region_code))];
+    if (cst.region && !regions.includes(cst.region)) regions.push(cst.region);
+    regions.sort((a, b) => regionName(a).localeCompare(regionName(b), st.lang));
     $('#comp-region').replaceChildren(new Option(L().compAllRegions, ''), ...regions.map((c) => new Option(regionName(c), c)));
     $('#comp-region').value = cst.region;
-    let rows = all.filter((r) => hasCat(r, cst.cat) && (!cst.region || r.region_code === cst.region));
-    if (cst.q) rows = rows.filter((r) => [r.name, r.name_full, r.name_lat, r.inn].some((x) => (x || '').toLowerCase().includes(cst.q)));
+    let rows = pool.filter((r) => hasCat(r, cst.cat) && (!cst.region || r.region_code === cst.region));
+    // search also covers the evidence (Japanese manufacturers of importers, register objects of exporters) and, in Russian, products
+    if (cst.q) rows = rows.filter((r) => [r.name, r.name_full, r.name_lat, r.inn, r.evidence, st.lang === 'ru' ? r.products : '']
+      .some((x) => (x || '').toLowerCase().includes(cst.q)));
     const key = {
       name: compName, inn: (r) => r.inn, region: (r) => regionName(r.region_code), hs4: (r) => codesOf(r)[0] || '',
-      okved: (r) => r.okved, employees: (r) => +r.employees || 0, since: (r) => r.since, level: (r) => ({ open: 0, limited: 1, pending: 2 }[r.status] ?? 3),
+      okved: (r) => r.okved, employees: (r) => +r.employees || 0, since: (r) => r.since,
+      level: (r) => ({ open: 0, limited: 1, pending: 2, rep: 3, importer: 4 }[r.status] ?? 5),
     }[cst.sort];
     rows.sort((a, b) => { const va = key(a), vb = key(b); return typeof va === 'number' ? cst.dir * (va - vb) : cst.dir * String(va).localeCompare(String(vb), st.lang); });
     // headline figures
     const kpi = (v, label) => { const d = el('div', 'rj-kpi'); d.append(el('b', '', String(v)), el('span', '', label(v))); return d; };
     $('#comp-kpis').replaceChildren(kpi(rows.length, L().kCompanies), kpi(new Set(rows.flatMap(codesOf).filter((h) => h.length === 4)).size, L().kCats),
-      kpi(new Set(rows.map((r) => r.region_code)).size, L().kRegions), kpi(rows.filter((r) => r.status === 'open').length, L().kOpen),
-      kpi(rows.filter((r) => r.sme).length, L().kSme));
-    // how big the chosen category is in trade
-    const vr = cst.cat && idx ? idx.byKey.get(`${st.period}|ru_jp|${cst.cat}`) : null;
-    $('#comp-cat-note').textContent = cst.cat
-      ? L().catNote(`${cst.cat} ${codeName(cst.cat, 'ru_jp')}`, fmtMoney(vr ? val(vr, 'value') : 0), periodLabel(idx && idx.periods.get(st.period)))
-      : L().catNoteAll(rows.length);
+      kpi(new Set(rows.map((r) => r.region_code)).size, L().kRegions),
+      ...(cst.flow !== 'jp_ru' ? [kpi(rows.filter((r) => r.status === 'open').length, L().kOpen)] : []),
+      ...(cst.flow !== 'ru_jp' ? [kpi(rows.filter((r) => r.status === 'rep').length, L().kRep), kpi(rows.filter((r) => hasFlag(r, 'pp353')).length, L().kPp353)] : []),
+      kpi(rows.filter((r) => r.sme && r.sme !== '-').length, L().kSme));
+    // how big the chosen category is in trade, in the chosen direction (both directions for «all»)
+    const catVal = (f) => { const vr = idx ? idx.byKey.get(`${st.period}|${f}|${cst.cat}`) : null; return fmtMoney(vr ? val(vr, 'value') : 0); };
+    const per = periodLabel(idx && idx.periods.get(st.period)), catLabel = `${cst.cat} ${codeName(cst.cat, cst.flow === 'jp_ru' ? 'jp_ru' : 'ru_jp')}`;
+    $('#comp-cat-note').textContent = !cst.cat ? L().catNoteAll(rows.length)
+      : cst.flow === 'ru_jp' ? L().catNote(catLabel, catVal('ru_jp'), per)
+        : cst.flow === 'jp_ru' ? L().catNoteJp(catLabel, catVal('jp_ru'), per)
+          : L().catNoteBoth(catLabel, catVal('ru_jp'), catVal('jp_ru'), per);
     if (!rows.length) { const tr = el('tr'); const td = el('td', 'l', L().compEmpty); td.colSpan = 8; tr.append(td); tb.append(tr); return; }
-    for (const r of rows) {
+    for (const r of rows.slice(0, cst.limit)) {
       const tr = el('tr'); tr.dataset.key = r.key;
       const td = (cls) => { const c = el('td', cls); tr.append(c); return c; };
       const c0 = td('l'); c0.append(document.createTextNode(compName(r)));
@@ -1450,26 +1501,42 @@
       else c1.append(document.createTextNode('—'));
       if (r.inn_check) { const w = el('small', 'rj-warn', L().innCheck); w.title = L().innCheckTip; c1.append(w); }
       td('l').textContent = regionName(r.region_code);
-      const c3 = td('l');
-      codesOf(r).forEach((h) => {
+      // categories: importers often have dozens — the six with most declarations as chips, the rest in a tooltip
+      const c3 = td('l'), cats = codesOf(r), CHIPS = 6;
+      cats.slice(0, CHIPS).forEach((h) => {
         const b = el('button', 'rj-chip'); b.type = 'button'; b.dataset.code = h;
         const i = el('i'); i.style.background = secColor(tIdx && tIdx.sec.get(h.slice(0, 2)));
-        b.append(i, document.createTextNode(`${h} ${codeName(h, 'ru_jp')}`));
+        b.append(i, document.createTextNode(`${h} ${codeName(h, r.flow)}`));
         c3.append(b);
       });
+      if (cats.length > CHIPS) {
+        const more = el('small', 'rj-morecats', L().moreCats(cats.length - CHIPS));
+        more.title = cats.slice(CHIPS).map((h) => `${h} ${codeName(h, r.flow)}`).join('\n');
+        c3.append(more);
+      }
       td('l opt').textContent = r.okved ? `${r.okved} ${okvedName(r)}`.trim() : '—';
       const c5 = td('nw');
-      c5.append(document.createTextNode(r.sme ? SME[r.sme][li()] : L().notSme));
+      if (r.sme === '-') { c5.textContent = '—'; c5.title = L().smeUnchecked; }  // реестр МСП по этому ИНН ещё не проверен
+      else c5.append(document.createTextNode(r.sme ? SME[r.sme][li()] : L().notSme));
       if (+r.employees) c5.append(el('small', '', L().employees(fmtInt(+r.employees))));
-      const c6 = td('l');
-      c6.append(document.createTextNode(L().evid({ ...r, objectsText: objectsText(r) })));
+      const c6 = td('l'), fsa = r.source === 'fsa';
+      c6.append(document.createTextNode(fsa ? L().evidFsa(+r.n_objects, makersText(r)) : L().evid({ ...r, objectsText: objectsText(r) })));
       if (r.since) c6.append(el('small', '', L().since(r.since.slice(0, 4), r.last.slice(0, 4))));
       const tv = tradeOf(r);
-      if (tv !== null) c6.append(el('small', 'rj-trade' + (tv > 0 ? '' : ' none'), tv > 0 ? L().tradeOk(fmtUsd(tv)) : L().tradeNone));
-      const c7 = td(''); const badge = el('span', 'rj-badge', L().levelB); badge.title = L().levelBTip; c7.append(badge);
+      if (tv !== null) {
+        const [ok, none] = r.flow === 'jp_ru' ? [L().tradeOkJp, L().tradeNoneJp] : [L().tradeOk, L().tradeNone];
+        c6.append(el('small', 'rj-trade' + (tv > 0 ? '' : ' none'), tv > 0 ? ok(fmtUsd(tv)) : none));
+      }
+      const c7 = td(''); const badge = el('span', 'rj-badge', L().levelB); badge.title = fsa ? L().levelBTipFsa : L().levelBTip; c7.append(badge);
       const stx = el('span', 'rj-status ' + r.status, L().statusT[r.status] || r.status); stx.title = L().statusTip[r.status] || ''; c7.append(stx);
+      // отметки импортёра: ввоз по особому порядку ПП 353 — обычно параллельный импорт через третьи страны
+      for (const f of ['pp353'].filter((x) => hasFlag(r, x))) { const fx = el('span', 'rj-status ' + f, L().flagT[f]); fx.title = L().flagTip[f]; c7.append(fx); }
+      c7.append(el('small', '', L().dirTag[r.flow]));
       tb.append(tr);
     }
+    const more = $('#comp-more');
+    more.hidden = rows.length <= cst.limit;
+    more.textContent = L().showMore(fmtInt(Math.min(cst.limit, rows.length)), fmtInt(rows.length));
     $('#comp-table').querySelectorAll('th').forEach((th) => {
       const b = th.querySelector('button');
       if (b.dataset.csort === cst.sort) th.setAttribute('aria-sort', cst.dir > 0 ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort');
@@ -1621,14 +1688,15 @@
         nmEl.append(dr);
       }
       nmEl.append(el('small', '', `${fmtMoney(o.b)} → ${fmtMoney(o.a)}`));
-      // exporters approved for Japan in this category (Cerberus), as on the product card
-      const comps = dst.flow !== 'jp_ru' && !isSec ? companiesFor(code, 'ru_jp') : [];
+      // companies of this category, as on the product card: exporters (Cerberus) for ru_jp, importers (Rosaccreditation) for jp_ru
+      const comps = isSec ? [] : dst.flow === 'both' ? [...companiesFor(code, 'ru_jp'), ...companiesFor(code, 'jp_ru')] : companiesFor(code, dst.flow);
       if (comps.length) {
         const ch = el('button', 'rj-chip', L().compChip(comps.length));
         ch.type = 'button'; ch.title = L().compChipTip;
         ch.addEventListener('click', (e) => {
           e.stopPropagation();
-          cst.cat = code.length >= 4 ? code.slice(0, 4) : code.slice(0, 2); cst.region = ''; cst.q = ''; $('#comp-search').value = '';
+          Object.assign(cst, { flow: dst.flow === 'both' ? 'all' : dst.flow, cat: code.length >= 4 ? code.slice(0, 4) : code.slice(0, 2), region: '', q: '', limit: COMP_PAGE });
+          $('#comp-search').value = '';
           showPage('companies');
         });
         nmEl.append(ch);
