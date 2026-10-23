@@ -269,8 +269,12 @@
         <button type="button" data-v="value" data-i18n="modeValue">Стоимость</button>
         <button type="button" data-v="growth" data-i18n="modeGrowth">Рост</button>
       </div>
-      <div class="rj-seg" role="group" data-i18n-aria="ariaUnit" id="seg-unit">
+      <div class="rj-seg" role="group" data-i18n-aria="ariaCur" id="seg-cur">
         <button type="button" data-v="usd">USD</button>
+        <button type="button" data-v="jpy">JPY</button>
+      </div>
+      <div class="rj-seg" role="group" data-i18n-aria="ariaUnit" id="seg-unit">
+        <button type="button" data-v="abs" data-i18n="unitAbs">Сумма</button>
         <button type="button" data-v="pct" data-i18n="unitPct">Проценты (%)</button>
       </div>
       <select class="rj-period" id="period" data-i18n-aria="ariaPeriod" data-source="periods"></select>
@@ -343,13 +347,13 @@
         <thead><tr>
           <th class="l" data-field="code"><button type="button" data-sort="code" data-i18n="thCode">Код</button></th>
           <th class="l" data-field="name_ru" id="th-name"><button type="button" data-sort="name" data-i18n="thName">Товар</button></th>
-          <th data-field="value"><button type="button" data-sort="value" data-i18n="thValue">Стоимость</button></th>
-          <th data-field="share"><button type="button" data-sort="share" data-i18n="thShare">Доля</button></th>
-          <th class="opt" data-field="prev"><button type="button" data-sort="prev" data-i18n="thPrev">Пред. период</button></th>
-          <th class="opt" data-field="change"><button type="button" data-sort="change" data-i18n="thChange">Изм., $</button></th>
-          <th data-field="growth"><button type="button" data-sort="growth" data-i18n="thGrowth">Изм., %</button></th>
+          <th data-field="value" id="th-value"><button type="button" data-sort="value" data-i18n="thValue">Стоимость</button></th>
+          <th data-field="share" id="th-share"><button type="button" data-sort="share" data-i18n="thShare">Доля</button></th>
+          <th class="opt" data-field="prev" id="th-prev"><button type="button" data-sort="prev" data-i18n="thPrev">Пред. период</button></th>
+          <th class="opt" data-field="change" id="th-change"><button type="button" data-sort="change">Изм., $</button></th>
+          <th data-field="growth" id="th-growth"><button type="button" data-sort="growth" data-i18n="thGrowth">Изм., %</button></th>
           <th class="opt" data-field="kg"><button type="button" data-sort="kg" data-i18n="thKg">Вес, т</button></th>
-          <th class="opt" data-field="price"><button type="button" data-sort="price" data-i18n="thPrice">$/кг</button></th>
+          <th class="opt" data-field="price" id="th-price"><button type="button" data-sort="price">$/кг</button></th>
         </tr></thead>
         <tbody></tbody>
       </table>
@@ -464,28 +468,29 @@
   dash.calc('views', {
     inputs: ['trade', 'products', 'periods'],
     title: 'Товары по периодам',
-    description: 'Суммы помесячных строк HS9 по секциям, главам HS2, позициям HS4, HS6 и HS9 за каждый период; доля в потоке, прошлый период и изменение; названия на трёх языках.',
+    description: 'Суммы помесячных строк HS9 по секциям, главам HS2, позициям HS4, HS6 и HS9 за каждый период — в долларах и в исходных иенах (поля *_jpy); доля в потоке, прошлый период и изменение; названия на трёх языках.',
     fn: (trade, products, periods) => {
       const prod = new Map(products.map((p) => [p.level === '9' ? p.flow + '|' + p.code : p.code, p]));
       const sec = (c) => (prod.get(c.slice(0, 2)) || {}).section || '22';
       const byMonth = new Map();
       trade.forEach((r) => { if (!byMonth.has(r.month)) byMonth.set(r.month, []); byMonth.get(r.month).push(r); });
       const acc = new Map();
-      const add = (pid, flow, level, code, v, kg) => {
+      const add = (pid, flow, level, code, v, kg, j) => {
         const key = `${pid}|${flow}|${code}`;
         let o = acc.get(key);
-        if (!o) acc.set(key, (o = { key, period: pid, flow, level, code, value: 0, kg: 0 }));
+        if (!o) acc.set(key, (o = { key, period: pid, flow, level, code, value: 0, value_jpy: 0, kg: 0 }));
         o.value += v;
+        o.value_jpy += j;
         o.kg += kg;
       };
       periods.forEach((p) => p.src.split(',').forEach((m) => (byMonth.get(m) || []).forEach((r) => {
-        const v = +r.value, kg = +r.kg, c = r.hs9;
-        add(p.period, r.flow, 0, 'TOTAL', v, kg);
-        add(p.period, r.flow, 1, 'S' + sec(c), v, kg);
-        add(p.period, r.flow, 2, c.slice(0, 2), v, kg);
-        add(p.period, r.flow, 4, c.slice(0, 4), v, kg);
-        add(p.period, r.flow, 6, c.slice(0, 6), v, kg);
-        add(p.period, r.flow, 9, c, v, kg);
+        const v = +r.value, j = +r.value_jpy, kg = +r.kg, c = r.hs9;
+        add(p.period, r.flow, 0, 'TOTAL', v, kg, j);
+        add(p.period, r.flow, 1, 'S' + sec(c), v, kg, j);
+        add(p.period, r.flow, 2, c.slice(0, 2), v, kg, j);
+        add(p.period, r.flow, 4, c.slice(0, 4), v, kg, j);
+        add(p.period, r.flow, 6, c.slice(0, 6), v, kg, j);
+        add(p.period, r.flow, 9, c, v, kg, j);
       })));
       // позиции, которые были в прошлом периоде, но выпали в текущем
       for (const p of periods) {
@@ -493,15 +498,16 @@
         for (const o of [...acc.values()]) {
           if (o.period !== p.prev) continue;
           const key = `${p.period}|${o.flow}|${o.code}`;
-          if (!acc.has(key)) acc.set(key, { key, period: p.period, flow: o.flow, level: o.level, code: o.code, value: 0, kg: 0 });
+          if (!acc.has(key)) acc.set(key, { key, period: p.period, flow: o.flow, level: o.level, code: o.code, value: 0, value_jpy: 0, kg: 0 });
         }
       }
       const prevOf = new Map(periods.map((p) => [p.period, p.prev]));
       const codeWord = { ru: ' · код ', en: ' · code ', ja: '・コード' };
       return [...acc.values()].map((o) => {
-        const total = acc.get(`${o.period}|${o.flow}|TOTAL`).value;
+        const tot = acc.get(`${o.period}|${o.flow}|TOTAL`);
         const pk = prevOf.get(o.period);
-        const prev = pk ? (acc.get(`${pk}|${o.flow}|${o.code}`) || { value: 0 }).value : null;
+        const po = pk ? acc.get(`${pk}|${o.flow}|${o.code}`) || { value: 0, value_jpy: 0 } : null;
+        const prev = po ? po.value : null, prevJ = po ? po.value_jpy : null;
         const p = (o.level === 9 ? prod.get(o.flow + '|' + o.code) : prod.get(o.code)) || {};
         const parent = o.level === 9 ? prod.get(o.code.slice(0, 6)) || {} : {};
         const name = (l) => p['name_' + l] || (o.level === 9 ? (parent['name_' + l] || o.code.slice(0, 6)) + codeWord[l] + o.code.slice(6) : o.code);
@@ -509,11 +515,16 @@
           ...o,
           section: o.level === 1 ? o.code.slice(1) : o.level === 0 ? '' : sec(o.code),
           name_ru: name('ru'), name_en: name('en'), name_ja: name('ja'),
-          share: total ? o.value / total : 0,
+          share: tot.value ? o.value / tot.value : 0,
+          share_jpy: tot.value_jpy ? o.value_jpy / tot.value_jpy : 0,
           prev,
+          prev_jpy: prevJ,
           change: prev === null ? null : o.value - prev,
+          change_jpy: prevJ === null ? null : o.value_jpy - prevJ,
           growth: prev ? o.value / prev - 1 : null,
+          growth_jpy: prevJ ? o.value_jpy / prevJ - 1 : null,
           price: o.kg > 0 ? o.value / o.kg : null,
+          price_jpy: o.kg > 0 ? o.value_jpy / o.kg : null,
         };
       });
     },
@@ -522,14 +533,15 @@
   dash.calc('balance', {
     inputs: ['views'],
     title: 'Сальдо торговли',
-    description: 'Экспорт России в Японию минус экспорт Японии в Россию за каждый период.',
+    description: 'Экспорт России в Японию минус экспорт Японии в Россию за каждый период, в долларах и в иенах.',
     fn: (views) => {
       const t = views.filter((r) => r.level === 0);
       const periods = [...new Set(t.map((r) => r.period))];
       return periods.map((period) => {
-        const ex = (t.find((r) => r.period === period && r.flow === 'ru_jp') || { value: 0 }).value;
-        const im = (t.find((r) => r.period === period && r.flow === 'jp_ru') || { value: 0 }).value;
-        return { period, exports: ex, imports: im, balance: ex - im };
+        const ex = t.find((r) => r.period === period && r.flow === 'ru_jp') || { value: 0, value_jpy: 0 };
+        const im = t.find((r) => r.period === period && r.flow === 'jp_ru') || { value: 0, value_jpy: 0 };
+        return { period, exports: ex.value, imports: im.value, balance: ex.value - im.value,
+          exports_jpy: ex.value_jpy, imports_jpy: im.value_jpy, balance_jpy: ex.value_jpy - im.value_jpy };
       });
     },
   });
@@ -586,10 +598,10 @@
       title: 'Торговля Россия — Япония по товарам', panelTitle: 'Торговля по товарам',
       ariaLang: 'Язык', ariaLevel: 'Уровень детализации', ariaMode: 'Показатель', ariaUnit: 'Единицы', ariaPeriod: 'Период', ariaFilter: 'Фильтр',
       ariaPortFlow: 'Направление для карты', ariaFlow: 'Направление',
-      modeValue: 'Стоимость', modeGrowth: 'Рост', unitPct: 'Проценты (%)', total: 'Итого:', clearSel: 'Снять выбор',
+      modeValue: 'Стоимость', modeGrowth: 'Рост', unitAbs: 'Сумма', unitPct: 'Проценты (%)', ariaCur: 'Валюта', total: 'Итого:', clearSel: 'Снять выбор',
       cardTitle: 'Карточка позиции', portsTitle: 'Порты и таможенные посты Японии', portTabImp: 'Импорт из России', portTabExp: 'Экспорт в Россию',
       search: 'Поиск по коду или названию', thCode: 'Код', thName: 'Товар', thValue: 'Стоимость', thShare: 'Доля', thPrev: 'Пред. период',
-      thChange: 'Изм., $', thGrowth: 'Изм., %', thKg: 'Вес, т', thPrice: '$/кг',
+      thChange: (c) => `Изм., ${c}`, thGrowth: 'Изм., %', thKg: 'Вес, т', thPrice: (c) => `${c}/кг`,
       hint: 'Клик по прямоугольнику выбирает товар: ниже появятся его динамика, порты и подсказки, где искать контрагентов. Повторный клик снимает выбор. Двойной клик раскрывает главу до HS4, HS6 и HS9.',
       flows: { ru_jp: 'Россия → Япония', jp_ru: 'Япония → Россия' },
       mapTitle: (f, p) => (f === 'ru_jp' ? 'Экспорт России в Японию, ' : 'Экспорт Японии в Россию, ') + p,
@@ -602,8 +614,8 @@
       noTrade: 'Нет поставок по этому фильтру в выбранном периоде', gradLo: '−100% и ниже', gradHi: '+100% и выше',
       drillTo: (l) => `Раскрыть до HS${l}`, clickHint: (d) => (d ? 'Клик — выбрать, двойной клик — раскрыть' : 'Клик — выбрать'),
       tValue: 'Стоимость', tShare: 'Доля в потоке', tPrev: (p) => `Было (${p})`, tChange: 'Изменение', tKg: 'Вес нетто', tPrice: 'Цена',
-      perKg: (p) => `$${p} за кг`, tons: (v) => `${v} т`,
-      trendAll: 'Помесячная динамика', trendSel: 'Динамика выбранной позиции', perMonth: ', долларов в месяц',
+      perKg: (p) => `${p} за кг`, tons: (v) => `${v} т`,
+      trendAll: 'Помесячная динамика', trendSel: 'Динамика выбранной позиции', perMonth: (c) => (c === 'jpy' ? ', иен в месяц' : ', долларов в месяц'),
       cardEmpty: 'Выберите прямоугольник на карте товаров или строку в таблице. Здесь появятся объём в штуках и тоннах, цена за единицу, регулярность поставок, основные порты и подсказки, где искать покупателей и поставщиков.',
       cValue: (p) => `Стоимость, ${p}`, cShare: 'Доля в потоке', cVsPrev: 'К прошлому периоду', cQty: 'Количество', cUnitPrice: (u) => `Цена за ${u}`,
       cKg: 'Вес нетто', cKgPrice: 'Цена за кг', cActive: 'Месяцев с поставками из последних 12', cActiveV: (n) => `${n} из 12`,
@@ -645,10 +657,10 @@
       title: 'Russia–Japan trade by product', panelTitle: 'Bilateral trade by product',
       ariaLang: 'Language', ariaLevel: 'Level of detail', ariaMode: 'Measure', ariaUnit: 'Units', ariaPeriod: 'Period', ariaFilter: 'Filter',
       ariaPortFlow: 'Direction shown on the map', ariaFlow: 'Direction',
-      modeValue: 'Trade value', modeGrowth: 'Growth', unitPct: 'Percentage (%)', total: 'Total:', clearSel: 'Clear selection',
+      modeValue: 'Trade value', modeGrowth: 'Growth', unitAbs: 'Amount', unitPct: 'Percentage (%)', ariaCur: 'Currency', total: 'Total:', clearSel: 'Clear selection',
       cardTitle: 'Product card', portsTitle: 'Japanese ports and customs offices', portTabImp: 'Imports from Russia', portTabExp: 'Exports to Russia',
       search: 'Search by code or name', thCode: 'Code', thName: 'Product', thValue: 'Value', thShare: 'Share', thPrev: 'Previous period',
-      thChange: 'Change, $', thGrowth: 'Change, %', thKg: 'Weight, t', thPrice: '$/kg',
+      thChange: (c) => `Change, ${c}`, thGrowth: 'Change, %', thKg: 'Weight, t', thPrice: (c) => `${c}/kg`,
       hint: 'Click a rectangle to select a product: its monthly trend, ports and leads on where to find counterparties appear below. Click it again to clear. Double-click to open a chapter down to HS4, HS6 and HS9.',
       flows: { ru_jp: 'Russia → Japan', jp_ru: 'Japan → Russia' },
       mapTitle: (f, p) => (f === 'ru_jp' ? 'Exports from Russia to Japan, ' : 'Exports from Japan to Russia, ') + p,
@@ -661,8 +673,8 @@
       noTrade: 'No trade for this filter in the selected period', gradLo: '−100% or less', gradHi: '+100% or more',
       drillTo: (l) => `Open down to HS${l}`, clickHint: (d) => (d ? 'Click to select, double-click to open' : 'Click to select'),
       tValue: 'Value', tShare: 'Share of flow', tPrev: (p) => `Before (${p})`, tChange: 'Change', tKg: 'Net weight', tPrice: 'Price',
-      perKg: (p) => `$${p} per kg`, tons: (v) => `${v} t`,
-      trendAll: 'Monthly trend', trendSel: 'Trend of the selected product', perMonth: ', US dollars per month',
+      perKg: (p) => `${p} per kg`, tons: (v) => `${v} t`,
+      trendAll: 'Monthly trend', trendSel: 'Trend of the selected product', perMonth: (c) => (c === 'jpy' ? ', yen per month' : ', US dollars per month'),
       cardEmpty: 'Select a rectangle on the product map or a row in the table. This card will show volume in units and tonnes, unit price, how regular the shipments are, the main ports and leads on where to look for buyers and suppliers.',
       cValue: (p) => `Value, ${p}`, cShare: 'Share of flow', cVsPrev: 'Vs previous period', cQty: 'Quantity', cUnitPrice: (u) => `Price per ${u === 'units' ? 'unit' : u}`,
       cKg: 'Net weight', cKgPrice: 'Price per kg', cActive: 'Months with shipments, last 12', cActiveV: (n) => `${n} of 12`,
@@ -704,10 +716,10 @@
       title: '日ロ貿易：品目別', panelTitle: '品目別の二国間貿易',
       ariaLang: '言語', ariaLevel: '品目の細かさ', ariaMode: '指標', ariaUnit: '単位', ariaPeriod: '期間', ariaFilter: '絞り込み',
       ariaPortFlow: '地図に表示する方向', ariaFlow: '方向',
-      modeValue: '金額', modeGrowth: '増減', unitPct: '構成比（%）', total: '合計：', clearSel: '選択を解除',
+      modeValue: '金額', modeGrowth: '増減', unitAbs: '実額', unitPct: '構成比（%）', ariaCur: '通貨', total: '合計：', clearSel: '選択を解除',
       cardTitle: '品目カード', portsTitle: '日本の港・税関官署', portTabImp: 'ロシアからの輸入', portTabExp: 'ロシアへの輸出',
       search: 'コードまたは品名で検索', thCode: 'コード', thName: '品目', thValue: '金額', thShare: '構成比', thPrev: '前期',
-      thChange: '増減額（$）', thGrowth: '増減率', thKg: '重量（t）', thPrice: '$/kg',
+      thChange: (c) => `増減額（${c}）`, thGrowth: '増減率', thKg: '重量（t）', thPrice: (c) => `${c}/kg`,
       hint: '四角をクリックすると品目を選択し、下に月次推移・港・取引相手の探し方が表示されます。もう一度クリックで解除。ダブルクリックでHS4・HS6・HS9へ掘り下げます。',
       flows: { ru_jp: 'ロシア → 日本', jp_ru: '日本 → ロシア' },
       mapTitle: (f, p) => (f === 'ru_jp' ? 'ロシアの対日輸出（' : '日本の対ロ輸出（') + p + '）',
@@ -720,8 +732,8 @@
       noTrade: '選択した期間・条件では取引がありません', gradLo: '−100%以下', gradHi: '+100%以上',
       drillTo: (l) => `HS${l}へ掘り下げ`, clickHint: (d) => (d ? 'クリックで選択、ダブルクリックで掘り下げ' : 'クリックで選択'),
       tValue: '金額', tShare: '構成比', tPrev: (p) => `前期（${p}）`, tChange: '増減', tKg: '正味重量', tPrice: '単価',
-      perKg: (p) => `1kgあたり$${p}`, tons: (v) => `${v} t`,
-      trendAll: '月次推移', trendSel: '選択品目の月次推移', perMonth: '、米ドル／月',
+      perKg: (p) => `1kgあたり${p}`, tons: (v) => `${v} t`,
+      trendAll: '月次推移', trendSel: '選択品目の月次推移', perMonth: (c) => (c === 'jpy' ? '、円／月' : '、米ドル／月'),
       cardEmpty: '品目マップの四角か表の行を選んでください。数量と重量、単価、輸送の頻度、主な港、取引相手の探し方がここに表示されます。',
       cValue: (p) => `金額（${p}）`, cShare: '構成比', cVsPrev: '前期比', cQty: '数量', cUnitPrice: (u) => `単価（${u}あたり）`,
       cKg: '正味重量', cKgPrice: '1kgあたり単価', cActive: '直近12か月のうち取引があった月', cActiveV: (n) => `${n}／12`,
@@ -992,8 +1004,8 @@
       intro: 'Дашборд показывает торговлю России и Японии по товарам — по образцу раздела «Bilateral Trade by Products» на oec.world, но с данными до последнего опубликованного месяца, детализацией до 9-значного кода и разбивкой по портам Японии. Лист «Компании» постепенно связывает товарные категории с российскими компаниями, чтобы клиентские менеджеры могли находить потенциальных клиентов.',
       sections: [
         ['Листы', ['Торговля — структура торговли за выбранный период: две карты-плитки (экспорт России в Японию и экспорт Японии в Россию), помесячная динамика, карточка выбранного товара, карта таможенных постов Японии и таблица товаров.', 'Компании — российские компании с подтверждённой по открытым реестрам связью с Японией и с привязкой к товарным категориям.']],
-        ['Как пользоваться листом «Торговля»', ['HS2 / HS4 / HS6 / HS9 — уровень детализации: от глав до 9-значных кодов японской статистики.', 'Стоимость / Рост — размер прямоугольника всегда равен стоимости; в режиме «Рост» цвет показывает изменение к такому же периоду годом раньше.', 'USD / Проценты — подписи в долларах или в доле от общего потока.', 'Период — полные годы с 2017 года, текущий год с января и последние 12 месяцев.', 'Клик по прямоугольнику выбирает товар: ниже появляются его динамика, карточка (объём, цена за единицу, регулярность поставок, основные посты, где искать контрагентов) и карта постов. Повторный клик снимает выбор, двойной клик раскрывает уровень ниже, «← Назад» возвращает на шаг.', 'Клик по кругу на карте постов показывает, какие товары через этот пост проходят.']],
-        ['Откуда данные', ['Таможенная статистика Японии (Министерство финансов, портал e-Stat): помесячно по 9-значным кодам, «товар × страна» с 2017 года и «таможенный пост × товар × страна» с 2021 года.', 'Россия не публикует таможенную статистику с 2022 года, поэтому обе стороны показаны по японским данным: экспорт России — импорт Японии товаров российского происхождения в ценах CIF, экспорт Японии — вывоз с конечным назначением в Россию в ценах FOB.', 'Иены пересчитаны в доллары по среднемесячному курсу ФРС США (серия EXJPUS).', 'OEC строит похожие графики по базе BACI (CEPII), собранной из тех же данных через UN Comtrade; она обновляется раз в год с отставанием около полутора лет. Годовые итоги этого дашборда совпадают с UN Comtrade с точностью до 0,2%.']],
+        ['Как пользоваться листом «Торговля»', ['HS2 / HS4 / HS6 / HS9 — уровень детализации: от глав до 9-значных кодов японской статистики.', 'Стоимость / Рост — размер прямоугольника всегда равен стоимости; в режиме «Рост» цвет показывает изменение к такому же периоду годом раньше.', 'USD / JPY — валюта: доллары или исходные иены. Сумма / Проценты — подписи в деньгах или в доле от общего потока.', 'Период — полные годы с 2017 года, текущий год с января и последние 12 месяцев.', 'Клик по прямоугольнику выбирает товар: ниже появляются его динамика, карточка (объём, цена за единицу, регулярность поставок, основные посты, где искать контрагентов) и карта постов. Повторный клик снимает выбор, двойной клик раскрывает уровень ниже, «← Назад» возвращает на шаг.', 'Клик по кругу на карте постов показывает, какие товары через этот пост проходят.']],
+        ['Откуда данные', ['Таможенная статистика Японии (Министерство финансов, портал e-Stat): помесячно по 9-значным кодам, «товар × страна» с 2017 года и «таможенный пост × товар × страна» с 2021 года.', 'Россия не публикует таможенную статистику с 2022 года, поэтому обе стороны показаны по японским данным: экспорт России — импорт Японии товаров российского происхождения в ценах CIF, экспорт Японии — вывоз с конечным назначением в Россию в ценах FOB.', 'Иены — исходная валюта статистики Японии; переключатель USD / JPY показывает суммы в иенах как есть или в долларах по среднемесячному курсу ФРС США (серия EXJPUS). Рост в иенах и в долларах различается из-за изменения курса.', 'OEC строит похожие графики по базе BACI (CEPII), собранной из тех же данных через UN Comtrade; она обновляется раз в год с отставанием около полутора лет. Годовые итоги этого дашборда совпадают с UN Comtrade с точностью до 0,2%.']],
         ['Как читать особые коды', ['Первые 6 цифр кода — международный HS (HS2017 до 2021 года, HS2022 с 2022 года), последние 3 — детализация Японии, своя у экспорта и импорта.', 'Коды с «X» (например, 24XXXXXXA) засекречены по заявке участника, когда по коду 1–2 экспортёра или импортёра. Сумма и страна настоящие, скрыт только точный товар.', 'Коды «00» — реэкспорт (товары не японского производства), реимпорт и бортовые припасы.', 'Названия товаров переведены для этого дашборда с японских справочников таможни.']],
         ['Обновление', ['Таможня Японии публикует месяц примерно через 4 недели после его окончания. Импорт за последний месяц — предварительный, через месяц его заменяют уточнённые данные; годовые цифры пересматриваются в марте и ноябре следующего года.']],
         ['Лист «Компании»', ['Компании берутся из открытых реестров, где компания и товар записаны рядом. У каждой связи есть уровень: A — поставки в Японию или из Японии подтверждены документами (таких источников пока нет); B — допуск к рынку: компания аттестована или зарегистрировала товар для Японии, сами поставки не подтверждены; C — косвенные признаки.', 'Сейчас подключён целиком реестр Россельхознадзора «Цербер»: все предприятия и суда, аттестованные на экспорт в Японию (уровень B). У каждой компании показано, открыт ли допуск, и ввозила ли Япония товары её категорий из России за последние 12 месяцев: аттестация есть у многих, кто давно не поставляет. ИНН берётся из поиска ЕГРЮЛ и принимается только после проверки фильтром самого реестра по ИНН; «ИНН не найден» значит, что действующей записи с таким названием, которую реестр подтверждает, нет. ОКВЭД, размер и численность — из реестра МСП ФНС.', 'Дальше по плану: декларации и сертификаты ЕАЭС, госзакупки и ЛесЕГАИС — они доступны только с российского IP. Санкционная проверка в дашборде не выполняется.']],
@@ -1006,8 +1018,8 @@
       intro: 'The dashboard shows Russia–Japan trade by product, modelled on the “Bilateral Trade by Products” section of oec.world but with data up to the latest published month, detail down to the 9-digit code and a breakdown by Japanese port. The Companies page links product categories to Russian companies step by step so that account managers can find potential clients.',
       sections: [
         ['Pages', ['Trade — the structure of trade in the selected period: two treemaps (Russian exports to Japan and Japanese exports to Russia), the monthly trend, a card for the selected product, a map of Japanese customs offices and a product table.', 'Companies — Russian companies whose link to Japan is confirmed by open registers, matched to product categories.']],
-        ['How to use the Trade page', ['HS2 / HS4 / HS6 / HS9 — level of detail, from chapters down to the 9-digit codes of Japanese statistics.', 'Trade value / Growth — rectangle size always shows value; in Growth mode the colour shows the change from the same period a year earlier.', 'USD / Percentage — labels in dollars or as a share of the whole flow.', 'Period — full years from 2017, the current year to date and the last 12 months.', 'Click a rectangle to select a product: its trend, a card (volume, unit price, how regular the shipments are, main customs offices, where to look for counterparties) and the port map appear below. Click again to clear, double-click to open the next level, “← Back” to go one step back.', 'Click a circle on the port map to see the products passing through that office.']],
-        ['Where the data come from', ['Japanese customs statistics (Ministry of Finance, e-Stat portal): monthly by 9-digit code, “commodity by country” from 2017 and “customs office by commodity by country” from 2021.', 'Russia has not published customs statistics since 2022, so both directions come from Japanese data: Russian exports are Japan’s imports of goods of Russian origin at CIF prices, Japanese exports are shipments with final destination Russia at FOB prices.', 'Yen are converted to US dollars at the monthly average rate of the US Federal Reserve (series EXJPUS).', 'OEC draws similar charts from the BACI database (CEPII), built from the same data via UN Comtrade and updated once a year with a lag of about 18 months. Annual totals in this dashboard match UN Comtrade within 0.2%.']],
+        ['How to use the Trade page', ['HS2 / HS4 / HS6 / HS9 — level of detail, from chapters down to the 9-digit codes of Japanese statistics.', 'Trade value / Growth — rectangle size always shows value; in Growth mode the colour shows the change from the same period a year earlier.', 'USD / JPY — currency: US dollars or the original yen. Amount / Percentage — labels in money or as a share of the whole flow.', 'Period — full years from 2017, the current year to date and the last 12 months.', 'Click a rectangle to select a product: its trend, a card (volume, unit price, how regular the shipments are, main customs offices, where to look for counterparties) and the port map appear below. Click again to clear, double-click to open the next level, “← Back” to go one step back.', 'Click a circle on the port map to see the products passing through that office.']],
+        ['Where the data come from', ['Japanese customs statistics (Ministry of Finance, e-Stat portal): monthly by 9-digit code, “commodity by country” from 2017 and “customs office by commodity by country” from 2021.', 'Russia has not published customs statistics since 2022, so both directions come from Japanese data: Russian exports are Japan’s imports of goods of Russian origin at CIF prices, Japanese exports are shipments with final destination Russia at FOB prices.', 'Yen is the original currency of Japanese statistics; the USD / JPY switch shows values in yen as published or in US dollars at the monthly average rate of the US Federal Reserve (series EXJPUS). Growth in yen and in dollars differs because the exchange rate changes.', 'OEC draws similar charts from the BACI database (CEPII), built from the same data via UN Comtrade and updated once a year with a lag of about 18 months. Annual totals in this dashboard match UN Comtrade within 0.2%.']],
         ['How to read special codes', ['The first 6 digits are the international HS code (HS2017 until 2021, HS2022 from 2022); the last 3 are Japan’s own detail and differ between exports and imports.', 'Codes with “X” (for example 24XXXXXXA) are kept confidential at a trader’s request when only 1–2 exporters or importers use the code. The value and the country are real; only the exact product is hidden.', 'Codes starting with “00” are re-exports (goods not made in Japan), re-imports and aircraft stores.', 'Product names were translated for this dashboard from the Japanese customs schedules.']],
         ['Updates', ['Japanese customs publish a month about 4 weeks after it ends. Imports for the latest month are preliminary and are replaced by detailed figures a month later; annual figures are revised again in March and November of the following year.']],
         ['The Companies page', ['Companies come from open registers that record a company together with a product. Each link has a level: A — shipments to or from Japan are documented (no such source yet); B — market access: the company is approved or has registered a product for Japan, shipments themselves are not confirmed; C — indirect signs.', 'Connected now: the whole Rosselkhoznadzor Cerberus register — every plant and vessel approved for export to Japan (level B). Each company shows whether its approval is open and whether Japan imported goods of its categories from Russia in the last 12 months: many approved companies have not shipped for years. Tax IDs come from the EGRUL search and are accepted only after a check against the register’s own tax-ID filter; “tax ID not found” means no active record with this name is confirmed by the register. Activity codes, size and staff numbers come from the SME register of the tax service.', 'Next: EAEU declarations and certificates of conformity, public procurement and LesEGAIS — available only from a Russian IP address. Sanctions screening is not part of this dashboard.']],
@@ -1020,8 +1032,8 @@
       intro: '日ロ間の品目別貿易を表示します。oec.worldの「Bilateral Trade by Products」を参考にしつつ、最新の公表月までのデータ、9桁品目までの詳細、日本の港別の内訳を備えています。「企業」ページでは、品目とロシア企業を段階的に結びつけ、営業担当者が見込み顧客を探せるようにします。',
       sections: [
         ['ページ構成', ['貿易：選択期間の貿易構造。2つのツリーマップ（ロシアの対日輸出・日本の対ロ輸出）、月次推移、選択品目のカード、日本の税関官署マップ、品目表。', '企業：公開登録簿で日本との取引が裏付けられたロシア企業を、品目と結びつけて表示します。']],
-        ['「貿易」ページの使い方', ['HS2／HS4／HS6／HS9：類から日本の9桁統計品目まで、品目の細かさを切り替えます。', '金額／増減：四角の大きさは常に金額。「増減」では色が前年同期比の変化を示します。', 'USD／構成比：表示をドルまたは全体に占める割合で切り替えます。', '期間：2017年以降の各年、今年の累計、直近12か月。', '四角をクリックすると品目を選択し、月次推移、カード（数量、単価、取引の頻度、主な官署、取引相手の探し方）、官署マップが表示されます。もう一度クリックで解除、ダブルクリックで下の階層へ、「← 戻る」で一つ前に戻ります。', '官署マップの円をクリックすると、その官署を通る品目が表示されます。']],
-        ['データの出典', ['財務省貿易統計（e-Stat）：9桁品目・月次。「品別国別表」は2017年から、「税関別品別国別表」は2021年から。', 'ロシアは2022年以降税関統計を公表していないため、双方向とも日本側のデータです。ロシアの対日輸出は日本のロシア原産品の輸入（CIF）、日本の対ロ輸出はロシアを最終仕向地とする輸出（FOB）です。', '円は米連邦準備制度の月平均レート（EXJPUS）でドルに換算しています。', 'OECは同じ元データをUN Comtrade経由でまとめたBACI（CEPII）で同様の図を作成しており、更新は年1回・約1年半遅れです。本ダッシュボードの年間合計はUN Comtradeと0.2%以内で一致します。']],
+        ['「貿易」ページの使い方', ['HS2／HS4／HS6／HS9：類から日本の9桁統計品目まで、品目の細かさを切り替えます。', '金額／増減：四角の大きさは常に金額。「増減」では色が前年同期比の変化を示します。', 'USD／JPY：通貨をドルまたは元の円で切り替えます。実額／構成比：表示を金額または全体に占める割合で切り替えます。', '期間：2017年以降の各年、今年の累計、直近12か月。', '四角をクリックすると品目を選択し、月次推移、カード（数量、単価、取引の頻度、主な官署、取引相手の探し方）、官署マップが表示されます。もう一度クリックで解除、ダブルクリックで下の階層へ、「← 戻る」で一つ前に戻ります。', '官署マップの円をクリックすると、その官署を通る品目が表示されます。']],
+        ['データの出典', ['財務省貿易統計（e-Stat）：9桁品目・月次。「品別国別表」は2017年から、「税関別品別国別表」は2021年から。', 'ロシアは2022年以降税関統計を公表していないため、双方向とも日本側のデータです。ロシアの対日輸出は日本のロシア原産品の輸入（CIF）、日本の対ロ輸出はロシアを最終仕向地とする輸出（FOB）です。', '円は日本の統計の元の通貨です。USD／JPYの切り替えで、公表どおりの円建て、または米連邦準備制度の月平均レート（EXJPUS）によるドル建てで表示します。為替の変動により、円建てとドル建ての増減率は異なります。', 'OECは同じ元データをUN Comtrade経由でまとめたBACI（CEPII）で同様の図を作成しており、更新は年1回・約1年半遅れです。本ダッシュボードの年間合計はUN Comtradeと0.2%以内で一致します。']],
         ['特殊なコードの見方', ['上6桁は国際HS（2021年まではHS2017、2022年からはHS2022）、下3桁は日本独自の細分で、輸出と輸入で異なります。', '「X」を含むコード（例：24XXXXXXA）は、該当する輸出入者が1〜2者の場合に当事者の申請で非公表とされた品目です。金額と相手国は実数で、品目のみ伏せられています。', '「00」で始まるコードは再輸出品（日本以外で生産された貨物）・再輸入品・機用品です。', '品名は日本の税関の品目表をもとに、このダッシュボード用に翻訳したものです。']],
         ['更新', ['財務省は月末から約4週間後に月次データを公表します。直近月の輸入は速報値で、翌月に確報値へ置き換わります。年間の数値は翌年3月と11月に改訂されます。']],
         ['「企業」ページ', ['企業と品目が並んで記録されている公開登録簿から企業を抽出します。各結びつきには確度があります。A：日本との出荷が文書で裏付けられる（該当する情報源はまだなし）、B：市場アクセス — 対日輸出の認定または製品登録あり、出荷自体は未確認、C：間接的な兆候。', '現在は、ロシア連邦獣医植物検疫監督庁のCerberus登録簿の全体（対日輸出認定の全工場・船舶、確度B）を接続しています。各企業について、認定が有効か、過去12か月に日本がその品目をロシアから輸入したかを表示します。認定があっても長年出荷していない企業は多数あります。納税者番号はEGRUL検索から取得し、登録簿自身の納税者番号フィルターで照合できた場合のみ採用。「納税者番号なし」は、登録簿が確認できる同名の有効な記録がないことを示します。業種コード・規模・従業員数は税務庁の中小企業登録簿から取得。', '今後：EAEUの適合宣言・認証、公共調達、LesEGAIS（いずれもロシアのIPからのみ利用可能）。制裁チェックは本ダッシュボードの対象外です。']],
@@ -1033,7 +1045,7 @@
   LANGS.forEach((l) => Object.assign(T[l], PAGE_T[l]));
 
   // ---- page ----
-  const st = { lang: 'ru', level: 4, mode: 'value', unit: 'usd', period: null, filter: null, tab: 'ru_jp', sort: 'value', dir: -1, q: '', sel: null, portFlow: 'ru_jp', port: null };
+  const st = { lang: 'ru', cur: 'usd', level: 4, mode: 'value', unit: 'abs', period: null, filter: null, tab: 'ru_jp', sort: 'value', dir: -1, q: '', sel: null, portFlow: 'ru_jp', port: null };
   const LEVELS = [2, 4, 6, 9];
   const nextLevel = (n) => (n <= 2 ? 4 : n <= 4 ? 6 : 9);
   const prevLen = (level) => ({ 2: 0, 4: 2, 6: 4, 9: 6 }[level]);
@@ -1057,11 +1069,31 @@
     const s = a >= 1e9 ? (a / 1e9).toFixed(a >= 1e10 ? 1 : 2) + 'B' : a >= 1e6 ? (a / 1e6).toFixed(a >= 1e8 ? 0 : a >= 1e7 ? 1 : 2) + 'M' : a >= 1e3 ? (a / 1e3).toFixed(a >= 1e5 ? 0 : 1) + 'K' : a.toFixed(0);
     return (v < 0 ? '−$' : '$') + s;
   };
-  const fmtSigned = (v) => (v > 0 ? '+' : '') + fmtUsd(v);
+  // иены — исходная валюта статистики Японии; в японском интерфейсе — в 億円 / 兆円
+  const fmtJpy = (v) => {
+    const a = Math.abs(v), neg = v < 0 ? '−' : '';
+    if (st.lang === 'ja') {
+      if (a >= 1e12) return neg + (a / 1e12).toFixed(a >= 1e13 ? 1 : 2) + '兆円';
+      if (a >= 1e8) return neg + d3.format(',')(+(a / 1e8).toFixed(a >= 1e10 ? 0 : 1)) + '億円';
+      if (a >= 1e4) return neg + d3.format(',')(Math.round(a / 1e4)) + '万円';
+      return neg + Math.round(a) + '円';
+    }
+    const s = a >= 1e12 ? (a / 1e12).toFixed(a >= 1e13 ? 1 : 2) + 'T' : a >= 1e9 ? (a / 1e9).toFixed(a >= 1e11 ? 0 : a >= 1e10 ? 1 : 2) + 'B'
+      : a >= 1e6 ? (a / 1e6).toFixed(a >= 1e8 ? 0 : a >= 1e7 ? 1 : 2) + 'M' : a >= 1e3 ? (a / 1e3).toFixed(a >= 1e5 ? 0 : 1) + 'K' : a.toFixed(0);
+    return neg + '¥' + s;
+  };
+  // выбранная валюта: имя поля в данных (value / value_jpy …) и форматирование
+  const isJpy = () => st.cur === 'jpy';
+  const F = (name) => (isJpy() ? name + '_jpy' : name);
+  const val = (r, name) => r[F(name)];
+  const curSym = () => (isJpy() ? '¥' : '$');
+  const fmtMoney = (v) => (isJpy() ? fmtJpy(v) : fmtUsd(v));
+  const fmtSigned = (v) => (v > 0 ? '+' : '') + fmtMoney(v);
   const fmtPct = (v, d = 1) => (v * 100).toFixed(d).replace('-', '−') + '%';
   const fmtGrowth = (g) => (g === null || g === undefined ? L().na : (g > 0 ? '+' : '') + fmtPct(g, Math.abs(g) >= 1 ? 0 : 1));
   const fmtInt = (v) => { const s = d3.format(',')(Math.round(v)); return st.lang === 'ru' ? s.replace(/,/g, ' ') : s; };
   const fmtPrice = (p) => (p >= 100 ? fmtInt(p) : p >= 1 ? p.toFixed(2) : p.toFixed(3));
+  const fmtPriceM = (p) => curSym() + fmtPrice(p);
   const lum = (hex) => { const c = d3.rgb(hex); return (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) / 255; };
   const growthColor = d3.scaleLinear().domain([-1, -0.5, 0, 0.5, 1]).clamp(true)
     .range(['#b83232', '#d96a5f', '#9aa0a6', '#4fae74', '#23864b']).interpolate(d3.interpolateRgb);
@@ -1154,7 +1186,7 @@
 
   // ---- controls ----
   function segs() {
-    for (const [id, keyName] of [['seg-level', 'level'], ['seg-mode', 'mode'], ['seg-unit', 'unit']]) {
+    for (const [id, keyName] of [['seg-level', 'level'], ['seg-mode', 'mode'], ['seg-cur', 'cur'], ['seg-unit', 'unit']]) {
       $('#' + id).querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(String(keyName === 'level' ? effLevel() : st[keyName]) === b.dataset.v)));
     }
     $('#tabs').querySelectorAll('button').forEach((b) => b.setAttribute('aria-selected', String(st.tab === b.dataset.v)));
@@ -1174,6 +1206,7 @@
   });
   $('#seg-mode').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.mode = b.dataset.v; draw(); } });
   $('#seg-unit').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.unit = b.dataset.v; draw(); } });
+  $('#seg-cur').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && b.dataset.v !== st.cur) { st.cur = b.dataset.v; draw(); } });
   $('#period').addEventListener('change', (e) => { st.period = e.target.value; st.port = null; draw(); });
   $('#tabs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.tab = b.dataset.v; drawTable(); segs(); } });
   $('#port-tabs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && !st.sel) { st.portFlow = b.dataset.v; st.port = null; drawPorts(); segs(); } });
@@ -1314,13 +1347,14 @@
   }
   const tileValue = (r) => {
     if (st.mode === 'growth') {
-      if (r.prev === null) return L().na;
-      if (!r.prev) return L().isNew;
-      return st.unit === 'pct' ? fmtGrowth(r.growth) : fmtSigned(r.change);
+      if (val(r, 'prev') === null) return L().na;
+      if (!val(r, 'prev')) return L().isNew;
+      return st.unit === 'pct' ? fmtGrowth(val(r, 'growth')) : fmtSigned(val(r, 'change'));
     }
-    return st.unit === 'pct' ? fmtPct(r.share, r.share >= 0.1 ? 1 : 2) : fmtUsd(r.value);
+    const sh = val(r, 'share');
+    return st.unit === 'pct' ? fmtPct(sh, sh >= 0.1 ? 1 : 2) : fmtMoney(val(r, 'value'));
   };
-  const tileFill = (r) => (st.mode === 'growth' ? (r.prev ? growthColor(r.growth) : r.prev === 0 ? '#23864b' : '#9aa0a6') : secColor(r.section));
+  const tileFill = (r) => (st.mode === 'growth' ? (val(r, 'prev') ? growthColor(val(r, 'growth')) : val(r, 'prev') === 0 ? '#23864b' : '#9aa0a6') : secColor(r.section));
 
   let firstDraw = true;
   function drawMap(fig, flow, H) {
@@ -1336,7 +1370,7 @@
       return;
     }
     const tree = d3.hierarchy({ children: d3.groups(rows, (r) => r.section).map(([section, items]) => ({ section, children: items })) })
-      .sum((d) => (d.children ? 0 : d.value)).sort((a, b) => b.value - a.value);
+      .sum((d) => (d.children ? 0 : val(d, 'value'))).sort((a, b) => b.value - a.value);
     d3.treemap().size([W, H]).paddingInner(1).round(true).tile(d3.treemapSquarify.ratio(1.15))(tree);
     const selHere = st.sel && st.sel.flow === flow;
     const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`)
@@ -1372,11 +1406,11 @@
       const pair = (k, v) => { const e = el('div', 'row'); e.append(el('span', 'k', k), el('span', '', v)); tip.append(e); };
       line('k', `HS${r.level}${L().sep}${r.code}${L().sep}${secName(r.section)}`);
       line('n', nm(r));
-      pair(L().tValue, fmtUsd(r.value));
-      pair(L().tShare, fmtPct(r.share, 2));
+      pair(L().tValue, fmtMoney(val(r, 'value')));
+      pair(L().tShare, fmtPct(val(r, 'share'), 2));
       const pp = idx.periods.get(idx.periods.get(st.period).prev);
-      if (pp) { pair(L().tPrev(periodLabel(pp)), fmtUsd(r.prev || 0)); pair(L().tChange, r.prev ? `${fmtSigned(r.change)} (${fmtGrowth(r.growth)})` : L().newItem); }
-      if (r.kg > 0) { pair(L().tKg, L().tons(fmtInt(r.kg / 1000))); pair(L().tPrice, L().perKg(fmtPrice(r.price))); }
+      if (pp) { pair(L().tPrev(periodLabel(pp)), fmtMoney(val(r, 'prev') || 0)); pair(L().tChange, val(r, 'prev') ? `${fmtSigned(val(r, 'change'))} (${fmtGrowth(val(r, 'growth'))})` : L().newItem); }
+      if (r.kg > 0) { pair(L().tKg, L().tons(fmtInt(r.kg / 1000))); pair(L().tPrice, L().perKg(fmtPriceM(val(r, 'price')))); }
       line('k', L().clickHint(drillable(r.code)));
       tip.hidden = false;
       const bw = box.clientWidth, bh = H * scale, [mx, my] = at;
@@ -1440,18 +1474,19 @@
     tradeIndex(t.data, pr.data);
     const test = scopeTest(null);
     const flows = st.sel ? [st.sel.flow] : ['ru_jp', 'jp_ru'];
-    $('#trend-note').textContent = `${scopeLabel()}${st.sel ? L().sep + flowName(st.sel.flow) : ''}${L().perMonth}`;
+    $('#trend-note').textContent = `${scopeLabel()}${st.sel ? L().sep + flowName(st.sel.flow) : ''}${L().perMonth(st.cur)}`;
     const months = tIdx.months;
     const sums = Object.fromEntries(flows.map((f) => [f, new Map(months.map((x) => [x, 0]))]));
-    for (const f of flows) for (const r of tIdx.byFlow[f]) if (test(r)) sums[f].set(r.month, sums[f].get(r.month) + +r.value);
+    const vf = F('value');
+    for (const f of flows) for (const r of tIdx.byFlow[f]) if (test(r)) sums[f].set(r.month, sums[f].get(r.month) + +r[vf]);
     const parse = (s) => new Date(s + '-01T00:00:00Z');
     const series = flows.map((f) => ({ f, color: flowColor(f), pts: months.map((x) => ({ d: parse(x), month: x, v: sums[f].get(x) })) }));
     const W = Math.max(280, box.clientWidth), H = 300;
     const yMax = d3.max(series, (s) => d3.max(s.pts, (p) => p.v)) || 1;
     const y = d3.scaleLinear([0, yMax * 1.08], [H - 28, 10]).nice();
     const yt = y.ticks(5);
-    const left = 8 + Math.max(...yt.map((v) => textW(fmtUsd(v), 12, 400)));
-    const lastLabel = (s) => `${st.sel ? '' : flowName(s.f) + ' '}${fmtUsd(s.pts[s.pts.length - 1].v)}`;
+    const left = 8 + Math.max(...yt.map((v) => textW(fmtMoney(v), 12, 400)));
+    const lastLabel = (s) => `${st.sel ? '' : flowName(s.f) + ' '}${fmtMoney(s.pts[s.pts.length - 1].v)}`;
     const right = 10 + Math.min(W * 0.32, Math.max(...series.map((s) => textW(lastLabel(s), 12, 500))));
     const x = d3.scaleUtc([parse(months[0]), parse(months[months.length - 1])], [left, W - right]);
     const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', L().trendAria);
@@ -1462,7 +1497,7 @@
     }
     svg.append('g').selectAll('line').data(yt).join('line').attr('x1', left).attr('x2', W - right).attr('y1', (v) => y(v)).attr('y2', (v) => y(v)).attr('stroke', 'var(--cds-chart-grid)');
     svg.append('g').selectAll('text').data(yt).join('text').attr('x', left - 6).attr('y', (v) => y(v)).attr('dy', '0.32em')
-      .attr('text-anchor', 'end').attr('fill', 'var(--color-fg-muted)').attr('font-size', 12).text(fmtUsd);
+      .attr('text-anchor', 'end').attr('fill', 'var(--color-fg-muted)').attr('font-size', 12).text(fmtMoney);
     const years = d3.utcYear.range(parse(months[0]), d3.utcMonth.offset(parse(months[months.length - 1]), 1));
     const step = Math.ceil(years.length / Math.max(1, Math.floor((W - left - right) / 48)));
     svg.append('g').selectAll('text').data(years.filter((_, i) => i % step === 0)).join('text')
@@ -1500,7 +1535,7 @@
           const r = el('div', 'row');
           const a = el('span'); const sw = el('i', 'rj-sw'); sw.style.background = s.color;
           a.append(sw, document.createTextNode(flowName(s.f)));
-          r.append(a, el('span', '', fmtUsd(s.pts[i].v)));
+          r.append(a, el('span', '', fmtMoney(s.pts[i].v)));
           tip.append(r);
         });
         tip.hidden = false;
@@ -1515,7 +1550,8 @@
   function portShares(test, flow, monthsSet) {
     if (!pIdx) return null;
     const by = new Map();
-    for (const r of pIdx.byFlow[flow]) if (monthsSet.has(r.month) && test(r)) by.set(r.custom, (by.get(r.custom) || 0) + +r.value);
+    const vf = F('value');
+    for (const r of pIdx.byFlow[flow]) if (monthsSet.has(r.month) && test(r)) by.set(r.custom, (by.get(r.custom) || 0) + +r[vf]);
     const total = d3.sum(by.values());
     return { total, list: [...by.entries()].sort((a, b) => b[1] - a[1]).map(([c, v]) => ({ custom: c, v, share: total ? v / total : 0, off: pIdx.off.get(c) })) };
   }
@@ -1531,28 +1567,28 @@
     const kv = el('dl', 'rj-kv');
     const pair = (k, v, mark) => { const dd = el('dd', '', v); if (mark) setMark(dd, mark[0], mark[1]); kv.append(el('dt', '', k), dd); };
     if (r) {
-      pair(L().cValue(pl), fmtUsd(r.value), [r.key, 'value']);
-      pair(L().cShare, fmtPct(r.share, 2), [r.key, 'share']);
-      if (r.prev !== null) pair(L().cVsPrev, r.prev ? fmtGrowth(r.growth) : L().newItem, r.prev ? [r.key, 'growth'] : null);
+      pair(L().cValue(pl), fmtMoney(val(r, 'value')), [r.key, F('value')]);
+      pair(L().cShare, fmtPct(val(r, 'share'), 2), [r.key, F('share')]);
+      if (val(r, 'prev') !== null) pair(L().cVsPrev, val(r, 'prev') ? fmtGrowth(val(r, 'growth')) : L().newItem, val(r, 'prev') ? [r.key, F('growth')] : null);
     } else {
-      pair(L().cValue(pl), '$0');
+      pair(L().cValue(pl), fmtMoney(0));
     }
     // quantity, unit price and regularity from the monthly rows
     const test = scopeTest(null);
     const monthsSet = new Set(per.src.split(','));
-    let qty = 0, kg = 0, val = 0;
+    let qty = 0, kg = 0, sum = 0;
     const units = new Set();
     for (const t of tIdx.byFlow[s.flow]) {
       if (!monthsSet.has(t.month) || !test(t)) continue;
-      val += +t.value; kg += +t.kg;
+      sum += +t[F('value')]; kg += +t.kg;
       if (t.unit) { qty += +t.qty; units.add(t.unit); }
     }
     if (units.size === 1 && qty > 0) {
       const u = unitName([...units][0]);
       pair(L().cQty, `${fmtInt(qty)} ${u}`);
-      pair(L().cUnitPrice(u), '$' + fmtPrice(val / qty));
+      pair(L().cUnitPrice(u), fmtPriceM(sum / qty));
     }
-    if (kg > 0) { pair(L().cKg, L().tons(fmtInt(kg / 1000))); pair(L().cKgPrice, '$' + fmtPrice(val / kg)); }
+    if (kg > 0) { pair(L().cKg, L().tons(fmtInt(kg / 1000))); pair(L().cKgPrice, fmtPriceM(sum / kg)); }
     const last12 = tIdx.months.slice(-12);
     const active = new Set();
     for (const t of tIdx.byFlow[s.flow]) if (t.month >= last12[0] && test(t) && +t.value > 0) active.add(t.month);
@@ -1632,7 +1668,7 @@
     const tip = el('div', 'rj-tip'); tip.hidden = true; map.append(tip);
     const b = svg.append('g').selectAll('g').data([...pts].sort((a, c) => c.v - a.v)).join('g')
       .attr('class', (p) => 'rj-bubble' + (st.port === p.custom ? ' sel' : '')).attr('tabindex', 0).attr('role', 'button')
-      .attr('aria-label', (p) => `${offName(p.off)}: ${fmtUsd(p.v)}`);
+      .attr('aria-label', (p) => `${offName(p.off)}: ${fmtMoney(p.v)}`);
     b.append('circle').attr('cx', (p) => p.xy[0]).attr('cy', (p) => p.xy[1]).attr('r', (p) => rad(p.v)).attr('fill', color).attr('stroke', color);
     // labels for the biggest posts, skipping any that would collide
     const placed = [];
@@ -1651,7 +1687,7 @@
     const showTip = (event, p) => {
       tip.replaceChildren(el('div', 'n', offName(p.off)), el('div', 'k', `${offKind(p.off)}, ${offHouse(p.off)}`));
       const row = (k, v) => { const e = el('div', 'row'); e.append(el('span', 'k', k), el('span', '', v)); tip.append(e); };
-      row(L().tValue, fmtUsd(p.v)); row(L().tShareShort, fmtPct(p.share, 1));
+      row(L().tValue, fmtMoney(p.v)); row(L().tShareShort, fmtPct(p.share, 1));
       tip.append(el('div', 'k', L().portTip));
       tip.hidden = false;
       const scale = map.clientWidth / (vx1 - vx0);
@@ -1673,7 +1709,7 @@
       if (pressed !== undefined) btn.setAttribute('aria-pressed', String(pressed));
       const nmEl = el('span', 'nm'); nmEl.append(document.createTextNode(name)); if (sub) nmEl.append(el('small', '', sub));
       const bar = el('span', 'bar'); const i = el('i'); i.style.width = Math.max(2, (v / maxv) * 100) + '%'; i.style.background = sw || color; bar.append(i);
-      const vv = el('span', 'v', fmtUsd(v)); vv.append(el('small', '', fmtPct(share, 1)));
+      const vv = el('span', 'v', fmtMoney(v)); vv.append(el('small', '', fmtPct(share, 1)));
       btn.append(nmEl, bar, vv);
       btn.addEventListener('click', onClick);
       list.append(btn);
@@ -1689,7 +1725,8 @@
       back.addEventListener('click', () => { st.port = null; drawPorts(); });
       head.append(el('h3', '', L().through(off ? offName(off) : st.port)), back);
       const by = new Map();
-      for (const r of pIdx.byFlow[flow]) if (r.custom === st.port && monthsSet.has(r.month) && test(r)) by.set(r.hs9, (by.get(r.hs9) || 0) + +r.value);
+      const vf = F('value');
+      for (const r of pIdx.byFlow[flow]) if (r.custom === st.port && monthsSet.has(r.month) && test(r)) by.set(r.hs9, (by.get(r.hs9) || 0) + +r[vf]);
       const tot = d3.sum(by.values());
       const items = [...by.entries()].sort((a, c) => c[1] - a[1]).slice(0, 14);
       const maxv = items.length ? items[0][1] : 1;
@@ -1712,15 +1749,16 @@
     let rows = rowsFor(st.tab, level).filter((r) => r.value > 0 || st.mode === 'growth');
     if (st.q) rows = rows.filter((r) => r.code.toLowerCase().includes(st.q) || LANGS.some((l) => (r['name_' + l] || '').toLowerCase().includes(st.q)));
     const key = st.sort, dir = st.dir;
-    const val = (r) => (key === 'name' ? nm(r) : r[key]);
+    const money = ['value', 'share', 'prev', 'change', 'growth', 'price'];
+    const sortVal = (r) => (key === 'name' ? nm(r) : money.includes(key) ? val(r, key) : r[key]);
     const locale = { ru: 'ru', en: 'en', ja: 'ja' }[st.lang];
     rows.sort((a, b) => {
-      const va = val(a), vb = val(b);
+      const va = sortVal(a), vb = sortVal(b);
       if (va === null || va === undefined) return 1;
       if (vb === null || vb === undefined) return -1;
       return typeof va === 'string' ? dir * va.localeCompare(vb, locale) : dir * (va - vb);
     });
-    const shown = rows.slice(0, 400);
+    const shown = rows.slice(0, 1000);
     for (const r of shown) {
       const tr = el('tr');
       tr.dataset.key = r.key;
@@ -1731,15 +1769,16 @@
       c0.append(sw, document.createTextNode(r.code));
       if (drillable(r.code)) { const d = el('button', 'rj-drill', '▸'); d.type = 'button'; d.setAttribute('aria-label', L().drillAria(r.code)); c0.append(d); }
       td(nm(r), 'l name');
-      td(fmtUsd(r.value));
-      td(fmtPct(r.share, 2));
-      td(r.prev === null ? L().na : fmtUsd(r.prev), 'opt');
-      const ch = td(r.change === null ? L().na : fmtSigned(r.change), 'opt');
-      const gr = td(r.prev === null ? L().na : r.prev === 0 ? L().isNew : fmtGrowth(r.growth));
-      const sign = r.change > 0 ? 'rj-pos' : r.change < 0 ? 'rj-neg' : '';
+      const pv = val(r, 'prev'), cv = val(r, 'change');
+      td(fmtMoney(val(r, 'value')));
+      td(fmtPct(val(r, 'share'), 2));
+      td(pv === null ? L().na : fmtMoney(pv), 'opt');
+      const ch = td(cv === null ? L().na : fmtSigned(cv), 'opt');
+      const gr = td(pv === null ? L().na : pv === 0 ? L().isNew : fmtGrowth(val(r, 'growth')));
+      const sign = cv > 0 ? 'rj-pos' : cv < 0 ? 'rj-neg' : '';
       if (sign) { ch.classList.add(sign); gr.classList.add(sign); }
       td(r.kg > 0 ? fmtInt(r.kg / 1000) : '—', 'opt');
-      td(r.price ? fmtPrice(r.price) : '—', 'opt');
+      td(val(r, 'price') ? fmtPrice(val(r, 'price')) : '—', 'opt');
       tb.append(tr);
     }
     $('#table').querySelectorAll('th').forEach((th) => {
@@ -1747,6 +1786,9 @@
       if (b.dataset.sort === key) th.setAttribute('aria-sort', dir > 0 ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort');
     });
     $('#table-title').textContent = L().tableTitle(level);
+    ['value', 'share', 'prev', 'change', 'growth', 'price'].forEach((k) => { $('#th-' + k).dataset.field = F(k); });
+    $('#th-change button').textContent = L().thChange(curSym());
+    $('#th-price button').textContent = L().thPrice(curSym());
     $('#table-note').textContent = L().tableNote(flowName(st.tab), periodLabel(idx.periods.get(st.period)), fmtInt(shown.length), fmtInt(rows.length), st.mode === 'growth');
   }
 
@@ -1781,14 +1823,15 @@
     // headline and summary: the same marked figures inside a sentence in the chosen language
     const tEx = idx.byKey.get(`${st.period}|ru_jp|TOTAL`), tIm = idx.byKey.get(`${st.period}|jp_ru|TOTAL`);
     const fill = (e, row, field, text) => { e.classList.remove('dash-skeleton'); if (!row) { e.textContent = '—'; return; } setMark(e, row.key, field); e.textContent = text(row); };
-    fill(M.tEx, tEx, 'value', (r) => fmtUsd(r.value)); fill(M.sEx, tEx, 'value', (r) => fmtUsd(r.value));
-    fill(M.tIm, tIm, 'value', (r) => fmtUsd(r.value)); fill(M.sIm, tIm, 'value', (r) => fmtUsd(r.value));
-    fill(M.tExg, tEx, 'growth', (r) => fmtGrowth(r.growth)); fill(M.tImg, tIm, 'growth', (r) => fmtGrowth(r.growth));
+    const money = (r) => fmtMoney(val(r, 'value')), growth = (r) => fmtGrowth(val(r, 'growth'));
+    fill(M.tEx, tEx, F('value'), money); fill(M.sEx, tEx, F('value'), money);
+    fill(M.tIm, tIm, F('value'), money); fill(M.sIm, tIm, F('value'), money);
+    fill(M.tExg, tEx, F('growth'), growth); fill(M.tImg, tIm, F('growth'), growth);
     compose($('#takeaway'), L().takeaway(pl, M.tEx, M.tExg, M.tIm, M.tImg));
     const bal = b.status === 'ok' ? b.data.find((x) => x.period === st.period) : null;
     M.sBal.classList.remove('dash-skeleton');
-    if (bal) { M.sBal.dataset.source = 'balance'; M.sBal.dataset.field = 'balance'; M.sBal.dataset.where = 'period=' + encodeURIComponent(st.period); M.sBal.textContent = fmtUsd(Math.abs(bal.balance)); }
-    compose($('#summary'), L().summary(!bal || bal.balance >= 0, pl, M.sBal, M.sEx, M.sIm));
+    if (bal) { M.sBal.dataset.source = 'balance'; M.sBal.dataset.field = F('balance'); M.sBal.dataset.where = 'period=' + encodeURIComponent(st.period); M.sBal.textContent = fmtMoney(Math.abs(val(bal, 'balance'))); }
+    compose($('#summary'), L().summary(!bal || val(bal, 'balance') >= 0, pl, M.sBal, M.sEx, M.sIm));
 
     const W = maps[0].querySelector('.rj-tm').clientWidth || 400;
     const H = Math.round(Math.max(320, Math.min(560, W * 0.92)));
@@ -1798,7 +1841,7 @@
       f.querySelector('.m-title').textContent = L().mapTitle(flow, pl);
       const tot = f.querySelector('.m-total');
       tot.classList.remove('dash-skeleton');
-      if (fr) { setMark(tot, fr.key, 'value'); tot.textContent = fmtUsd(fr.value); } else tot.textContent = '—';
+      if (fr) { setMark(tot, fr.key, F('value')); tot.textContent = fmtMoney(val(fr, 'value')); } else tot.textContent = '—';
       const scope = !st.filter ? '' : st.filter.type === 'section' ? secName(st.filter.id) : `${st.filter.code} ${codeName(st.filter.code, flow)}`;
       f.querySelector('.m-scope').textContent = scope ? `${L().sep}${scope}` : '';
       drawMap(f, flow, H);
@@ -1929,7 +1972,7 @@
     // how big the chosen category is in trade
     const vr = cst.cat && idx ? idx.byKey.get(`${st.period}|ru_jp|${cst.cat}`) : null;
     $('#comp-cat-note').textContent = cst.cat
-      ? L().catNote(`${cst.cat} ${codeName(cst.cat, 'ru_jp')}`, fmtUsd(vr ? vr.value : 0), periodLabel(idx && idx.periods.get(st.period)))
+      ? L().catNote(`${cst.cat} ${codeName(cst.cat, 'ru_jp')}`, fmtMoney(vr ? val(vr, 'value') : 0), periodLabel(idx && idx.periods.get(st.period)))
       : L().catNoteAll(rows.length);
     if (!rows.length) { const tr = el('tr'); const td = el('td', 'l', L().compEmpty); td.colSpan = 8; tr.append(td); tb.append(tr); return; }
     for (const r of rows) {
