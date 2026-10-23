@@ -39,234 +39,7 @@
 </head>
 <body>
 <main id="dash-root">
-<style>
-  /* Layout: OEC-style — control panel on the left, two mirrored treemaps on the right;
-     below them the selected item (trend + card), the port map, and the product table */
-  .rj {
-    --rj-pick: #f6c343;
-    --rj-pick-ink: #1c1a14;
-    --rj-track: color-mix(in srgb, var(--color-fg) 6%, transparent);
-    --rj-sea: color-mix(in srgb, var(--color-fg) 4%, var(--color-panel));
-    --rj-land: var(--color-bg);
-    --rj-land-other: color-mix(in srgb, var(--color-fg) 9%, var(--color-panel));
-    font-family: var(--font-anthropic-sans);
-    display: grid;
-    gap: var(--cds-gap-lg);
-    font-variant-numeric: tabular-nums;
-  }
-  .rj-head { display: grid; gap: var(--cds-gap-xs); }
-  .rj-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
-  .rj-take { margin: 0; color: var(--color-fg-muted); max-width: 72ch; }
-  .rj-take b, .rj-sum b { font-weight: 600; color: var(--color-fg); }
-
-  .rj-wrap { container-type: inline-size; }
-  .rj-main { display: grid; gap: var(--cds-gap-lg); grid-template-columns: 1fr; }
-  @container (min-width: 1080px) { .rj-main { grid-template-columns: minmax(240px, 280px) minmax(0, 1fr); } }
-
-  .rj-panel { display: grid; gap: var(--cds-gap-md); align-content: start; min-width: 0; }
-  .rj-panel h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
-  .rj-seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--rj-track); border-radius: 999px; padding: 3px; }
-  .rj-seg button { font: inherit; font-size: var(--cds-font-size-body); color: var(--color-fg); background: transparent; border: 0; border-radius: 999px; padding: 6px 8px; cursor: pointer; }
-  .rj-seg button[aria-pressed="true"] { background: var(--rj-pick); color: var(--rj-pick-ink); font-weight: 600; }
-  .rj button:focus-visible, .rj select:focus-visible, .rj input:focus-visible, .rj-tile:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
-  .rj-period { font: inherit; color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 8px 14px; width: 100%; }
-  .rj-crumbs { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: var(--cds-font-size-caption); min-height: 1.6em; }
-  .rj-crumbs button, .rj-link { font: inherit; background: none; border: 0; padding: 2px 0; color: var(--color-fg); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
-  .rj-crumbs span[aria-current] { color: var(--color-fg-muted); }
-  .rj-crumbs .sep { color: var(--color-fg-muted); }
-  .rj-sum { margin: 0; line-height: 1.55; color: var(--color-fg-muted); }
-  .rj-hint { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; }
-
-  .rj-maps { container-type: inline-size; min-width: 0; }
-  .rj-maps-grid { display: grid; gap: var(--cds-gap-lg); grid-template-columns: 1fr; }
-  @container (min-width: 620px) { .rj-maps-grid { grid-template-columns: 1fr 1fr; } .rj-legend { grid-column: 1 / -1; } }
-  .rj-map { margin: 0; display: grid; gap: var(--cds-gap-xs); position: relative; min-width: 0; }
-  .rj-map h3 { margin: 0; text-align: center; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); text-wrap: balance; }
-  .rj-total { text-align: center; color: var(--color-fg-muted); }
-  .rj-total b { font-family: var(--font-anthropic-serif); font-weight: 400; color: var(--color-fg); font-size: 1.15em; }
-  .rj-tm { position: relative; min-height: 340px; }
-  .rj-tm svg { display: block; }
-  .rj-tile { cursor: pointer; outline: none; }
-  .rj-tile rect { stroke: transparent; stroke-width: 2; }
-  .rj-tile:hover rect { stroke: var(--color-fg); }
-  .rj-tile.sel rect { stroke: var(--color-fg); stroke-width: 3; }
-  .rj-tm svg.dim .rj-tile:not(.sel) { opacity: .42; }
-  .rj-empty { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); border: 1px dashed var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); text-align: center; }
-  .rj-dot { width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); flex: none; }
-
-  .rj-legend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: var(--cds-font-size-caption); }
-  .rj-legend button { font: inherit; display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; padding: 2px 0; color: var(--color-fg); cursor: pointer; }
-  .rj-legend button[aria-pressed="true"] { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
-  .rj-legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex: none; }
-  .rj-grad { display: flex; align-items: center; gap: 8px; }
-  .rj-grad i { width: 160px; max-width: 40vw; height: 10px; border-radius: 5px; background: linear-gradient(90deg, #b83232, #9aa0a6, #23864b); }
-
-  .rj-selbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--cds-gap-sm); padding: var(--cds-pad-sm) var(--cds-pad-md); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-panel); }
-  .rj-selbar .what { flex: 1 1 260px; min-width: 0; }
-  .rj-selbar .what b { font-weight: 600; }
-  .rj-btn { font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
-  .rj-btn.pick { background: var(--rj-pick); color: var(--rj-pick-ink); border-color: transparent; font-weight: 600; }
-
-  .rj-tip {
-    position: absolute; z-index: 5; pointer-events: none; max-width: 320px;
-    background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius);
-    box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption);
-    display: grid; gap: 2px;
-  }
-  .rj-tip .k { color: var(--cds-text-secondary); }
-  .rj-tip .n { font-weight: 600; }
-  .rj-tip .row { display: flex; justify-content: space-between; gap: 12px; }
-
-  .rj-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-sm); min-width: 0; align-content: start; }
-  .rj-card h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
-  .rj-note { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-  .rj-row2 { container-type: inline-size; }
-  .rj-row2-grid { display: grid; gap: var(--cds-gap-lg); grid-template-columns: 1fr; }
-  @container (min-width: 900px) { .rj-row2-grid { grid-template-columns: minmax(0, 3fr) minmax(280px, 2fr); } }
-  .rj-trend { position: relative; min-height: 300px; }
-  .rj-trend svg { display: block; overflow: visible; }
-
-  .rj-item { display: grid; gap: var(--cds-gap-sm); }
-  .rj-item .code { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-  .rj-item h3 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: 600; text-wrap: balance; }
-  .rj-item .orig { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-  .rj-kv { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; margin: 0; font-size: var(--cds-font-size-caption); }
-  .rj-kv dt { color: var(--color-fg-muted); }
-  .rj-kv dd { margin: 0; text-align: right; font-weight: 500; }
-  .rj-flag { margin: 0; padding: var(--cds-pad-xs) var(--cds-pad-sm); border-radius: var(--cds-radius); background: var(--rj-track); font-size: var(--cds-font-size-caption); line-height: 1.5; }
-  .rj-leads { display: grid; gap: 4px; font-size: var(--cds-font-size-caption); line-height: 1.5; }
-  .rj-leads h4 { margin: 0; font-size: var(--cds-font-size-caption); font-weight: 600; }
-  .rj-leads p { margin: 0; }
-  .rj-leads ul { margin: 0; padding-left: 1.1em; }
-  .rj-leads a { color: var(--color-fg); }
-
-  .rj-ports { container-type: inline-size; }
-  .rj-ports-grid { display: grid; gap: var(--cds-gap-lg); grid-template-columns: 1fr; }
-  @container (min-width: 820px) { .rj-ports-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
-  .rj-pmap { position: relative; min-height: 360px; width: 100%; max-width: 580px; justify-self: center; }
-  .rj-pmap svg { display: block; border-radius: var(--cds-radius); }
-  .rj-bubble { cursor: pointer; }
-  .rj-bubble circle { fill-opacity: .5; stroke-width: 1.5; }
-  .rj-bubble:hover circle, .rj-bubble.sel circle { fill-opacity: .85; stroke: var(--color-fg); }
-  .rj-plabel { font-size: 23px; fill: var(--color-fg); paint-order: stroke; stroke: var(--rj-sea); stroke-width: 6px; stroke-linejoin: round; pointer-events: none; }
-  .rj-plist { display: grid; gap: 2px; align-content: start; min-width: 0; }
-  .rj-prow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(60px, 34%) auto; gap: 4px 10px; align-items: center; width: 100%; font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); text-align: left; background: none; border: 0; border-radius: var(--cds-radius); padding: 6px 8px; cursor: pointer; }
-  .rj-prow:hover, .rj-prow[aria-pressed="true"] { background: var(--rj-track); }
-  .rj-prow .nm { min-width: 0; }
-  .rj-prow .nm small { display: block; color: var(--color-fg-muted); }
-  .rj-prow .bar { height: 8px; border-radius: 4px; background: var(--rj-track); overflow: hidden; }
-  .rj-prow .bar i { display: block; height: 100%; border-radius: 4px; }
-  .rj-prow .v { text-align: right; white-space: nowrap; }
-  .rj-prow .v small { display: block; color: var(--color-fg-muted); }
-  .rj-plist-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 4px; }
-  .rj-plist-head h3 { margin: 0; font-size: var(--cds-font-size-body); font-weight: 600; }
-
-  .rj-tools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; justify-content: space-between; }
-  .rj-tabs { display: inline-grid; grid-auto-flow: column; background: var(--rj-track); border-radius: 999px; padding: 3px; }
-  .rj-tabs button { font: inherit; background: transparent; border: 0; border-radius: 999px; padding: 5px 12px; color: var(--color-fg); cursor: pointer; }
-  .rj-tabs button[aria-selected="true"] { background: var(--rj-pick); color: var(--rj-pick-ink); font-weight: 600; }
-  .rj-tabs button:disabled { cursor: default; opacity: .55; }
-  .rj-search { font: inherit; color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 6px 12px; min-width: 0; flex: 1 1 200px; max-width: 320px; }
-  .rj-tablebox { max-height: 560px; overflow: auto; border-top: 1px solid var(--color-border-line); }
-  .rj-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); }
-  .rj-table th { position: sticky; top: 0; background: var(--color-panel); text-align: right; font-weight: var(--cds-font-weight-medium); padding: 0; z-index: 1; }
-  .rj-table th button { font: inherit; width: 100%; text-align: inherit; background: none; border: 0; padding: 8px 6px; color: var(--color-fg-muted); cursor: pointer; white-space: nowrap; }
-  .rj-table th[aria-sort] button { color: var(--color-fg); }
-  .rj-table td { padding: 6px; border-top: 1px solid var(--color-border-line); text-align: right; white-space: nowrap; }
-  .rj-table th.l, .rj-table td.l { text-align: left; }
-  .rj-table td.name { white-space: normal; min-width: 180px; }
-  .rj-table td.name small { display: block; color: var(--color-fg-muted); }
-  .rj-table tbody tr { cursor: pointer; }
-  .rj-table tbody tr:hover td, .rj-table tbody tr.sel td { background: var(--rj-track); }
-  .rj-drill { font: inherit; background: none; border: 1px solid var(--color-border-line); border-radius: 4px; color: var(--color-fg); padding: 0 5px; margin-left: 6px; cursor: pointer; }
-  .rj-sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; vertical-align: baseline; }
-  .rj-pos { color: var(--color-ok); }
-  .rj-neg { color: var(--color-bad); }
-  @media (max-width: 720px) { .rj-table .opt { display: none; } }
-  .rj-foot { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.5; max-width: 110ch; }
-
-  [data-dash-source-state=empty] { color: transparent; }
-  [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
-  @media (prefers-reduced-motion: no-preference) {
-    .rj-tm svg.fresh .rj-tile { animation: rj-in var(--cds-dur-slow) var(--cds-ease-out) both; }
-    @keyframes rj-in { from { opacity: 0; } to { opacity: 1; } }
-  }
-</style>
-<style>
-  .rj-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: var(--cds-gap-sm); }
-  .rj-langs { display: inline-grid; grid-auto-flow: column; background: var(--rj-track); border-radius: 999px; padding: 3px; flex: none; }
-  .rj-langs button { font: inherit; font-size: var(--cds-font-size-caption); background: transparent; border: 0; border-radius: 999px; padding: 5px 12px; color: var(--color-fg); cursor: pointer; }
-  .rj-langs button[aria-pressed="true"] { background: var(--rj-pick); color: var(--rj-pick-ink); font-weight: 600; }
-  .rj:lang(ja) { line-break: strict; }
-  .rj [hidden] { display: none !important; }
-  .rj-back { font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 3px 10px; margin-right: 6px; cursor: pointer; }
-  .rj-nav { font-size: var(--cds-font-size-body); }
-  .rj-pages { display: flex; gap: 4px; border-bottom: 1px solid var(--color-border-line); margin-top: var(--cds-gap-sm); }
-  .rj-pages button { font: inherit; background: none; border: 0; border-bottom: 3px solid transparent; padding: 8px 14px; color: var(--color-fg-muted); cursor: pointer; margin-bottom: -1px; }
-  .rj-pages button[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--rj-pick); font-weight: 600; }
-  .rj-page { display: grid; gap: var(--cds-gap-lg); }
-  .rj-about { display: grid; gap: var(--cds-gap-lg); max-width: 78ch; line-height: 1.6; }
-  .rj-about h2 { margin: 0; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); }
-  .rj-about h3 { margin: 0 0 4px; font-size: var(--cds-font-size-heading); font-weight: 600; }
-  .rj-about p { margin: 0; }
-  .rj-about ul { margin: 4px 0 0; padding-left: 1.2em; display: grid; gap: 4px; }
-  .rj-about a { color: var(--color-fg); }
-  .rj-head2 { display: grid; gap: var(--cds-gap-xs); }
-  .rj-head2 h2 { margin: 0; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); }
-  .rj-kpis { display: flex; flex-wrap: wrap; gap: var(--cds-gap-lg); }
-  .rj-kpi { display: grid; gap: 2px; min-width: 120px; }
-  .rj-kpi b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); }
-  .rj-kpi span { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-  .rj-ctools { justify-content: flex-start; }
-  .rj-csel { width: auto; max-width: 100%; min-width: 0; flex: 0 1 280px; }
-  .rj-ctable td { white-space: normal; vertical-align: top; }
-  .rj-ctable td.nw { white-space: nowrap; }
-  .rj-ctable td small { display: block; color: var(--color-fg-muted); }
-  .rj-chip { display: inline-block; font: inherit; font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); background: var(--color-bg); color: var(--color-fg); border-radius: 999px; padding: 1px 8px; margin: 0 4px 4px 0; cursor: pointer; }
-  .rj-chip i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; }
-  .rj-badge { display: inline-block; font-size: var(--cds-font-size-caption); font-weight: 600; border-radius: 4px; padding: 1px 6px; background: var(--rj-pick); color: var(--rj-pick-ink); }
-  .rj-warn { display: inline-block; font-size: var(--cds-font-size-caption); color: var(--color-warn); }
-  .rj-status { display: block; font-size: var(--cds-font-size-caption); margin-top: 2px; white-space: nowrap; }
-  .rj-status.open { color: var(--color-ok); } .rj-status.pending { color: var(--color-warn); } .rj-status.limited { color: var(--color-fg-muted); }
-  .rj-ctable td small.rj-trade.none { color: var(--color-warn); }
-  .rj-sources ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: var(--cds-font-size-caption); line-height: 1.5; }
-  .rj-sources b { font-weight: 600; }
-  /* четыре листа: на узком экране вкладки ужимаются, а если всё равно не помещаются — переносятся */
-  .rj-pages { flex-wrap: wrap; }
-  @media (max-width: 480px) { .rj-pages button { padding: 8px 8px; } }
-  /* Расчёты: платёжный баланс, прямые инвестиции, валюта расчётов */
-  .rj-cq { container-type: inline-size; }
-  .rj-stcur { flex: 0 0 auto; min-width: 140px; }
-  .rj-keys { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: var(--cds-font-size-caption); }
-  .rj-key { display: inline-flex; align-items: center; gap: 6px; }
-  .rj-key i { width: 12px; height: 12px; border-radius: 3px; flex: none; }
-  .rj-key i.dot { width: 8px; height: 8px; border-radius: 50%; }
-  .rj-chart { position: relative; min-height: 200px; }
-  .rj-chart svg { display: block; overflow: visible; }
-  .rj-chart svg rect[tabindex]:focus-visible { outline: 2px solid var(--color-fg); outline-offset: -2px; }
-  .rj-grid2 { display: grid; gap: var(--cds-gap-lg); grid-template-columns: 1fr; }
-  @container (min-width: 820px) { .rj-grid2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
-  .rj-fig { margin: 0; display: grid; gap: var(--cds-gap-xs); align-content: start; min-width: 0; }
-  .rj-fig figcaption { font-size: var(--cds-font-size-caption); font-weight: 600; }
-  .rj-kpi span + span { font-size: var(--cds-font-size-caption); }
-  .rj-dlist { display: grid; gap: 2px; }
-  .rj-dgroup { margin: var(--cds-gap-sm) 0 2px; font-size: var(--cds-font-size-caption); font-weight: 600; color: var(--color-fg-muted); }
-  .rj-drow { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(70px, 1fr) minmax(84px, auto); gap: 4px 12px; align-items: center; padding: 6px 8px; border-radius: var(--cds-radius); font-size: var(--cds-font-size-caption); }
-  .rj-drow:hover { background: var(--rj-track); }
-  .rj-drow small { display: block; color: var(--color-fg-muted); font-weight: 400; }
-  .rj-drow .v { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .rj-drow .v b { font-weight: 600; }
-  .rj-dtrack { position: relative; height: 10px; }
-  .rj-dtrack::before { content: ''; position: absolute; left: 50%; top: -4px; bottom: -4px; width: 1px; background: var(--cds-chart-axis); }
-  .rj-dtrack i { position: absolute; top: 0; bottom: 0; }
-  .rj-crow { display: grid; grid-template-columns: minmax(96px, auto) minmax(0, 1fr); gap: 10px; align-items: center; font-size: var(--cds-font-size-caption); padding: 2px 0; }
-  .rj-crow.world { margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--color-border-line); }
-  .rj-cbar { display: flex; gap: 2px; height: 22px; }
-  .rj-cbar span { display: flex; align-items: center; justify-content: center; min-width: 0; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: default; }
-  .rj-cbar span:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 1px; }
-  .rj-insights ul { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; line-height: 1.55; max-width: 110ch; }
-  .rj-insights b { font-weight: 600; }
-</style>
+<link rel="stylesheet" href="style.css">
 
 <div class="rj" lang="ru">
   <header class="rj-head" id="top">
@@ -281,6 +54,7 @@
     <nav class="rj-pages" role="tablist" data-i18n-aria="ariaPages" id="pages">
       <button type="button" role="tab" data-v="about" id="tab-about" data-i18n="tabAbout">Описание</button>
       <button type="button" role="tab" data-v="trade" id="tab-trade" data-i18n="tabTrade">Торговля</button>
+      <button type="button" role="tab" data-v="dynamics" id="tab-dynamics" data-i18n="tabDynamics">Динамика</button>
       <button type="button" role="tab" data-v="settlements" id="tab-settlements" data-i18n="tabSettlements">Расчёты</button>
       <button type="button" role="tab" data-v="companies" id="tab-companies" data-i18n="tabCompanies">Компании</button>
     </nav>
@@ -375,6 +149,7 @@
         <button type="button" role="tab" data-v="jp_ru">—</button>
       </div>
       <input class="rj-search" id="search" type="search" data-i18n-ph="search" data-i18n-aria="search">
+      <button type="button" class="rj-btn" id="to-dyn" data-i18n="toDyn">—</button>
     </div>
     <nav class="rj-crumbs rj-nav" id="table-crumbs" data-i18n-aria="ariaFilter"></nav>
     <p class="rj-note" id="table-note">—</p>
@@ -397,6 +172,78 @@
   </section>
 
   <p class="rj-foot" id="source-note" data-i18n="footShort">—</p>
+  </section>
+
+  <section class="rj-page" id="dynamics" hidden>
+    <div class="rj-head2">
+      <h2 data-i18n="dyTitle">—</h2>
+      <p class="rj-take" data-i18n="dyIntro">—</p>
+    </div>
+    <div class="rj-dtools">
+      <div class="rj-seg" role="group" data-i18n-aria="ariaDir" id="dy-flow">
+        <button type="button" data-v="ru_jp">—</button>
+        <button type="button" data-v="jp_ru">—</button>
+        <button type="button" data-v="both" data-i18n="dirBoth">—</button>
+      </div>
+      <div class="rj-seg" role="group" data-i18n-aria="ariaLevel" id="dy-level">
+        <button type="button" data-v="1" data-i18n="lvlS">—</button>
+        <button type="button" data-v="2">HS2</button>
+        <button type="button" data-v="4">HS4</button>
+        <button type="button" data-v="6">HS6</button>
+        <button type="button" data-v="9">HS9</button>
+      </div>
+      <div class="rj-seg" role="group" data-i18n-aria="ariaCur" id="dy-cur">
+        <button type="button" data-v="usd">USD</button>
+        <button type="button" data-v="jpy">JPY</button>
+      </div>
+    </div>
+    <div class="rj-dper" id="dy-period" data-source="trade">
+      <span data-i18n="per">—</span>
+      <select id="dy-a0" data-i18n-aria="ariaA0"></select><span>—</span><select id="dy-a1" data-i18n-aria="ariaA1"></select>
+      <span data-i18n="vs">—</span>
+      <select id="dy-base" data-i18n-aria="ariaBase">
+        <option value="yoy" data-i18n="baseYoy">—</option>
+        <option value="prev" data-i18n="basePrev">—</option>
+        <option value="custom" data-i18n="baseCustom">—</option>
+      </select>
+      <span id="dy-bcustom" hidden><select id="dy-b0" data-i18n-aria="ariaB0"></select><span>—</span><select id="dy-b1" data-i18n-aria="ariaB1"></select></span>
+      <span class="rj-note" id="dy-blabel"></span>
+    </div>
+    <div class="rj-dtools">
+      <div class="rj-dpresets" role="group" data-i18n-aria="ariaPresets" id="dy-presets">
+        <button type="button" class="rj-chip" data-v="ytd" data-i18n="preYtd">—</button>
+        <button type="button" class="rj-chip" data-v="ltm" data-i18n="preLtm">—</button>
+        <button type="button" class="rj-chip" data-v="q" data-i18n="preQ">—</button>
+        <button type="button" class="rj-chip" data-v="m" data-i18n="preM">—</button>
+      </div>
+      <div class="rj-seg" role="group" data-i18n-aria="ariaN" id="dy-n">
+        <button type="button" data-v="10">—</button>
+        <button type="button" data-v="20">—</button>
+        <button type="button" data-v="50">—</button>
+      </div>
+      <div class="rj-seg" role="group" data-i18n-aria="ariaSort" id="dy-sort">
+        <button type="button" data-v="abs" data-i18n="sortAbs">—</button>
+        <button type="button" data-v="pct" data-i18n="sortPct">—</button>
+      </div>
+      <div class="rj-crumbs" id="dy-scope"></div>
+    </div>
+    <p class="rj-take" id="dy-summary" data-source="trade">—</p>
+    <div class="rj-cq">
+      <div class="rj-movers" id="dy-lists" data-source="trade products companies">
+        <section class="rj-card rj-mlist" id="dy-up">
+          <h2 class="up" data-i18n="up">—</h2>
+          <p class="rj-note">—</p>
+          <div class="rows"></div>
+        </section>
+        <section class="rj-card rj-mlist" id="dy-down">
+          <h2 class="down" data-i18n="down">—</h2>
+          <p class="rj-note">—</p>
+          <div class="rows"></div>
+        </section>
+      </div>
+    </div>
+    <p class="rj-hint" id="dy-note"></p>
+    <p class="rj-foot" data-i18n="footDy">—</p>
   </section>
 
   <section class="rj-page" id="settlements" hidden>
@@ -499,6 +346,7 @@
   </section>
 </div>
 
+<script src="texts.js"></script>
 
 </main>
 <script>
@@ -657,670 +505,8 @@
   });
 </script>
 <script>
-  // ---- interface text in three languages ----
-  const SECTIONS = {
-    1: [['Продукты животного происхождения', 'Animal products', '動物性生産品'], '#f2a483'],
-    2: [['Продукты растительного происхождения', 'Vegetable products', '植物性生産品'], '#9ccb4a'],
-    3: [['Жиры и масла', 'Animal and vegetable fats', '動植物性油脂'], '#c9b037'],
-    4: [['Продовольственные товары', 'Foodstuffs', '調製食料品・飲料・たばこ'], '#f6d55c'],
-    5: [['Минеральные продукты', 'Mineral products', '鉱物性生産品'], '#a33c00'],
-    6: [['Химическая продукция', 'Chemical products', '化学工業生産品'], '#e040c8'],
-    7: [['Пластмассы и каучук', 'Plastics and rubber', 'プラスチック・ゴム'], '#f58fd8'],
-    8: [['Кожа и шкуры', 'Hides and leather', '皮革・毛皮'], '#b5835a'],
-    9: [['Древесина и изделия', 'Wood products', '木材・木製品'], '#d7263d'],
-    10: [['Бумага и целлюлоза', 'Paper goods', 'パルプ・紙'], '#e6dc8f'],
-    11: [['Текстиль', 'Textiles', '紡織用繊維・製品'], '#16a34a'],
-    12: [['Обувь и головные уборы', 'Footwear and headwear', '履物・帽子'], '#5dd3c3'],
-    13: [['Камень, керамика, стекло', 'Stone and glass', '石・陶磁・ガラス'], '#8d99ae'],
-    14: [['Драгметаллы и камни', 'Precious metals', '貴金属・宝石'], '#9b3df2'],
-    15: [['Металлы', 'Metals', '卑金属'], '#a87a2a'],
-    16: [['Машины и электроника', 'Machines', '機械・電気機器'], '#2f86e6'],
-    17: [['Транспорт', 'Transportation', '輸送機器'], '#6cc7eb'],
-    18: [['Приборы', 'Instruments', '精密機器'], '#9b0e6b'],
-    19: [['Оружие', 'Weapons', '武器'], '#5b6770'],
-    20: [['Разные товары', 'Miscellaneous', '雑品'], '#f28c28'],
-    21: [['Искусство и антиквариат', 'Arts and antiques', '美術品・骨とう'], '#6b4e9b'],
-    22: [['Реэкспорт и прочее', 'Re-exports and other', '再輸出・その他'], '#b0b0b0'],
-  };
-  const HOUSES = {
-    1: ['Токийская таможня', 'Tokyo Customs', '東京税関'], 2: ['Иокогамская таможня', 'Yokohama Customs', '横浜税関'],
-    3: ['Таможня Кобе', 'Kobe Customs', '神戸税関'], 4: ['Осакская таможня', 'Osaka Customs', '大阪税関'],
-    5: ['Таможня Нагои', 'Nagoya Customs', '名古屋税関'], 6: ['Таможня Модзи', 'Moji Customs', '門司税関'],
-    7: ['Таможня Нагасаки', 'Nagasaki Customs', '長崎税関'], 8: ['Таможня Хакодате', 'Hakodate Customs', '函館税関'],
-    9: ['Таможня Окинавы', 'Okinawa Customs', '沖縄地区税関'],
-  };
-  const KINDS = { 'порт': ['порт', 'port', '港'], 'аэропорт': ['аэропорт', 'airport', '空港'], 'почта': ['почта', 'mail', '郵便'] };
-  const UNITS = {
-    NO: ['шт.', 'units', '台・個'], CM: ['м³', 'm³', 'm³'], KL: ['кл', 'kl', 'kl'], ST: ['компл.', 'sets', 'セット'], DZ: ['дюж.', 'dozen', 'ダース'],
-    PR: ['пар', 'pairs', '組'], SM: ['м²', 'm²', 'm²'], TH: ['тыс. шт.', 'thousand', '千個'], GT: ['GT', 'GT', '総トン'], LT: ['л', 'l', 'l'], CT: ['карат', 'carats', 'カラット'],
-  };
-  const LANGS = ['ru', 'en', 'ja'];
-  const MON = {
-    ru: ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'],
-    en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-  };
-  const MONTH_FULL = {
-    ru: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
-    en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-  };
-  const T = {
-    ru: {
-      title: 'Торговля Россия — Япония по товарам', panelTitle: 'Торговля по товарам',
-      ariaLang: 'Язык', ariaLevel: 'Уровень детализации', ariaMode: 'Показатель', ariaUnit: 'Единицы', ariaPeriod: 'Период', ariaFilter: 'Фильтр',
-      ariaPortFlow: 'Направление для карты', ariaFlow: 'Направление',
-      modeValue: 'Стоимость', modeGrowth: 'Рост', unitAbs: 'Сумма', unitPct: 'Проценты (%)', ariaCur: 'Валюта', total: 'Итого:', clearSel: 'Снять выбор',
-      cardTitle: 'Карточка позиции', portsTitle: 'Порты и таможенные посты Японии', portTabImp: 'Импорт из России', portTabExp: 'Экспорт в Россию',
-      search: 'Поиск по коду или названию', thCode: 'Код', thName: 'Товар', thValue: 'Стоимость', thShare: 'Доля', thPrev: 'Пред. период',
-      thChange: (c) => `Изм., ${c}`, thGrowth: 'Изм., %', thKg: 'Вес, т', thPrice: (c) => `${c}/кг`,
-      hint: 'Клик по прямоугольнику выбирает товар: ниже появятся его динамика, порты и подсказки, где искать контрагентов. Повторный клик снимает выбор. Двойной клик раскрывает главу до HS4, HS6 и HS9.',
-      flows: { ru_jp: 'Россия → Япония', jp_ru: 'Япония → Россия' },
-      mapTitle: (f, p) => (f === 'ru_jp' ? 'Экспорт России в Японию, ' : 'Экспорт Японии в Россию, ') + p,
-      year: (y) => y, ytd: (y, m) => `${y}, ${MON.ru[0]}–${MON.ru[m - 1]}`,
-      ltm: (a, b) => `12 мес.: ${MON.ru[+a.slice(5) - 1]} ${a.slice(0, 4)} – ${MON.ru[+b.slice(5) - 1]} ${b.slice(0, 4)}`,
-      monthLong: (m) => `${MONTH_FULL.ru[+m.slice(5) - 1]} ${m.slice(0, 4)}`,
-      takeaway: (P, ex, exg, im, img) => [P, ': Россия поставила в Японию на ', ex, ' (', exg, ' к прошлому периоду), Япония в Россию — на ', im, ' (', img, ').'],
-      summary: (surplus, P, bal, ex, im) => [surplus ? 'Профицит России' : 'Дефицит России', ' в торговле с Японией за период ', P, ': ', bal, '. Экспорт России составил ', ex, ', импорт из Японии — ', im, '.'],
-      back: '← Назад', backAria: 'Вернуться на предыдущий шаг', allGoods: 'Все товары', na: 'н/д', isNew: 'новое', newItem: 'новая позиция', sep: ' · ',
-      noTrade: 'Нет поставок по этому фильтру в выбранном периоде', gradLo: '−100% и ниже', gradHi: '+100% и выше',
-      drillTo: (l) => `Раскрыть до HS${l}`, clickHint: (d) => (d ? 'Клик — выбрать, двойной клик — раскрыть' : 'Клик — выбрать'),
-      tValue: 'Стоимость', tShare: 'Доля в потоке', tPrev: (p) => `Было (${p})`, tChange: 'Изменение', tKg: 'Вес нетто', tPrice: 'Цена',
-      perKg: (p) => `${p} за кг`, tons: (v) => `${v} т`,
-      trendAll: 'Помесячная динамика', trendSel: 'Динамика выбранной позиции', perMonth: (c) => (c === 'jpy' ? ', иен в месяц' : ', долларов в месяц'),
-      cardEmpty: 'Выберите прямоугольник на карте товаров или строку в таблице. Здесь появятся объём в штуках и тоннах, цена за единицу, регулярность поставок, основные порты и подсказки, где искать покупателей и поставщиков.',
-      cValue: (p) => `Стоимость, ${p}`, cShare: 'Доля в потоке', cVsPrev: 'К прошлому периоду', cQty: 'Количество', cUnitPrice: (u) => `Цена за ${u}`,
-      cKg: 'Вес нетто', cKgPrice: 'Цена за кг', cActive: 'Месяцев с поставками из последних 12', cActiveV: (n) => `${n} из 12`,
-      fConf: 'Код засекречен таможней по заявке участника: по нему 1–2 экспортёра или импортёра. Сумма и страна настоящие, скрыт только точный товар внутри главы.',
-      fReexp: 'Реэкспорт: товары не японского производства, ввезённые в Японию и вывезенные в Россию без переработки. Товарный состав таможня не раскрывает.',
-      fReimp: 'Реимпорт: японские товары, вернувшиеся из России.',
-      fContract: 'Поставки каждый месяц через 1–2 поста: похоже на долгосрочный контракт с небольшим числом участников.',
-      fRare: 'Редкие партии: скорее разовые сделки, участников может быть один-два.',
-      fPorts: (top, more) => `Основные посты: ${top}${more ? ` и ещё ${more}` : ''}.`,
-      leadsTitle: 'Где искать контрагентов',
-      leadsDefExp: 'Импортёров в России ищите в реестре деклараций и сертификатов Росаккредитации по коду ТН ВЭД и японскому изготовителю. Конечных заказчиков из госсектора видно на госзакупках по стране происхождения.',
-      leadsDefImp: 'Покупатели в Японии обычно находятся рядом с постом прибытия (карта ниже). Сырьё чаще всего проходит через японские торговые дома.',
-      sanctions: 'Перед контактом проверьте компании по санкционным спискам Японии, ЕС и США.',
-      portNote: (s, f, p) => `${s} · ${f} · ${p}. Размер круга — стоимость за период.`,
-      portsFrom: (y, part) => ` Данные по постам есть с ${y} года${part ? ', часть периода не покрыта' : ''}.`,
-      portsNone: (y) => `Данные по таможенным постам есть с ${y} года. Выберите более поздний период.`,
-      portsEmpty: 'По постам нет данных для этого выбора.', postsN: (n) => `Посты: ${n}`, valueShare: 'стоимость и доля',
-      postX: (c) => `Пост ${c}`, through: (p) => `${p}: что проходит`, allPosts: '← Все посты', portTip: 'Нажмите, чтобы увидеть товары', tShareShort: 'Доля',
-      mapAria: 'Карта таможенных постов', trendAria: 'Помесячная динамика',
-      tableTitle: (l) => `Товары HS${l}`,
-      tableNote: (f, p, n, m, g) => `${f}, ${p}. Показано ${n} из ${m}. Клик по строке выбирает товар, кнопка ▸ раскрывает его.` + (g ? ' В режиме «Рост» в списке есть и позиции, которые выпали из торговли.' : ''),
-      drillAria: (c) => `Раскрыть ${c}`, failed: 'Не удалось загрузить',
-      foot: 'Источник: таможенная статистика Японии (Министерство финансов, Trade Statistics of Japan, портал e-Stat), помесячно по 9-значным кодам: таблицы «товар × страна» с 2017 года и «таможенный пост × товар × страна» с 2021 года. Россия не публикует таможенную статистику с 2022 года, поэтому обе стороны торговли показаны по японским данным: экспорт России — это импорт Японии товаров российского происхождения в ценах CIF, экспорт Японии — вывоз с конечным назначением в Россию в ценах FOB. Иены пересчитаны в доллары по среднемесячному курсу (ФРС США, серия EXJPUS). Импорт за последний месяц — предварительные данные таможни, через месяц их заменяют уточнённые. Первые 6 цифр кода — международный HS (HS2017 до 2021 года, HS2022 с 2022 года), последние 3 — детализация Японии, своя у экспорта и импорта. Коды с «X» — позиции, засекреченные по заявке участника (по коду 1–2 экспортёра или импортёра): сумма публикуется, точный товар скрыт. Коды «00» — реэкспорт, реимпорт и бортовые припасы. OEC строит похожие графики по базе BACI (CEPII), которая собирается из тех же данных через UN Comtrade и обновляется раз в год с отставанием около полутора лет. Названия товаров переведены для этого дашборда. Карта: Natural Earth.',
-      leads: {
-        lng: 'Сырьё по долгосрочным контрактам. Покупатели СПГ, нефти и угля — японские энергокомпании, газовые компании и НПЗ; участники проектов «Сахалин-1» и «Сахалин-2» раскрыты в их годовых отчётах. Порт прибытия на карте указывает на конкретный терминал и, значит, на покупателя.',
-        pgm: 'Драгметаллы обычно идут авиатранспортом (посты аэропортов на карте). В Японии покупатели — торговые дома, аффинажные компании и производители катализаторов, в России — производитель металла и его трейдеры.',
-        metals: 'Металлы обычно покупают японские торговые дома, а дальше металл идёт к литейщикам, прокатчикам и автокомпонентным заводам. Порт прибытия на карте сужает круг до конкретного региона.',
-        fish: 'Морепродукты: поставщики — российские рыбопромышленные компании, держатели квот; их список Росрыболовство публикует при распределении квот. Покупатели — импортёры, оптовики и переработчики рядом с постами прибытия: живой товар обычно идёт на Хоккайдо, мороженый — в крупные порты (карта ниже).',
-        wood: 'Древесина: экспортёров можно найти по сделкам в ЛесЕГАИС (там есть ИНН участников сделок с древесиной). Покупатели — лесоторговые компании и производители домокомплектов в регионах портов прибытия.',
-        cars: 'Почти весь автоэкспорт в Россию — подержанные машины (это видно на уровне HS9). Экспортёры — японские компании, которые покупают авто на аукционах, обычно рядом с портами отгрузки (карта). Покупатели — дилеры и частные лица, чаще всего на Дальнем Востоке.',
-        pharma: 'Лекарства: в Государственном реестре лекарственных средств указаны держатели регистрационных удостоверений японских препаратов. На госзакупках видны конечные заказчики, больницы, по стране происхождения «Япония».',
-        medical: 'Медицинские и измерительные приборы: в реестре медизделий Росздравнадзора указаны производитель и уполномоченный представитель в России. На госзакупках видны конечные заказчики.',
-        equipment: 'Техника, шины, запчасти: в реестре деклараций и сертификатов соответствия ЕАЭС (Росаккредитация) есть заявитель, обычно импортёр, японский изготовитель и код ТН ВЭД. Это самый прямой открытый способ найти импортёров конкретных марок.',
-        consumer: 'Пищевые ингредиенты, косметика, гигиена: в реестре свидетельств о госрегистрации ЕАЭС и в реестре Росаккредитации указаны получатель (импортёр) и производитель.',
-      },
-      links: { ais: 'Отслеживание судов (AIS)', fish: 'Росрыболовство', les: 'ЛесЕГАИС', grls: 'ГРЛС', zakupki: 'Госзакупки', med: 'Реестр медизделий', fsa: 'Реестр Росаккредитации', sgr: 'Реестр СГР ЕАЭС' },
-    },
-    en: {
-      title: 'Russia–Japan trade by product', panelTitle: 'Bilateral trade by product',
-      ariaLang: 'Language', ariaLevel: 'Level of detail', ariaMode: 'Measure', ariaUnit: 'Units', ariaPeriod: 'Period', ariaFilter: 'Filter',
-      ariaPortFlow: 'Direction shown on the map', ariaFlow: 'Direction',
-      modeValue: 'Trade value', modeGrowth: 'Growth', unitAbs: 'Amount', unitPct: 'Percentage (%)', ariaCur: 'Currency', total: 'Total:', clearSel: 'Clear selection',
-      cardTitle: 'Product card', portsTitle: 'Japanese ports and customs offices', portTabImp: 'Imports from Russia', portTabExp: 'Exports to Russia',
-      search: 'Search by code or name', thCode: 'Code', thName: 'Product', thValue: 'Value', thShare: 'Share', thPrev: 'Previous period',
-      thChange: (c) => `Change, ${c}`, thGrowth: 'Change, %', thKg: 'Weight, t', thPrice: (c) => `${c}/kg`,
-      hint: 'Click a rectangle to select a product: its monthly trend, ports and leads on where to find counterparties appear below. Click it again to clear. Double-click to open a chapter down to HS4, HS6 and HS9.',
-      flows: { ru_jp: 'Russia → Japan', jp_ru: 'Japan → Russia' },
-      mapTitle: (f, p) => (f === 'ru_jp' ? 'Exports from Russia to Japan, ' : 'Exports from Japan to Russia, ') + p,
-      year: (y) => y, ytd: (y, m) => `${y}, ${MON.en[0]}–${MON.en[m - 1]}`,
-      ltm: (a, b) => `12 months: ${MON.en[+a.slice(5) - 1]} ${a.slice(0, 4)} – ${MON.en[+b.slice(5) - 1]} ${b.slice(0, 4)}`,
-      monthLong: (m) => `${MONTH_FULL.en[+m.slice(5) - 1]} ${m.slice(0, 4)}`,
-      takeaway: (P, ex, exg, im, img) => [P, ': Russia shipped ', ex, ' to Japan (', exg, ' vs the previous period); Japan shipped ', im, ' to Russia (', img, ').'],
-      summary: (surplus, P, bal, ex, im) => ['Russia has a trade ', surplus ? 'surplus' : 'deficit', ' of ', bal, ' with Japan in ', P, '. Exports reached ', ex, ' while imports totalled ', im, '.'],
-      back: '← Back', backAria: 'Go back one step', allGoods: 'All products', na: 'n/a', isNew: 'new', newItem: 'new item', sep: ' · ',
-      noTrade: 'No trade for this filter in the selected period', gradLo: '−100% or less', gradHi: '+100% or more',
-      drillTo: (l) => `Open down to HS${l}`, clickHint: (d) => (d ? 'Click to select, double-click to open' : 'Click to select'),
-      tValue: 'Value', tShare: 'Share of flow', tPrev: (p) => `Before (${p})`, tChange: 'Change', tKg: 'Net weight', tPrice: 'Price',
-      perKg: (p) => `${p} per kg`, tons: (v) => `${v} t`,
-      trendAll: 'Monthly trend', trendSel: 'Trend of the selected product', perMonth: (c) => (c === 'jpy' ? ', yen per month' : ', US dollars per month'),
-      cardEmpty: 'Select a rectangle on the product map or a row in the table. This card will show volume in units and tonnes, unit price, how regular the shipments are, the main ports and leads on where to look for buyers and suppliers.',
-      cValue: (p) => `Value, ${p}`, cShare: 'Share of flow', cVsPrev: 'Vs previous period', cQty: 'Quantity', cUnitPrice: (u) => `Price per ${u === 'units' ? 'unit' : u}`,
-      cKg: 'Net weight', cKgPrice: 'Price per kg', cActive: 'Months with shipments, last 12', cActiveV: (n) => `${n} of 12`,
-      fConf: 'Japanese customs keeps this code confidential at a trader’s request: only 1–2 exporters or importers use it. The value and the country are real; only the exact product within the chapter is hidden.',
-      fReexp: 'Re-exports: goods not made in Japan that were imported into Japan and shipped on to Russia unprocessed. Customs does not disclose what they are.',
-      fReimp: 'Re-imports: Japanese goods returned from Russia.',
-      fContract: 'Shipments every month through 1–2 offices: this looks like a long-term contract with few participants.',
-      fRare: 'Few shipments: likely one-off deals, possibly by one or two traders.',
-      fPorts: (top, more) => `Main customs offices: ${top}${more ? ` and ${more} more` : ''}.`,
-      leadsTitle: 'Where to look for counterparties',
-      leadsDefExp: 'Look for Russian importers in the EAEU register of declarations and certificates of conformity (Rosaccreditation) by HS code and Japanese manufacturer. Public-sector end customers appear in Russian public procurement records by country of origin.',
-      leadsDefImp: 'Buyers in Japan are usually close to the customs office of arrival (map below). Raw materials mostly go through Japanese trading houses.',
-      sanctions: 'Check companies against the Japanese, EU and US sanctions lists before any contact.',
-      portNote: (s, f, p) => `${s} · ${f} · ${p}. Circle size shows value in the period.`,
-      portsFrom: (y, part) => ` Customs office data start in ${y}${part ? '; part of the period is not covered' : ''}.`,
-      portsNone: (y) => `Customs office data start in ${y}. Choose a later period.`,
-      portsEmpty: 'No customs office data for this selection.', postsN: (n) => `Customs offices: ${n}`, valueShare: 'value and share',
-      postX: (c) => `Office ${c}`, through: (p) => `${p}: what goes through`, allPosts: '← All offices', portTip: 'Click to see products', tShareShort: 'Share',
-      mapAria: 'Map of customs offices', trendAria: 'Monthly trend',
-      tableTitle: (l) => `Products, HS${l}`,
-      tableNote: (f, p, n, m, g) => `${f}, ${p}. Showing ${n} of ${m}. Click a row to select a product; ▸ opens it.` + (g ? ' In Growth mode the list also includes products that dropped out of trade.' : ''),
-      drillAria: (c) => `Open ${c}`, failed: 'Failed to load',
-      foot: 'Source: Japanese customs statistics (Ministry of Finance, Trade Statistics of Japan, e-Stat portal), monthly by 9-digit code: “commodity by country” tables from 2017 and “customs office by commodity by country” tables from 2021. Russia has not published customs statistics since 2022, so both sides of the trade come from Japanese data: Russian exports are Japan’s imports of goods of Russian origin (CIF), Japanese exports are shipments with final destination Russia (FOB). Yen are converted to US dollars at the monthly average rate (US Federal Reserve, series EXJPUS). Imports for the latest month are preliminary and are replaced by detailed figures a month later. The first 6 digits are the international HS code (HS2017 until 2021, HS2022 from 2022); the last 3 are Japan’s own detail and differ between exports and imports. Codes with “X” are kept confidential at a trader’s request (1–2 exporters or importers per code): the value is published, the exact product is hidden. Codes starting with “00” are re-exports, re-imports and aircraft stores. OEC draws similar charts from the BACI database (CEPII), which is built from the same data via UN Comtrade and updated once a year with a lag of about 18 months. Product names were translated for this dashboard. Map: Natural Earth.',
-      leads: {
-        lng: 'Raw materials under long-term contracts. Buyers of LNG, crude oil and coal are Japanese power and gas utilities and refiners; participants in Sakhalin-1 and Sakhalin-2 are disclosed in their annual reports. The port of arrival on the map points to a specific terminal and so to the buyer.',
-        pgm: 'Precious metals usually travel by air (airport offices on the map). In Japan the buyers are trading houses, refiners and catalyst makers; in Russia, the metal producer and its traders.',
-        metals: 'Metals are usually bought by Japanese trading houses and then go to foundries, rolling mills and auto-parts plants. The port of arrival on the map narrows the search to a region.',
-        fish: 'Seafood: suppliers are Russian fishing companies holding quotas; the Federal Agency for Fishery publishes them when quotas are allocated. Buyers are importers, wholesalers and processors near the offices of arrival: live product usually goes to Hokkaido, frozen product to the large ports (map below).',
-        wood: 'Timber: exporters can be found through deals in LesEGAIS, the Russian timber register, which lists the tax IDs of the parties. Buyers are timber traders and house-kit makers in the regions of the ports of arrival.',
-        cars: 'Almost all car exports to Russia are used cars (visible at HS9 level). Exporters are Japanese companies buying at auctions, usually near the ports of shipment (map). Buyers are dealers and private individuals, mostly in the Russian Far East.',
-        pharma: 'Medicines: the Russian State Register of Medicines lists the registration holders of Japanese drugs. Public procurement shows the end customers, hospitals, by country of origin “Japan”.',
-        medical: 'Medical and measuring instruments: the Roszdravnadzor register of medical devices lists the manufacturer and its authorised representative in Russia. Public procurement shows the end customers.',
-        equipment: 'Machinery, tyres, parts: the EAEU register of declarations and certificates of conformity (Rosaccreditation) shows the applicant, usually the importer, the Japanese manufacturer and the HS code. This is the most direct open way to find importers of specific brands.',
-        consumer: 'Food ingredients, cosmetics, hygiene products: the EAEU state registration register and the Rosaccreditation register show the recipient (importer) and the manufacturer.',
-      },
-      links: { ais: 'Ship tracking (AIS)', fish: 'Federal Agency for Fishery', les: 'LesEGAIS', grls: 'State Register of Medicines', zakupki: 'Russian public procurement', med: 'Medical device register', fsa: 'Rosaccreditation register', sgr: 'EAEU state registration register' },
-    },
-    ja: {
-      title: '日ロ貿易：品目別', panelTitle: '品目別の二国間貿易',
-      ariaLang: '言語', ariaLevel: '品目の細かさ', ariaMode: '指標', ariaUnit: '単位', ariaPeriod: '期間', ariaFilter: '絞り込み',
-      ariaPortFlow: '地図に表示する方向', ariaFlow: '方向',
-      modeValue: '金額', modeGrowth: '増減', unitAbs: '実額', unitPct: '構成比（%）', ariaCur: '通貨', total: '合計：', clearSel: '選択を解除',
-      cardTitle: '品目カード', portsTitle: '日本の港・税関官署', portTabImp: 'ロシアからの輸入', portTabExp: 'ロシアへの輸出',
-      search: 'コードまたは品名で検索', thCode: 'コード', thName: '品目', thValue: '金額', thShare: '構成比', thPrev: '前期',
-      thChange: (c) => `増減額（${c}）`, thGrowth: '増減率', thKg: '重量（t）', thPrice: (c) => `${c}/kg`,
-      hint: '四角をクリックすると品目を選択し、下に月次推移・港・取引相手の探し方が表示されます。もう一度クリックで解除。ダブルクリックでHS4・HS6・HS9へ掘り下げます。',
-      flows: { ru_jp: 'ロシア → 日本', jp_ru: '日本 → ロシア' },
-      mapTitle: (f, p) => (f === 'ru_jp' ? 'ロシアの対日輸出（' : '日本の対ロ輸出（') + p + '）',
-      year: (y) => `${y}年`, ytd: (y, m) => `${y}年1〜${m}月`,
-      ltm: (a, b) => `直近12か月（${a.slice(0, 4)}年${+a.slice(5)}月〜${b.slice(0, 4)}年${+b.slice(5)}月）`,
-      monthLong: (m) => `${m.slice(0, 4)}年${+m.slice(5)}月`,
-      takeaway: (P, ex, exg, im, img) => [P, '：ロシアの対日輸出は', ex, '（前期比', exg, '）、日本の対ロ輸出は', im, '（同', img, '）。'],
-      summary: (surplus, P, bal, ex, im) => [P, 'のロシアの対日貿易収支は', bal, 'の', surplus ? '黒字' : '赤字', '。輸出', ex, '、日本からの輸入', im, '。'],
-      back: '← 戻る', backAria: '前の表示に戻る', allGoods: 'すべての品目', na: '—', isNew: '新規', newItem: '新規品目', sep: '・',
-      noTrade: '選択した期間・条件では取引がありません', gradLo: '−100%以下', gradHi: '+100%以上',
-      drillTo: (l) => `HS${l}へ掘り下げ`, clickHint: (d) => (d ? 'クリックで選択、ダブルクリックで掘り下げ' : 'クリックで選択'),
-      tValue: '金額', tShare: '構成比', tPrev: (p) => `前期（${p}）`, tChange: '増減', tKg: '正味重量', tPrice: '単価',
-      perKg: (p) => `1kgあたり${p}`, tons: (v) => `${v} t`,
-      trendAll: '月次推移', trendSel: '選択品目の月次推移', perMonth: (c) => (c === 'jpy' ? '、円／月' : '、米ドル／月'),
-      cardEmpty: '品目マップの四角か表の行を選んでください。数量と重量、単価、輸送の頻度、主な港、取引相手の探し方がここに表示されます。',
-      cValue: (p) => `金額（${p}）`, cShare: '構成比', cVsPrev: '前期比', cQty: '数量', cUnitPrice: (u) => `単価（${u}あたり）`,
-      cKg: '正味重量', cKgPrice: '1kgあたり単価', cActive: '直近12か月のうち取引があった月', cActiveV: (n) => `${n}／12`,
-      fConf: '当事者の申請により税関が非公表としたコードです（該当する輸出入者は1〜2者）。金額と相手国は実数で、類の中の具体的な品目だけが伏せられています。',
-      fReexp: '再輸出品：日本以外で生産され、日本に輸入された後、加工されずにロシアへ輸出された貨物。品目の内訳は公表されていません。',
-      fReimp: '再輸入品：ロシアから戻ってきた日本の貨物。',
-      fContract: '毎月1〜2の官署を通じて取引：少数の当事者による長期契約とみられます。',
-      fRare: '取引はまれ：単発の取引で、当事者は1〜2者の可能性があります。',
-      fPorts: (top, more) => `主な官署：${top}${more ? `、ほか${more}` : ''}。`,
-      leadsTitle: '取引相手の探し方',
-      leadsDefExp: 'ロシアの輸入者は、EAEUの適合宣言・認証登録簿（ロシア連邦認定庁）でHSコードと日本のメーカー名から探せます。公共部門の最終顧客は、原産国「日本」でロシアの公共調達サイトから確認できます。',
-      leadsDefImp: '日本の買い手は通常、到着する税関官署の近くにいます（下の地図）。原材料の多くは日本の商社を経由します。',
-      sanctions: '接触の前に、日本・EU・米国の制裁リストで相手企業を確認してください。',
-      portNote: (s, f, p) => `${s}・${f}・${p}。円の大きさは期間中の金額です。`,
-      portsFrom: (y, part) => ` 税関官署別のデータは${y}年からです${part ? '（期間の一部は対象外）' : ''}。`,
-      portsNone: (y) => `税関官署別のデータは${y}年からです。それ以降の期間を選んでください。`,
-      portsEmpty: 'この選択では官署別のデータがありません。', postsN: (n) => `官署：${n}`, valueShare: '金額と構成比',
-      postX: (c) => `官署 ${c}`, through: (p) => `${p}を通る品目`, allPosts: '← すべての官署', portTip: 'クリックで品目を表示', tShareShort: '構成比',
-      mapAria: '税関官署の地図', trendAria: '月次推移',
-      tableTitle: (l) => `品目（HS${l}）`,
-      tableNote: (f, p, n, m, g) => `${f}・${p}。${m}件中${n}件を表示。行をクリックで選択、▸で掘り下げ。` + (g ? '「増減」では取引がなくなった品目も表示します。' : ''),
-      drillAria: (c) => `${c}を掘り下げ`, failed: '読み込めませんでした',
-      foot: '出典：財務省貿易統計（e-Stat）の9桁品目・月次データ。「品別国別表」は2017年から、「税関別品別国別表」は2021年から。ロシアは2022年以降税関統計を公表していないため、双方向とも日本側のデータで示しています。ロシアの対日輸出は日本のロシア原産品の輸入（CIF）、日本の対ロ輸出はロシアを最終仕向地とする輸出（FOB）です。円は米連邦準備制度の月平均レート（EXJPUS）でドル換算しました。直近月の輸入は速報値で、翌月に確報値へ置き換わります。コードの上6桁は国際HS（2021年まではHS2017、2022年からはHS2022）、下3桁は日本独自の細分で輸出と輸入で異なります。「X」を含むコードは当事者の申請による非公表品目（1〜2者）で、金額は公表され品目のみ伏せられています。「00」で始まるコードは再輸出品・再輸入品・機用品です。OECは同じ元データをUN Comtrade経由でまとめたBACI（CEPII）で同様の図を作成しており、更新は年1回・約1年半遅れです。品名はこのダッシュボード用に翻訳したものです。地図：Natural Earth。',
-      leads: {
-        lng: '長期契約による原燃料。LNG・原油・石炭の買い手は日本の電力・ガス会社や製油所で、サハリン1・2の参加企業は各社の年次報告で開示されています。地図上の到着港は特定の受入基地、つまり買い手を示します。',
-        pgm: '貴金属は通常航空輸送です（地図の空港官署）。日本側の買い手は商社、精錬会社、触媒メーカー、ロシア側は金属の生産者とそのトレーダーです。',
-        metals: '金属は通常日本の商社が買い付け、鋳造・圧延・自動車部品メーカーへ流れます。地図の到着港で地域を絞り込めます。',
-        fish: '水産物：供給者は漁獲枠を持つロシアの水産会社で、ロシア連邦漁業庁が割当時に公表しています。買い手は到着官署の近くの輸入業者・卸・加工業者で、活魚介は北海道、冷凍品は大きな港に入るのが一般的です（下の地図）。',
-        wood: '木材：輸出者はロシアの木材取引登録システム（LesEGAIS）で、取引当事者の納税者番号から探せます。買い手は到着港の地域の木材商社やプレカット・住宅部材メーカーです。',
-        cars: '対ロ自動車輸出のほぼすべてが中古車です（HS9で確認できます）。輸出者はオークションで仕入れる日本の輸出業者で、多くは積出港の近くにあります（地図）。買い手はディーラーや個人で、主に極東です。',
-        pharma: '医薬品：ロシアの医薬品国家登録簿に日本の医薬品の登録保有者が載っています。公共調達サイトでは原産国「日本」で最終顧客（病院）がわかります。',
-        medical: '医療・計測機器：ロシア連邦保健監督庁の医療機器登録簿にメーカーとロシアでの正規代理人が載っています。公共調達サイトで最終顧客がわかります。',
-        equipment: '機械・タイヤ・部品：EAEUの適合宣言・認証登録簿（ロシア連邦認定庁）には申請者（通常は輸入者）、日本のメーカー、HSコードが載っています。特定ブランドの輸入者を探す最も直接的な公開情報です。',
-        consumer: '食品原料・化粧品・衛生用品：EAEUの国家登録証明登録簿とロシア連邦認定庁の登録簿に、受取人（輸入者）とメーカーが載っています。',
-      },
-      links: { ais: '船舶動静（AIS）', fish: 'ロシア連邦漁業庁', les: 'LesEGAIS（木材登録）', grls: '医薬品国家登録簿', zakupki: 'ロシア公共調達', med: '医療機器登録簿', fsa: 'ロシア連邦認定庁の登録簿', sgr: 'EAEU国家登録簿' },
-    },
-  };
-  // where to look for counterparties: public registries and logic by chapter and direction
-  const LEADS = [
-    { ch: ['27'], flow: 'ru_jp', key: 'lng', links: [['ais', 'https://www.marinetraffic.com']] },
-    { ch: ['71'], flow: 'ru_jp', key: 'pgm', links: [] },
-    { ch: ['72', '74', '75', '76', '81'], flow: 'ru_jp', key: 'metals', links: [] },
-    { ch: ['03', '16'], flow: 'ru_jp', key: 'fish', links: [['fish', 'https://fish.gov.ru']] },
-    { ch: ['44'], flow: 'ru_jp', key: 'wood', links: [['les', 'https://lesegais.ru']] },
-    { ch: ['87'], flow: 'jp_ru', key: 'cars', links: [] },
-    { ch: ['30'], flow: 'jp_ru', key: 'pharma', links: [['grls', 'https://grls.rosminzdrav.ru'], ['zakupki', 'https://zakupki.gov.ru']] },
-    { ch: ['90'], flow: 'jp_ru', key: 'medical', links: [['med', 'https://roszdravnadzor.gov.ru/services/misearch'], ['zakupki', 'https://zakupki.gov.ru']] },
-    { ch: ['40', '73', '84', '85', '87', '94', '95'], flow: 'jp_ru', key: 'equipment', links: [['fsa', 'https://pub.fsa.gov.ru']] },
-    { ch: ['21', '33', '34', '96'], flow: 'jp_ru', key: 'consumer', links: [['sgr', 'https://nsi.eaeunion.org'], ['fsa', 'https://pub.fsa.gov.ru']] },
-  ];
-  const DEFAULT_LINKS = { jp_ru: [['fsa', 'https://pub.fsa.gov.ru'], ['zakupki', 'https://zakupki.gov.ru']], ru_jp: [] };
-  // ---- texts of the About and Companies pages ----
-  const ruPlural = (n, one, few, many) => { const a = n % 100, b = n % 10; return a > 10 && a < 20 ? many : b === 1 ? one : b >= 2 && b <= 4 ? few : many; };
-  const OKVED_T = {
-    '01.41': ['Разведение молочного скота', 'Dairy cattle farming', '酪農'], '01.47': ['Разведение сельскохозяйственной птицы', 'Poultry farming', '養鶏'],
-    '01.49': ['Разведение прочих животных', 'Other animal farming', 'その他の畜産'], '01.49.1': ['Пчеловодство', 'Beekeeping', '養蜂'],
-    '03.1': ['Рыболовство', 'Fishing', '漁業'], '03.11': ['Рыболовство морское', 'Marine fishing', '海面漁業'],
-    '03.12': ['Рыболовство пресноводное', 'Freshwater fishing', '内水面漁業'], '03.21': ['Рыбоводство морское', 'Marine aquaculture', '海面養殖'],
-    '03.22': ['Рыбоводство пресноводное', 'Freshwater aquaculture', '内水面養殖'],
-    '10.11': ['Переработка и консервирование мяса', 'Meat processing', '食肉加工'], '10.12': ['Производство продукции из мяса птицы', 'Poultry meat processing', '鶏肉加工'],
-    '10.13': ['Производство продукции из мяса', 'Meat products', '食肉製品製造'], '10.20.2': ['Производство консервов из рыбы', 'Canned fish', '魚缶詰製造'],
-    '10.20.4': ['Производство муки и гранул из рыбы', 'Fish meal', '魚粉製造'], '10.41': ['Производство масел и жиров', 'Oils and fats', '油脂製造'],
-    '10.51': ['Производство молочной продукции', 'Dairy products', '乳製品製造'], '10.89': ['Производство прочих пищевых продуктов', 'Other food products', 'その他食品製造'],
-    '10.91': ['Производство кормов для животных', 'Animal feed', '飼料製造'], '10.92': ['Производство кормов для домашних животных', 'Pet food', 'ペットフード製造'],
-    '46.17': ['Агенты по торговле пищевыми продуктами', 'Food trade agents', '食品販売代理'], '46.21': ['Торговля оптовая зерном и кормами', 'Wholesale of grain and feed', '穀物・飼料卸売'],
-    '46.23': ['Торговля оптовая живыми животными', 'Wholesale of live animals', '家畜卸売'], '46.32': ['Торговля оптовая мясом', 'Wholesale of meat', '食肉卸売'],
-    '46.33': ['Торговля оптовая молочными продуктами и яйцами', 'Wholesale of dairy products and eggs', '乳製品・卵卸売'],
-    '46.38': ['Торговля оптовая прочими пищевыми продуктами', 'Wholesale of other food', 'その他食品卸売'], '46.38.2': ['Торговля оптовая прочими пищевыми продуктами', 'Wholesale of other food products', 'その他食品卸売'],
-    '46.39': ['Торговля оптовая пищевыми продуктами', 'Non-specialised wholesale of food', '食品総合卸売'], '46.69': ['Торговля оптовая прочими машинами', 'Wholesale of other machinery', 'その他機械卸売'],
-    '46.75': ['Торговля оптовая химическими продуктами', 'Wholesale of chemicals', '化学品卸売'], '47.11': ['Розничная торговля в неспециализированных магазинах', 'Retail in non-specialised stores', '総合小売'],
-    '47.23': ['Розничная торговля рыбой', 'Retail of fish', '鮮魚小売'], '49.41': ['Грузовые автоперевозки', 'Road freight transport', '道路貨物輸送'],
-    '50.20': ['Морской грузовой транспорт', 'Sea freight transport', '海上貨物輸送'], '52.10.2': ['Хранение в холодильниках', 'Cold storage', '冷蔵保管'],
-    '52.22': ['Вспомогательная деятельность водного транспорта', 'Water transport support', '水運付帯サービス'], '52.29': ['Вспомогательная транспортная деятельность', 'Other transport support', 'その他運輸付帯サービス'],
-    '68.20': ['Аренда недвижимости', 'Real estate rental', '不動産賃貸'], '70.22': ['Консультирование по вопросам управления', 'Management consulting', '経営コンサルティング'],
-    '77.34': ['Аренда водных судов', 'Rental of ships', '船舶リース'], '01.47.2': ['Производство яиц', 'Egg production', '鶏卵生産'],
-    '10.11.1': ['Производство охлаждённого мяса', 'Chilled meat production', '冷蔵食肉生産'], '10.51.9': ['Производство прочей молочной продукции', 'Other dairy products', 'その他乳製品製造'],
-    '10.52': ['Производство мороженого', 'Ice cream production', 'アイスクリーム製造'], '10.71': ['Производство хлеба и кондитерских изделий', 'Bread and pastry production', 'パン・菓子製造'],
-    '21.20.1': ['Производство лекарственных препаратов', 'Pharmaceutical production', '医薬品製造'], '50.20.11': ['Перевозки рефрижераторными судами', 'Refrigerated sea transport', '冷凍船輸送'],
-    '52.24.2': ['Транспортная обработка грузов', 'Cargo handling', '貨物取扱'], '68.20.2': ['Аренда нежилой недвижимости', 'Rental of non-residential property', '非住宅不動産賃貸'],
-    '52.10.1': ['Хранение замороженных и охлаждённых грузов', 'Cold storage of frozen and chilled goods', '冷凍・冷蔵貨物の保管'], '03.12.1': ['Рыболовство пресноводное промышленное', 'Industrial freshwater fishing', '内水面漁業（産業規模）'],
-    '10.89.6': ['Переработка мёда', 'Honey processing', '蜂蜜加工'], '10.12.5': ['Производство пера и пуха', 'Feather and down production', '羽毛生産'],
-    '01.11.1': ['Выращивание зерновых культур', 'Cereal growing', '穀物栽培'], '52.24': ['Транспортная обработка грузов', 'Cargo handling', '貨物取扱'],
-    '46.3': ['Торговля оптовая пищевыми продуктами, напитками и табаком', 'Wholesale of food, beverages and tobacco', '食品・飲料・たばこ卸売'], '52.22.11': ['Инфраструктура морских портов', 'Sea port infrastructure', '港湾インフラ運営'],
-    '10.13.2': ['Производство колбасных изделий', 'Sausage production', 'ソーセージ製造'], '46.69.9': ['Торговля оптовая прочим оборудованием', 'Wholesale of other equipment', 'その他機器卸売'],
-    '10.82': ['Производство какао, шоколада и кондитерских изделий', 'Cocoa, chocolate and confectionery', 'カカオ・チョコレート・菓子製造'], '03.22.5': ['Воспроизводство пресноводных биоресурсов', 'Freshwater fish stocking', '内水面水産資源の増殖'],
-    '03.21.2': ['Рыбоводство морское пастбищное', 'Marine ranching aquaculture', '海面栽培漁業'], '62.01': ['Разработка программного обеспечения', 'Software development', 'ソフトウェア開発'],
-    '01.49.11': ['Пчеловодство медового направления', 'Honey beekeeping', '採蜜養蜂'], '13.92': ['Производство готовых текстильных изделий', 'Made-up textile articles', '繊維製品製造'],
-    '10.11.3': ['Производство замороженного мяса и субпродуктов', 'Frozen meat and offal production', '冷凍食肉・内臓生産'], '10.91.3': ['Производство кормового белка, премиксов и витаминов', 'Feed protein, premixes and vitamins', '飼料用たんぱく・プレミックス製造'],
-    '10.41.51': ['Производство рафинированного соевого масла', 'Refined soybean oil', '精製大豆油製造'], '46.17.1': ['Агенты по оптовой торговле пищевыми продуктами', 'Food wholesale agents', '食品卸売代理'],
-    '46.4': ['Торговля оптовая непродовольственными товарами', 'Wholesale of non-food consumer goods', '非食品消費財卸売'], '10.13.1': ['Производство солёного, варёного, копчёного мяса', 'Cured, cooked and smoked meat', '塩漬・加熱・燻製食肉製造'],
-    '10.85': ['Производство готовых пищевых продуктов и блюд', 'Prepared meals and dishes', '調理食品製造'], '10.42': ['Производство маргариновой продукции', 'Margarine production', 'マーガリン製造'],
-    '52.10.9': ['Хранение и складирование прочих грузов', 'Storage of other goods', 'その他貨物の保管'], '01.19': ['Выращивание прочих однолетних культур', 'Other annual crops', 'その他一年生作物栽培'],
-    '68.20.29': ['Аренда прочей нежилой недвижимости', 'Rental of other non-residential property', 'その他非住宅不動産賃貸'], '45.1': ['Торговля автотранспортными средствами', 'Sale of motor vehicles', '自動車販売'],
-    '10.41.4': ['Производство жмыха и муки из масличных семян', 'Oilseed cake and meal', '油かす・油糧粉製造'], '46.11': ['Агенты по торговле сельскохозяйственным сырьём и животными', 'Agents in agricultural raw materials and live animals', '農産原料・家畜取引代理'],
-    '10.51.2': ['Производство сливочного масла и молочного жира', 'Butter and milk fat production', 'バター・乳脂肪製造'], '03.22.1': ['Рыбоводство пресноводное индустриальное', 'Industrial freshwater aquaculture', '内水面養殖（産業規模）'],
-    '68.32.2': ['Управление эксплуатацией нежилого фонда', 'Management of non-residential property', '非住宅不動産管理'], '10.13.3': ['Производство мясных консервов', 'Canned meat production', '食肉缶詰製造'],
-    '50.10': ['Морской пассажирский транспорт', 'Sea passenger transport', '海上旅客輸送'], '01.49.2': ['Разведение кроликов и пушных зверей', 'Rabbit and fur animal farming', 'ウサギ・毛皮獣飼育'],
-    '10.1': ['Переработка и консервирование мяса', 'Meat processing and preserving', '食肉加工・保存'], '46.32.2': ['Торговля оптовая продуктами из мяса', 'Wholesale of meat products', '食肉製品卸売'],
-    '41.20': ['Строительство зданий', 'Construction of buildings', '建物建設'], '82.92': ['Упаковывание товаров', 'Packaging activities', '包装業'],
-    '77.32': ['Аренда строительных машин', 'Rental of construction machinery', '建設機械リース'], '20.14': ['Производство органических химических веществ', 'Basic organic chemicals', '基礎有機化学品製造'],
-    '52.22.1': ['Вспомогательная деятельность морского транспорта', 'Sea transport support', '海運付帯サービス'], '50.40': ['Внутренний водный грузовой транспорт', 'Inland waterway freight transport', '内陸水運貨物輸送'],
-    '10.2': ['Переработка и консервирование рыбы и морепродуктов', 'Fish and seafood processing', '水産物の加工・保存'], '10.39.2': ['Переработка фруктов и орехов', 'Fruit and nut processing', '果実・ナッツ加工'],
-    '46.31': ['Торговля оптовая фруктами и овощами', 'Wholesale of fruit and vegetables', '青果卸売'], '03.11.5': ['Рыболовство морское для аквакультуры', 'Marine fishing for aquaculture', '養殖向け海面漁業'],
-    '02.30': ['Сбор пищевых лесных ресурсов', 'Gathering of wild forest products', '林産物採取'], '03.21.4': ['Воспроизводство морских биоресурсов', 'Marine fish stocking', '海洋水産資源の増殖'],
-    '01.70': ['Охота и отлов диких животных', 'Hunting and trapping', '狩猟'], '56.29': ['Прочее общественное питание', 'Other food service', 'その他飲食サービス'],
-    '47.29': ['Розничная торговля прочими пищевыми продуктами', 'Retail of other food', 'その他食品小売'], '10.51.3': ['Производство сыра', 'Cheese production', 'チーズ製造'],
-    '46.16.2': ['Агенты по оптовой торговле одеждой', 'Clothing wholesale agents', '衣料卸売代理'], '46.73': ['Торговля оптовая лесоматериалами и стройматериалами', 'Wholesale of timber and building materials', '木材・建材卸売'],
-    '46.24': ['Торговля оптовая шкурами и кожей', 'Wholesale of hides and leather', '皮革卸売'],
-    '03.11.1': ['Рыболовство морское промышленное', 'Industrial marine fishing', '海面漁業（産業規模）'],
-    '03.11.2': ['Рыболовство морское прибрежное', 'Coastal marine fishing', '沿岸漁業'],
-    '03.21.1': ['Рыбоводство морское индустриальное', 'Industrial marine aquaculture', '海面養殖'],
-    '10.20': ['Переработка и консервирование рыбы, ракообразных и моллюсков', 'Fish and seafood processing', '水産物の加工・保存'],
-    '10.20.1': ['Переработка и консервирование рыбы', 'Fish processing and preserving', '魚の加工・保存'],
-    '46.38.1': ['Торговля оптовая рыбой и морепродуктами', 'Wholesale of fish and seafood', '水産物卸売'],
-    '46.90': ['Торговля оптовая неспециализированная', 'Non-specialised wholesale', '各種商品卸売'],
-    '46.21.19': ['Торговля оптовая сельскохозяйственным сырьём', 'Wholesale of agricultural raw materials', '農産原料卸売'],
-    '52.10': ['Складирование и хранение', 'Warehousing and storage', '倉庫・保管'],
-    '56.10': ['Рестораны и доставка еды', 'Restaurants and food delivery', '飲食店・配達'],
-    '68.3': ['Операции с недвижимостью за вознаграждение', 'Real estate on a fee basis', '不動産仲介・管理'],
-  };
-  const REGION_T = {
-    2: ['Республика Башкортостан', 'Bashkortostan', 'バシコルトスタン共和国'], 3: ['Республика Бурятия', 'Buryatia', 'ブリヤート共和国'],
-    10: ['Республика Карелия', 'Karelia', 'カレリア共和国'], 14: ['Республика Саха (Якутия)', 'Sakha (Yakutia)', 'サハ共和国（ヤクーチア）'],
-    16: ['Республика Татарстан', 'Tatarstan', 'タタールスタン共和国'], 18: ['Удмуртская Республика', 'Udmurtia', 'ウドムルト共和国'],
-    22: ['Алтайский край', 'Altai Krai', 'アルタイ地方'], 23: ['Краснодарский край', 'Krasnodar Krai', 'クラスノダール地方'],
-    24: ['Красноярский край', 'Krasnoyarsk Krai', 'クラスノヤルスク地方'], 25: ['Приморский край', 'Primorsky Krai', '沿海地方'],
-    26: ['Ставропольский край', 'Stavropol Krai', 'スタヴロポリ地方'], 27: ['Хабаровский край', 'Khabarovsk Krai', 'ハバロフスク地方'],
-    28: ['Амурская область', 'Amur Oblast', 'アムール州'], 29: ['Архангельская область', 'Arkhangelsk Oblast', 'アルハンゲリスク州'],
-    30: ['Астраханская область', 'Astrakhan Oblast', 'アストラハン州'], 31: ['Белгородская область', 'Belgorod Oblast', 'ベルゴロド州'],
-    32: ['Брянская область', 'Bryansk Oblast', 'ブリャンスク州'], 33: ['Владимирская область', 'Vladimir Oblast', 'ウラジーミル州'],
-    35: ['Вологодская область', 'Vologda Oblast', 'ヴォログダ州'], 36: ['Воронежская область', 'Voronezh Oblast', 'ヴォロネジ州'],
-    38: ['Иркутская область', 'Irkutsk Oblast', 'イルクーツク州'], 39: ['Калининградская область', 'Kaliningrad Oblast', 'カリーニングラード州'],
-    40: ['Калужская область', 'Kaluga Oblast', 'カルーガ州'], 41: ['Камчатский край', 'Kamchatka Krai', 'カムチャツカ地方'],
-    42: ['Кемеровская область', 'Kemerovo Oblast', 'ケメロヴォ州'], 44: ['Костромская область', 'Kostroma Oblast', 'コストロマ州'],
-    46: ['Курская область', 'Kursk Oblast', 'クルスク州'], 47: ['Ленинградская область', 'Leningrad Oblast', 'レニングラード州'],
-    48: ['Липецкая область', 'Lipetsk Oblast', 'リペツク州'], 49: ['Магаданская область', 'Magadan Oblast', 'マガダン州'],
-    50: ['Московская область', 'Moscow Oblast', 'モスクワ州'], 51: ['Мурманская область', 'Murmansk Oblast', 'ムルマンスク州'],
-    52: ['Нижегородская область', 'Nizhny Novgorod Oblast', 'ニジニ・ノヴゴロド州'], 53: ['Новгородская область', 'Novgorod Oblast', 'ノヴゴロド州'],
-    54: ['Новосибирская область', 'Novosibirsk Oblast', 'ノヴォシビルスク州'], 55: ['Омская область', 'Omsk Oblast', 'オムスク州'],
-    56: ['Оренбургская область', 'Orenburg Oblast', 'オレンブルク州'], 57: ['Орловская область', 'Oryol Oblast', 'オリョール州'],
-    58: ['Пензенская область', 'Penza Oblast', 'ペンザ州'], 59: ['Пермский край', 'Perm Krai', 'ペルミ地方'],
-    60: ['Псковская область', 'Pskov Oblast', 'プスコフ州'], 61: ['Ростовская область', 'Rostov Oblast', 'ロストフ州'],
-    63: ['Самарская область', 'Samara Oblast', 'サマラ州'], 64: ['Саратовская область', 'Saratov Oblast', 'サラトフ州'],
-    65: ['Сахалинская область', 'Sakhalin Oblast', 'サハリン州'], 66: ['Свердловская область', 'Sverdlovsk Oblast', 'スヴェルドロフスク州'],
-    67: ['Смоленская область', 'Smolensk Oblast', 'スモレンスク州'], 68: ['Тамбовская область', 'Tambov Oblast', 'タンボフ州'],
-    69: ['Тверская область', 'Tver Oblast', 'トヴェリ州'], 70: ['Томская область', 'Tomsk Oblast', 'トムスク州'],
-    71: ['Тульская область', 'Tula Oblast', 'トゥーラ州'], 72: ['Тюменская область', 'Tyumen Oblast', 'チュメニ州'],
-    73: ['Ульяновская область', 'Ulyanovsk Oblast', 'ウリヤノフスク州'], 75: ['Забайкальский край', 'Zabaykalsky Krai', 'ザバイカリエ地方'],
-    77: ['Москва', 'Moscow', 'モスクワ'], 78: ['Санкт-Петербург', 'Saint Petersburg', 'サンクトペテルブルク'],
-    79: ['Еврейская автономная область', 'Jewish Autonomous Oblast', 'ユダヤ自治州'], 87: ['Чукотский автономный округ', 'Chukotka', 'チュクチ自治管区'],
-    89: ['Ямало-Ненецкий автономный округ', 'Yamalo-Nenets', 'ヤマロ・ネネツ自治管区'],
-  };
-  const OBJ_KINDS = {  // короткие ключи видов объектов из build_companies.py (KINDS)
-    'судно': ['судно', 'vessel', '船舶'], 'рыбозавод': ['рыбоперерабатывающий завод', 'fish processing plant', '水産加工場'],
-    'склад': ['склад-холодильник', 'cold store', '冷蔵倉庫'], 'производство': ['производство', 'production plant', '製造施設'],
-    'промысел': ['добыча и переработка гидробионтов', 'harvesting and processing of aquatic products', '水産物の採捕・加工'],
-    'мясокомбинат': ['мясокомбинат', 'meat processing plant', '食肉加工場'], 'фасовка мёда': ['фасовка мёда', 'honey packing', '蜂蜜充填'],
-    'молокозавод': ['молочный завод', 'dairy plant', '乳製品工場'], 'производство кормов': ['производство кормов', 'feed production', '飼料製造'],
-    'транспорт': ['транспортное средство', 'transport vehicle', '輸送手段'], 'птицефабрика': ['птицефабрика', 'poultry farm', '養鶏場'],
-    'торговля кормами': ['торговля кормами', 'feed trading and storage', '飼料の販売・保管'], 'пасека': ['пасека', 'apiary', '養蜂場'],
-    'аквакультура': ['аквакультура', 'aquaculture', '養殖'], 'бойня': ['бойня', 'slaughterhouse', '食肉処理場'],
-    'пухо-перовая фабрика': ['пухо-перовая фабрика', 'down and feather plant', '羽毛加工場'], 'вылов и хранение': ['вылов и хранение', 'catching and storage', '漁獲・保管'],
-    'комбикорма': ['комбикормовый завод', 'compound feed plant', '配合飼料工場'], 'торговля': ['торговля', 'trading', '販売'],
-    'КФХ': ['фермерское хозяйство', 'farm', '農場'], 'животноводство': ['животноводство', 'livestock farm', '畜産'],
-    'розница': ['розничная торговля', 'retail', '小売'], 'обработка шерсти': ['обработка шерсти', 'wool processing', '羊毛加工'],
-    'ветпрепараты': ['производство ветпрепаратов', 'veterinary drugs production', '動物用医薬品製造'], 'ветсанутильзавод': ['утилизационный завод', 'rendering plant', 'レンダリング工場'],
-    'объект': ['объект', 'facility', '施設'],
-  };
-  const SME = { 1: ['Микро', 'Micro', '零細'], 2: ['Малое', 'Small', '小規模'], 3: ['Среднее', 'Medium', '中規模'] };
-  const PAGE_T = {
-    ru: {
-      tabAbout: 'Описание', tabTrade: 'Торговля', tabCompanies: 'Компании', ariaPages: 'Листы дашборда',
-      footShort: 'Источник: таможенная статистика Японии (Министерство финансов, портал e-Stat), помесячно по 9-значным кодам; обе стороны торговли — по японским данным. Подробнее об источниках и о том, как читать данные, — на листе «Описание».',
-      compTitle: 'Российские компании, торгующие с Японией',
-      compIntro: 'Шаг 1: все предприятия и суда, аттестованные Россельхознадзором на экспорт в Японию (реестр «Цербер»). Аттестация — это допуск к рынку, а не поставки: смотрите статус допуска и ввозила ли Япония товары этой категории из России за последние 12 месяцев. ИНН подтверждён самим реестром; вид деятельности и размер — из ЕГРЮЛ и реестра МСП ФНС.',
-      compLevels: 'Уровни связи с Японией: A — поставки в Японию или из Японии подтверждены документами (таких источников пока нет); B — допуск к рынку: компания аттестована или зарегистрировала товар для Японии, сами поставки не подтверждены; C — косвенные признаки. Все компании на этом листе сейчас уровня B.',
-      compCat: 'Категория', compRegion: 'Регион', compSearch: 'Название или ИНН', compAllCats: 'Все категории', compAllRegions: 'Все регионы',
-      chapterAll: (c, n) => `${c} ${n} (вся глава)`,
-      cName: 'Компания', cInn: 'ИНН', cRegion: 'Регион', cCats: 'Категории', cOkved: 'Деятельность (ОКВЭД)', cSize: 'Размер', cEvidence: 'Подтверждение', cLevel: 'Уровень',
-      kCompanies: (n) => ruPlural(n, 'компания', 'компании', 'компаний'), kCats: (n) => ruPlural(n, 'товарная позиция HS4', 'товарные позиции HS4', 'товарных позиций HS4'),
-      kRegions: (n) => ruPlural(n, 'регион', 'региона', 'регионов'), kOpen: () => 'с открытым допуском', kSme: () => 'в реестре МСП',
-      employees: (n) => `${n} чел.`, notSme: 'вне реестра МСП',
-      evid: (r) => `Цербер: ${r.objectsText}`, more: (n) => `и ещё ${n}`, since: (a, b) => (a === b ? `записи реестра: ${a} г.` : `записи реестра: ${a}–${b} гг.`),
-      tradeOk: (v) => `Япония ввозит эти товары из России: ${v} за 12 мес.`, tradeNone: 'За последние 12 мес. Япония эти товары из России не ввозила',
-      levelB: 'B', levelBTip: 'Уровень B: допуск к рынку — компания аттестована на экспорт в Японию; сами поставки не подтверждены',
-      statusT: { open: 'допуск открыт', pending: 'ожидает допуска', limited: 'с ограничениями' },
-      statusTip: { open: 'Хотя бы один объект имеет статус «Без ограничений»', pending: 'Все объекты ожидают права доступа от японской стороны', limited: 'Усиленный лабораторный контроль, предупреждение или специальные требования' },
-      innCheck: 'ИНН не найден', innCheckTip: 'В ЕГРЮЛ нет действующей записи с таким названием, которую реестр «Цербер» подтверждает по ИНН. Ищите компанию по адресу из реестра',
-      innLink: 'Открыть карточку компании на rusprofile.ru',
-      catNote: (cat, v, p) => `${cat}: экспорт России в Японию ${v} за ${p}.`,
-      catNoteAll: (n) => `Показаны все компании (${n}). Выберите категорию, чтобы увидеть её объём в торговле.`,
-      compEmpty: 'Нет компаний по этому фильтру', srcTitle: 'Источники листа',
-      sources: [
-        ['Подключено', 'реестр Россельхознадзора «Цербер» целиком — все предприятия и суда, аттестованные на экспорт в Японию, по всем страницам выдачи. ИНН — поиск ЕГРЮЛ с проверкой фильтром самого реестра по ИНН; ОКВЭД, размер и численность — реестр МСП ФНС.'],
-        ['Нужен российский IP', 'декларации и сертификаты ЕАЭС (Росаккредитация: импортёры японских марок), госзакупки (поставщики товаров японского происхождения), ЛесЕГАИС (экспортёры древесины). Массовой выгрузки нет, на экране до 25 строк.'],
-        ['Только вручную', 'реестр аккредитованных филиалов и представительств иностранных компаний ФНС (защищён капчей).'],
-        ['Не подходит', 'реестр лекарственных средств: держатели регистраций японских препаратов — иностранные компании, а не российские.'],
-        ['Не входит в дашборд', 'санкционная проверка выполняется отдельно.'],
-      ],
-      compInCat: (n) => `Компании в этой категории: ${n} →`,
-    },
-    en: {
-      tabAbout: 'About', tabTrade: 'Trade', tabCompanies: 'Companies', ariaPages: 'Dashboard pages',
-      footShort: 'Source: Japanese customs statistics (Ministry of Finance, e-Stat), monthly by 9-digit code; both directions come from Japanese data. See the About page for sources and how to read the data.',
-      compTitle: 'Russian companies trading with Japan',
-      compIntro: 'Step 1: every plant and vessel approved by Rosselkhoznadzor for export to Japan (the Cerberus register). Approval is market access, not shipments: check the approval status and whether Japan imported goods of that category from Russia in the last 12 months. Tax IDs are confirmed by the register itself; activity and size come from the Russian tax service (EGRUL and the SME register).',
-      compLevels: 'Levels of the link with Japan: A — shipments to or from Japan are documented (no such source yet); B — market access: the company is approved or has registered a product for Japan, shipments themselves are not confirmed; C — indirect signs. All companies on this page are currently level B.',
-      compCat: 'Category', compRegion: 'Region', compSearch: 'Name or tax ID', compAllCats: 'All categories', compAllRegions: 'All regions',
-      chapterAll: (c, n) => `${c} ${n} (whole chapter)`,
-      cName: 'Company', cInn: 'Tax ID (INN)', cRegion: 'Region', cCats: 'Categories', cOkved: 'Activity (OKVED)', cSize: 'Size', cEvidence: 'Evidence', cLevel: 'Level',
-      kCompanies: (n) => (n === 1 ? 'company' : 'companies'), kCats: (n) => (n === 1 ? 'HS4 product heading' : 'HS4 product headings'),
-      kRegions: (n) => (n === 1 ? 'region' : 'regions'), kOpen: () => 'with open approval', kSme: () => 'in the SME register',
-      employees: (n) => `${n} staff`, notSme: 'not in the SME register',
-      evid: (r) => `Cerberus: ${r.objectsText}`, more: (n) => `and ${n} more`, since: (a, b) => (a === b ? `register entries: ${a}` : `register entries: ${a}–${b}`),
-      tradeOk: (v) => `Japan imports these goods from Russia: ${v} in the last 12 months`, tradeNone: 'No Japanese imports of these goods from Russia in the last 12 months',
-      levelB: 'B', levelBTip: 'Level B: market access — the company is approved for export to Japan; shipments themselves are not confirmed',
-      statusT: { open: 'approval open', pending: 'awaiting approval', limited: 'with restrictions' },
-      statusTip: { open: 'At least one facility has the status “No restrictions”', pending: 'All facilities are waiting for access rights from the Japanese side', limited: 'Reinforced laboratory control, warning or special requirements' },
-      innCheck: 'tax ID not found', innCheckTip: 'EGRUL has no active record with this name that the Cerberus register confirms by tax ID. Look the company up by the address in the register',
-      innLink: 'Open the company profile on rusprofile.ru',
-      catNote: (cat, v, p) => `${cat}: Russian exports to Japan ${v} in ${p}.`,
-      catNoteAll: (n) => `Showing all companies (${n}). Choose a category to see its trade value.`,
-      compEmpty: 'No companies for this filter', srcTitle: 'Sources of this page',
-      sources: [
-        ['Connected', 'the whole Rosselkhoznadzor Cerberus register — every plant and vessel approved for export to Japan, all result pages. Tax IDs: EGRUL search checked against the register’s own tax-ID filter; activity, size and staff numbers: the SME register of the tax service.'],
-        ['Needs a Russian IP address', 'EAEU declarations and certificates of conformity (Rosaccreditation: importers of Japanese brands), public procurement (suppliers of goods of Japanese origin), LesEGAIS (timber exporters). No bulk download; up to 25 rows on screen.'],
-        ['Manual only', 'the tax service register of accredited branches and representative offices of foreign companies (protected by a captcha).'],
-        ['Not suitable', 'the register of medicines: holders of registrations of Japanese drugs are foreign companies, not Russian ones.'],
-        ['Not part of the dashboard', 'sanctions screening is done separately.'],
-      ],
-      compInCat: (n) => `Companies in this category: ${n} →`,
-    },
-    ja: {
-      tabAbout: '概要', tabTrade: '貿易', tabCompanies: '企業', ariaPages: 'ダッシュボードのページ',
-      footShort: '出典：財務省貿易統計（e-Stat）の9桁品目・月次データ。双方向とも日本側のデータです。出典とデータの見方は「概要」ページをご覧ください。',
-      compTitle: '日本と取引するロシア企業',
-      compIntro: 'ステップ1：ロシア連邦獣医植物検疫監督庁が対日輸出を認定した全工場・船舶（Cerberus登録簿）。認定は市場へのアクセスであり、出荷の裏付けではありません。認定の状態と、過去12か月に日本がその品目をロシアから輸入したかをご確認ください。納税者番号は登録簿自体で確認済み。業種・規模は税務庁（EGRUL・中小企業登録簿）から取得しています。',
-      compLevels: '日本との結びつきの確度：A — 日本との出荷が文書で裏付けられる（該当する情報源はまだなし）、B — 市場アクセス：対日輸出の認定または製品登録あり、出荷自体は未確認、C — 間接的な兆候。現在このページの企業はすべて確度Bです。',
-      compCat: '品目', compRegion: '地域', compSearch: '企業名または納税者番号', compAllCats: 'すべての品目', compAllRegions: 'すべての地域',
-      chapterAll: (c, n) => `${c} ${n}（類全体）`,
-      cName: '企業', cInn: '納税者番号（INN）', cRegion: '地域', cCats: '品目', cOkved: '業種（OKVED）', cSize: '規模', cEvidence: '裏付け', cLevel: '確度',
-      kCompanies: () => '社', kCats: () => 'HS4品目', kRegions: () => '地域', kOpen: () => '認定が有効', kSme: () => '中小企業登録簿に掲載',
-      employees: (n) => `${n}人`, notSme: '中小企業登録簿に掲載なし',
-      evid: (r) => `Cerberus：${r.objectsText}`, more: (n) => `ほか${n}件`, since: (a, b) => (a === b ? `登録簿の記載：${a}年` : `登録簿の記載：${a}〜${b}年`),
-      tradeOk: (v) => `日本はこの品目をロシアから輸入：過去12か月で${v}`, tradeNone: '過去12か月、日本はこの品目をロシアから輸入していません',
-      levelB: 'B', levelBTip: '確度B：市場アクセス — 対日輸出の認定あり。出荷自体は未確認',
-      statusT: { open: '認定有効', pending: '認定待ち', limited: '制限あり' },
-      statusTip: { open: '少なくとも1施設が「制限なし」の状態', pending: 'すべての施設が日本側のアクセス許可待ち', limited: '強化検査、警告または特別要件' },
-      innCheck: '納税者番号なし', innCheckTip: 'Cerberus登録簿が納税者番号で確認できる同名の有効なEGRUL記録がありません。登録簿の住所で企業を探してください',
-      innLink: 'rusprofile.ruで企業情報を開く',
-      catNote: (cat, v, p) => `${cat}：ロシアの対日輸出 ${v}（${p}）。`,
-      catNoteAll: (n) => `すべての企業（${n}社）を表示しています。品目を選ぶと貿易額が表示されます。`,
-      compEmpty: 'この条件に該当する企業はありません', srcTitle: 'このページの出典',
-      sources: [
-        ['接続済み', 'ロシア連邦獣医植物検疫監督庁のCerberus登録簿の全体（対日輸出認定の全工場・船舶、全ページ）。納税者番号はEGRUL検索を登録簿自身の納税者番号フィルターで照合。業種・規模・従業員数は税務庁の中小企業登録簿。'],
-        ['ロシアのIPが必要', 'EAEUの適合宣言・認証登録簿（日本ブランドの輸入者）、公共調達（日本原産品の供給者）、LesEGAIS（木材輸出者）。一括ダウンロードはなく、画面表示は25行まで。'],
-        ['手作業のみ', '税務庁の外国企業支店・駐在員事務所登録簿（キャプチャで保護）。'],
-        ['対象外', '医薬品登録簿：日本の医薬品の登録保有者は外国企業で、ロシア企業ではありません。'],
-        ['ダッシュボード外', '制裁チェックは別途実施しています。'],
-      ],
-      compInCat: (n) => `この品目の企業：${n}社 →`,
-    },
-  };
-  const ABOUT = {
-    ru: {
-      title: 'О дашборде',
-      intro: 'Дашборд показывает торговлю России и Японии по товарам — по образцу раздела «Bilateral Trade by Products» на oec.world, но с данными до последнего опубликованного месяца, детализацией до 9-значного кода и разбивкой по портам Японии. Лист «Компании» постепенно связывает товарные категории с российскими компаниями, чтобы клиентские менеджеры могли находить потенциальных клиентов.',
-      sections: [
-        ['Листы', ['Торговля — структура торговли за выбранный период: две карты-плитки (экспорт России в Японию и экспорт Японии в Россию), помесячная динамика, карточка выбранного товара, карта таможенных постов Японии и таблица товаров.', 'Расчёты — денежные потоки помимо товаров по платёжному балансу Японии: услуги, поездки, доходы от инвестиций, прямые инвестиции японских компаний в Россию и валюта расчётов.', 'Компании — российские компании с подтверждённой по открытым реестрам связью с Японией и с привязкой к товарным категориям.']],
-        ['Как пользоваться листом «Торговля»', ['HS2 / HS4 / HS6 / HS9 — уровень детализации: от глав до 9-значных кодов японской статистики.', 'Стоимость / Рост — размер прямоугольника всегда равен стоимости; в режиме «Рост» цвет показывает изменение к такому же периоду годом раньше.', 'USD / JPY — валюта: доллары или исходные иены. Сумма / Проценты — подписи в деньгах или в доле от общего потока.', 'Период — полные годы с 2017 года, текущий год с января и последние 12 месяцев.', 'Клик по прямоугольнику выбирает товар: ниже появляются его динамика, карточка (объём, цена за единицу, регулярность поставок, основные посты, где искать контрагентов) и карта постов. Повторный клик снимает выбор, двойной клик раскрывает уровень ниже, «← Назад» возвращает на шаг.', 'Клик по кругу на карте постов показывает, какие товары через этот пост проходят.']],
-        ['Откуда данные', ['Таможенная статистика Японии (Министерство финансов, портал e-Stat): помесячно по 9-значным кодам, «товар × страна» с 2017 года и «таможенный пост × товар × страна» с 2021 года.', 'Россия не публикует таможенную статистику с 2022 года, поэтому обе стороны показаны по японским данным: экспорт России — импорт Японии товаров российского происхождения в ценах CIF, экспорт Японии — вывоз с конечным назначением в Россию в ценах FOB.', 'Иены — исходная валюта статистики Японии; переключатель USD / JPY показывает суммы в иенах как есть или в долларах по среднемесячному курсу ФРС США (серия EXJPUS). Рост в иенах и в долларах различается из-за изменения курса.', 'OEC строит похожие графики по базе BACI (CEPII), собранной из тех же данных через UN Comtrade; она обновляется раз в год с отставанием около полутора лет. Годовые итоги этого дашборда совпадают с UN Comtrade с точностью до 0,2%.', 'Лист «Расчёты»: платёжный баланс Японии по странам (сальдо статей по кварталам с 2014 года), прямые инвестиции по странам помесячно и их остатки на конец года — Минфин Японии; валюта расчётов по полугодиям — таможня Японии.']],
-        ['Как читать особые коды', ['Первые 6 цифр кода — международный HS (HS2017 до 2021 года, HS2022 с 2022 года), последние 3 — детализация Японии, своя у экспорта и импорта.', 'Коды с «X» (например, 24XXXXXXA) засекречены по заявке участника, когда по коду 1–2 экспортёра или импортёра. Сумма и страна настоящие, скрыт только точный товар.', 'Коды «00» — реэкспорт (товары не японского производства), реимпорт и бортовые припасы.', 'Названия товаров переведены для этого дашборда с японских справочников таможни.']],
-        ['Обновление', ['Таможня Японии публикует месяц примерно через 4 недели после его окончания. Импорт за последний месяц — предварительный, через месяц его заменяют уточнённые данные; годовые цифры пересматриваются в марте и ноябре следующего года.']],
-        ['Лист «Компании»', ['Компании берутся из открытых реестров, где компания и товар записаны рядом. У каждой связи есть уровень: A — поставки в Японию или из Японии подтверждены документами (таких источников пока нет); B — допуск к рынку: компания аттестована или зарегистрировала товар для Японии, сами поставки не подтверждены; C — косвенные признаки.', 'Сейчас подключён целиком реестр Россельхознадзора «Цербер»: все предприятия и суда, аттестованные на экспорт в Японию (уровень B). У каждой компании показано, открыт ли допуск, и ввозила ли Япония товары её категорий из России за последние 12 месяцев: аттестация есть у многих, кто давно не поставляет. ИНН берётся из поиска ЕГРЮЛ и принимается только после проверки фильтром самого реестра по ИНН; «ИНН не найден» значит, что действующей записи с таким названием, которую реестр подтверждает, нет. ОКВЭД, размер и численность — из реестра МСП ФНС.', 'Дальше по плану: декларации и сертификаты ЕАЭС, госзакупки и ЛесЕГАИС — они доступны только с российского IP. Санкционная проверка в дашборде не выполняется.']],
-      ],
-      links: [['Trade Statistics of Japan — загрузка данных', 'https://www.customs.go.jp/toukei/info/tsdl_e.htm'], ['Календарь публикаций таможни Японии', 'https://www.customs.go.jp/toukei/calendar/calend_e.htm'], ['Реестр Россельхознадзора «Цербер»', 'https://cerberus.vetrf.ru/cerberus/certified/exporter/pub']],
-      linksTitle: 'Ссылки',
-    },
-    en: {
-      title: 'About this dashboard',
-      intro: 'The dashboard shows Russia–Japan trade by product, modelled on the “Bilateral Trade by Products” section of oec.world but with data up to the latest published month, detail down to the 9-digit code and a breakdown by Japanese port. The Companies page links product categories to Russian companies step by step so that account managers can find potential clients.',
-      sections: [
-        ['Pages', ['Trade — the structure of trade in the selected period: two treemaps (Russian exports to Japan and Japanese exports to Russia), the monthly trend, a card for the selected product, a map of Japanese customs offices and a product table.', 'Payments — money flows beyond goods from Japan’s balance of payments: services, travel, investment income, Japanese direct investment in Russia and invoicing currencies.', 'Companies — Russian companies whose link to Japan is confirmed by open registers, matched to product categories.']],
-        ['How to use the Trade page', ['HS2 / HS4 / HS6 / HS9 — level of detail, from chapters down to the 9-digit codes of Japanese statistics.', 'Trade value / Growth — rectangle size always shows value; in Growth mode the colour shows the change from the same period a year earlier.', 'USD / JPY — currency: US dollars or the original yen. Amount / Percentage — labels in money or as a share of the whole flow.', 'Period — full years from 2017, the current year to date and the last 12 months.', 'Click a rectangle to select a product: its trend, a card (volume, unit price, how regular the shipments are, main customs offices, where to look for counterparties) and the port map appear below. Click again to clear, double-click to open the next level, “← Back” to go one step back.', 'Click a circle on the port map to see the products passing through that office.']],
-        ['Where the data come from', ['Japanese customs statistics (Ministry of Finance, e-Stat portal): monthly by 9-digit code, “commodity by country” from 2017 and “customs office by commodity by country” from 2021.', 'Russia has not published customs statistics since 2022, so both directions come from Japanese data: Russian exports are Japan’s imports of goods of Russian origin at CIF prices, Japanese exports are shipments with final destination Russia at FOB prices.', 'Yen is the original currency of Japanese statistics; the USD / JPY switch shows values in yen as published or in US dollars at the monthly average rate of the US Federal Reserve (series EXJPUS). Growth in yen and in dollars differs because the exchange rate changes.', 'OEC draws similar charts from the BACI database (CEPII), built from the same data via UN Comtrade and updated once a year with a lag of about 18 months. Annual totals in this dashboard match UN Comtrade within 0.2%.', 'The Payments page: Japan’s balance of payments by country (balances by item, quarterly from 2014), direct investment by country (monthly) and its year-end stock — Japanese Ministry of Finance; invoicing currencies by half-year — Japanese customs.']],
-        ['How to read special codes', ['The first 6 digits are the international HS code (HS2017 until 2021, HS2022 from 2022); the last 3 are Japan’s own detail and differ between exports and imports.', 'Codes with “X” (for example 24XXXXXXA) are kept confidential at a trader’s request when only 1–2 exporters or importers use the code. The value and the country are real; only the exact product is hidden.', 'Codes starting with “00” are re-exports (goods not made in Japan), re-imports and aircraft stores.', 'Product names were translated for this dashboard from the Japanese customs schedules.']],
-        ['Updates', ['Japanese customs publish a month about 4 weeks after it ends. Imports for the latest month are preliminary and are replaced by detailed figures a month later; annual figures are revised again in March and November of the following year.']],
-        ['The Companies page', ['Companies come from open registers that record a company together with a product. Each link has a level: A — shipments to or from Japan are documented (no such source yet); B — market access: the company is approved or has registered a product for Japan, shipments themselves are not confirmed; C — indirect signs.', 'Connected now: the whole Rosselkhoznadzor Cerberus register — every plant and vessel approved for export to Japan (level B). Each company shows whether its approval is open and whether Japan imported goods of its categories from Russia in the last 12 months: many approved companies have not shipped for years. Tax IDs come from the EGRUL search and are accepted only after a check against the register’s own tax-ID filter; “tax ID not found” means no active record with this name is confirmed by the register. Activity codes, size and staff numbers come from the SME register of the tax service.', 'Next: EAEU declarations and certificates of conformity, public procurement and LesEGAIS — available only from a Russian IP address. Sanctions screening is not part of this dashboard.']],
-      ],
-      links: [['Trade Statistics of Japan — data download', 'https://www.customs.go.jp/toukei/info/tsdl_e.htm'], ['Japanese customs release calendar', 'https://www.customs.go.jp/toukei/calendar/calend_e.htm'], ['Rosselkhoznadzor Cerberus register', 'https://cerberus.vetrf.ru/cerberus/certified/exporter/pub']],
-      linksTitle: 'Links',
-    },
-    ja: {
-      title: 'このダッシュボードについて',
-      intro: '日ロ間の品目別貿易を表示します。oec.worldの「Bilateral Trade by Products」を参考にしつつ、最新の公表月までのデータ、9桁品目までの詳細、日本の港別の内訳を備えています。「企業」ページでは、品目とロシア企業を段階的に結びつけ、営業担当者が見込み顧客を探せるようにします。',
-      sections: [
-        ['ページ構成', ['貿易：選択期間の貿易構造。2つのツリーマップ（ロシアの対日輸出・日本の対ロ輸出）、月次推移、選択品目のカード、日本の税関官署マップ、品目表。', '国際収支：日本の国際収支統計による貿易以外の資金の流れ（サービス、旅行、投資収益、日本企業の対ロ直接投資、貿易取引通貨）。', '企業：公開登録簿で日本との取引が裏付けられたロシア企業を、品目と結びつけて表示します。']],
-        ['「貿易」ページの使い方', ['HS2／HS4／HS6／HS9：類から日本の9桁統計品目まで、品目の細かさを切り替えます。', '金額／増減：四角の大きさは常に金額。「増減」では色が前年同期比の変化を示します。', 'USD／JPY：通貨をドルまたは元の円で切り替えます。実額／構成比：表示を金額または全体に占める割合で切り替えます。', '期間：2017年以降の各年、今年の累計、直近12か月。', '四角をクリックすると品目を選択し、月次推移、カード（数量、単価、取引の頻度、主な官署、取引相手の探し方）、官署マップが表示されます。もう一度クリックで解除、ダブルクリックで下の階層へ、「← 戻る」で一つ前に戻ります。', '官署マップの円をクリックすると、その官署を通る品目が表示されます。']],
-        ['データの出典', ['財務省貿易統計（e-Stat）：9桁品目・月次。「品別国別表」は2017年から、「税関別品別国別表」は2021年から。', 'ロシアは2022年以降税関統計を公表していないため、双方向とも日本側のデータです。ロシアの対日輸出は日本のロシア原産品の輸入（CIF）、日本の対ロ輸出はロシアを最終仕向地とする輸出（FOB）です。', '円は日本の統計の元の通貨です。USD／JPYの切り替えで、公表どおりの円建て、または米連邦準備制度の月平均レート（EXJPUS）によるドル建てで表示します。為替の変動により、円建てとドル建ての増減率は異なります。', 'OECは同じ元データをUN Comtrade経由でまとめたBACI（CEPII）で同様の図を作成しており、更新は年1回・約1年半遅れです。本ダッシュボードの年間合計はUN Comtradeと0.2%以内で一致します。', '「国際収支」ページ：財務省の地域別国際収支（項目別収支、2014年以降の四半期）、国・地域別の直接投資（月次）とその年末残高。貿易取引通貨別比率（半期）は財務省関税局の公表値です。']],
-        ['特殊なコードの見方', ['上6桁は国際HS（2021年まではHS2017、2022年からはHS2022）、下3桁は日本独自の細分で、輸出と輸入で異なります。', '「X」を含むコード（例：24XXXXXXA）は、該当する輸出入者が1〜2者の場合に当事者の申請で非公表とされた品目です。金額と相手国は実数で、品目のみ伏せられています。', '「00」で始まるコードは再輸出品（日本以外で生産された貨物）・再輸入品・機用品です。', '品名は日本の税関の品目表をもとに、このダッシュボード用に翻訳したものです。']],
-        ['更新', ['財務省は月末から約4週間後に月次データを公表します。直近月の輸入は速報値で、翌月に確報値へ置き換わります。年間の数値は翌年3月と11月に改訂されます。']],
-        ['「企業」ページ', ['企業と品目が並んで記録されている公開登録簿から企業を抽出します。各結びつきには確度があります。A：日本との出荷が文書で裏付けられる（該当する情報源はまだなし）、B：市場アクセス — 対日輸出の認定または製品登録あり、出荷自体は未確認、C：間接的な兆候。', '現在は、ロシア連邦獣医植物検疫監督庁のCerberus登録簿の全体（対日輸出認定の全工場・船舶、確度B）を接続しています。各企業について、認定が有効か、過去12か月に日本がその品目をロシアから輸入したかを表示します。認定があっても長年出荷していない企業は多数あります。納税者番号はEGRUL検索から取得し、登録簿自身の納税者番号フィルターで照合できた場合のみ採用。「納税者番号なし」は、登録簿が確認できる同名の有効な記録がないことを示します。業種コード・規模・従業員数は税務庁の中小企業登録簿から取得。', '今後：EAEUの適合宣言・認証、公共調達、LesEGAIS（いずれもロシアのIPからのみ利用可能）。制裁チェックは本ダッシュボードの対象外です。']],
-      ],
-      links: [['Trade Statistics of Japan（データダウンロード）', 'https://www.customs.go.jp/toukei/info/tsdl_e.htm'], ['財務省貿易統計の公表日程', 'https://www.customs.go.jp/toukei/calendar/calend_e.htm'], ['Cerberus登録簿（ロシア連邦獣医植物検疫監督庁）', 'https://cerberus.vetrf.ru/cerberus/certified/exporter/pub']],
-      linksTitle: 'リンク',
-    },
-  };
-  // ---- texts of the Settlements page (Japan's balance of payments with Russia, shown from Russia's side) ----
-  const SETTLE_T = {
-    ru: {
-      tabSettlements: 'Расчёты', stTitle: 'Расчёты России и Японии',
-      stIntro: 'Товары — главная, но не единственная статья расчётов. Платёжный баланс Японии показывает и остальные: услуги, поездки, доходы от инвестиций, прямые инвестиции. Здесь данные Минфина Японии по России показаны со стороны России: плюс — Россия получает от Японии больше, чем платит, минус — платит больше.',
-      ariaYear: 'Год', ariaGran: 'Шаг графика', granY: 'Годы', granQ: 'Кварталы',
-      inYear: (y) => `за ${y} г.`, atEnd: (y) => `на конец ${y} г.`, endOf: (y) => `Конец ${y} г.`,
-      kCurrent: 'Сальдо текущих операций', kGoods: 'Товары', kServices: 'Услуги', kIncome: 'Доходы от инвестиций',
-      kFdi: 'Прямые инвестиции Японии в Россию', kDip: 'Накопленные японские инвестиции в России',
-      c1Title: 'Из чего складывается сальдо текущих операций',
-      c1Note: (u, q) => `Сальдо по статьям со стороны России, ${u}; точка — итог. Последний квартал в данных — ${q}.`,
-      unitWord: { usd: 'в долларах США', jpy: 'в иенах' },
-      series: { goods: 'Товары', services: 'Услуги', primary: 'Доходы от инвестиций', secondary: 'Текущие трансферты', current: 'Итог' },
-      quarter: (p) => `${['I', 'II', 'III', 'IV'][+p.slice(-1) - 1]} кв. ${p.slice(0, 4)}`,
-      half: (p) => `${p.endsWith('1') ? 'I' : 'II'} пол. ${p.slice(0, 4)}`,
-      c2Title: (y) => `Услуги и доходы по статьям, ${y}`,
-      c2Note: 'Полоса вправо — Россия получает больше, чем платит, влево — платит больше. Мелким шрифтом — то же годом раньше.',
-      groupServices: 'Услуги', groupIncome: 'Доходы',
-      items: {
-        travel: ['Поездки', 'траты россиян в Японии минус траты японцев в России'],
-        transport: ['Транспорт', 'перевозка грузов и пассажиров, портовые услуги'],
-        construction: ['Строительство', 'стройки японских компаний в России и российских — в Японии'],
-        ip: ['Роялти и лицензии', 'плата за товарные знаки, патенты, технологии и программы'],
-        business: ['Прочие деловые услуги', 'инжиниринг, консалтинг, исследования, торговое посредничество'],
-        financial: ['Финансовые услуги', 'банковские комиссии и сборы'],
-        maintenance: ['Ремонт и обслуживание', 'ремонт судов, самолётов и оборудования'],
-        insurance: ['Страхование и пенсии', 'страховые премии за вычетом выплат'],
-        telecom: ['Связь и ИТ', 'телеком, компьютерные и информационные услуги'],
-        government: ['Государственные услуги', 'расходы посольств, консульств и других госорганов'],
-        personal: ['Культура и развлечения', 'аудиовизуальные и прочие услуги частным лицам'],
-        manufacturing: ['Переработка сырья заказчика', 'переработка давальческого сырья'],
-        primary: ['Доходы от инвестиций', 'дивиденды, реинвестированная прибыль и проценты; в основном доходы японских компаний от вложений в России'],
-        secondary: ['Текущие трансферты', 'безвозмездные переводы: гранты, помощь, частные переводы'],
-      },
-      c3Title: 'Прямые инвестиции Японии в Россию', c3aTitle: 'Вложено за год, нетто', c3bTitle: 'Накоплено на конец года',
-      c3Note: (v, y) => ['Вложения японских компаний в российские дочерние и совместные предприятия, включая прибыль, оставленную в России. Российские прямые инвестиции в Японии почти нулевые: ', v, ` на конец ${y} г.`],
-      sReinv: 'Реинвестированная прибыль', sOther: 'Капитал и займы', sEquity: 'Капитал', sDebt: 'Займы внутри группы', sDipTotal: 'Всего',
-      tExec: 'Вложено', tWd: 'Изъято', tNet: 'Нетто',
-      c4Title: 'Валюта расчётов в торговле Японии с регионом',
-      c4Note: (imp, exp, p) => ['Таможня Японии не публикует валюты отдельно по России — только по региону «Центральная и Восточная Европа, Россия и др.». Россия — ', imp, ' импорта Японии из региона и ', exp, ` экспорта (${p}). Нижняя строка — весь мир для сравнения.`],
-      c4Imp: 'Импорт Японии из региона', c4Exp: 'Экспорт Японии в регион', world: 'Весь мир',
-      ccy: { JPY: 'Иена', USD: 'Доллар США', EUR: 'Евро', other: 'Прочие' },
-      c5Title: 'Что это значит для поиска клиентов',
-      insights: {
-        subs: ['Дочерние компании японских фирм', (dip, reinv, y, inc, yi) => ['Накопленные японские вложения в России — ', dip, ` на конец ${y} г., из них прибыль, оставленная в России, — `, reinv, `. Доходы японских инвесторов от вложений в России за ${yi} г. — `, inc, '. Это клиенты для расчётов по импорту из Японии, роялти и дивидендам; названий компаний в этих данных нет.']],
-        travel: ['Поездки', (v, y, v0, y0) => ['Россияне тратят в Японии больше, чем японцы в России: перевес ', v, ` за ${y} г. (в ${y0} г. — `, v0, '). Это платежи туроператоров и частных лиц.']],
-        ccy: ['Валюта', (jpy, usd, p) => ['В импорте Японии из региона, куда входит Россия, доля иены — ', jpy, ', доллара — ', usd, ` (${p}); юаня нет среди пяти основных валют. Для экспортёров в Японию это аргумент за расчёты в иенах.`]],
-      },
-      srcTitleS: 'Источники и как читать',
-      stSources: [
-        ['Платёжный баланс Японии по странам', 'Минфин и Банк Японии, таблицы 6a: сальдо статей по кварталам с 2014 года; квартал публикуется примерно через 4–5 месяцев после окончания. Минфин показывает сальдо со стороны Японии, здесь знак обратный — со стороны России. Товары в платёжном балансе учитываются в ценах FOB в обе стороны, поэтому сальдо отличается от таможенного на листе «Торговля».'],
-        ['Прямые инвестиции', 'Минфин Японии, таблицы 6d: по странам помесячно, включая реинвестированную прибыль; последние месяцы — предварительные. Остатки на конец года — статистика внешних активов и обязательств Японии по странам, раз в год в мае.'],
-        ['Валюта расчётов', 'таможня Японии, по полугодиям. По России отдельно не публикуется — только по региону «Центральная и Восточная Европа, Россия и др.»; долю России в торговле с регионом показывает таможенная статистика.'],
-        ['Пересчёт в доллары', 'потоки — по среднему за период курсу ФРС США (EXJPUS), остатки — по курсу последнего рабочего дня года (DEXJPUS). Переключатель JPY показывает исходные цифры в иенах.'],
-        ['Чего здесь нет', 'названий компаний и банков: платёжный баланс — сводная статистика. Финансовый счёт (портфельные инвестиции, займы, депозиты) не показан: по России он нерегулярен и плохо поддаётся толкованию.'],
-      ],
-    },
-    en: {
-      tabSettlements: 'Payments', stTitle: 'Russia–Japan payments',
-      stIntro: 'Goods are the main item of Russia–Japan payments, but not the only one. Japan’s balance of payments also shows services, travel, investment income and direct investment. This page shows the Japanese Ministry of Finance data on Russia from Russia’s side: plus means Russia receives more from Japan than it pays, minus means it pays more.',
-      ariaYear: 'Year', ariaGran: 'Chart step', granY: 'Years', granQ: 'Quarters',
-      inYear: (y) => `in ${y}`, atEnd: (y) => `at end-${y}`, endOf: (y) => `End-${y}`,
-      kCurrent: 'Current account balance', kGoods: 'Goods', kServices: 'Services', kIncome: 'Investment income',
-      kFdi: 'Japanese direct investment in Russia', kDip: 'Japanese direct investment stock in Russia',
-      c1Title: 'What makes up the current account balance',
-      c1Note: (u, q) => `Balance by item from Russia’s side, ${u}; the dot is the total. Latest quarter in the data: ${q}.`,
-      unitWord: { usd: 'US dollars', jpy: 'yen' },
-      series: { goods: 'Goods', services: 'Services', primary: 'Investment income', secondary: 'Current transfers', current: 'Total' },
-      quarter: (p) => `Q${p.slice(-1)} ${p.slice(0, 4)}`,
-      half: (p) => `H${p.slice(-1)} ${p.slice(0, 4)}`,
-      c2Title: (y) => `Services and income by item, ${y}`,
-      c2Note: 'A bar to the right means Russia receives more than it pays; to the left, it pays more. Small print: the same item a year earlier.',
-      groupServices: 'Services', groupIncome: 'Income',
-      items: {
-        travel: ['Travel', 'spending by Russians in Japan minus spending by Japanese in Russia'],
-        transport: ['Transport', 'freight and passenger transport, port services'],
-        construction: ['Construction', 'construction by Japanese firms in Russia and by Russian firms in Japan'],
-        ip: ['Royalties and licences', 'fees for trademarks, patents, technology and software'],
-        business: ['Other business services', 'engineering, consulting, research, trade-related services'],
-        financial: ['Financial services', 'bank fees and commissions'],
-        maintenance: ['Maintenance and repair', 'repair of ships, aircraft and equipment'],
-        insurance: ['Insurance and pensions', 'premiums net of claims'],
-        telecom: ['Telecom and IT', 'telecommunications, computer and information services'],
-        government: ['Government services', 'spending by embassies, consulates and other agencies'],
-        personal: ['Culture and recreation', 'audiovisual and other personal services'],
-        manufacturing: ['Processing of others’ inputs', 'tolling'],
-        primary: ['Investment income', 'dividends, reinvested earnings and interest; mostly income of Japanese companies from their investments in Russia'],
-        secondary: ['Current transfers', 'grants, aid and private transfers'],
-      },
-      c3Title: 'Japanese direct investment in Russia', c3aTitle: 'Invested during the year, net', c3bTitle: 'Stock at end of year',
-      c3Note: (v, y) => ['Investment by Japanese companies in their Russian subsidiaries and joint ventures, including profits kept in Russia. Russian direct investment in Japan is close to zero: ', v, ` at end-${y}.`],
-      sReinv: 'Reinvested earnings', sOther: 'Equity and loans', sEquity: 'Equity', sDebt: 'Intra-group loans', sDipTotal: 'Total',
-      tExec: 'Invested', tWd: 'Withdrawn', tNet: 'Net',
-      c4Title: 'Invoicing currency in Japan’s trade with the region',
-      c4Note: (imp, exp, p) => ['Japanese customs do not publish currencies for Russia alone, only for the region “Central and Eastern Europe, Russia etc.” Russia accounts for ', imp, ' of Japan’s imports from the region and ', exp, ` of its exports to it (${p}). The bottom row shows the whole world for comparison.`],
-      c4Imp: 'Japan’s imports from the region', c4Exp: 'Japan’s exports to the region', world: 'World',
-      ccy: { JPY: 'Yen', USD: 'US dollar', EUR: 'Euro', other: 'Other' },
-      c5Title: 'What this means for finding clients',
-      insights: {
-        subs: ['Subsidiaries of Japanese companies', (dip, reinv, y, inc, yi) => ['Japanese direct investment in Russia stood at ', dip, ` at end-${y}, of which profits kept in Russia: `, reinv, `. Japanese investors earned `, inc, ` from their investments in Russia in ${yi}. These companies need payments for imports from Japan, royalties and dividends; the data do not name them.`]],
-        travel: ['Travel', (v, y, v0, y0) => ['Russians spend more in Japan than Japanese spend in Russia: a gap of ', v, ` in ${y} (`, v0, ` in ${y0}). These are payments by tour operators and individuals.`]],
-        ccy: ['Currency', (jpy, usd, p) => ['In Japan’s imports from the region that includes Russia, the yen has a share of ', jpy, ' and the dollar ', usd, ` (${p}); the yuan is not among the top five currencies. For exporters to Japan this argues for settlement in yen.`]],
-      },
-      srcTitleS: 'Sources and how to read them',
-      stSources: [
-        ['Japan’s balance of payments by country', 'Ministry of Finance and Bank of Japan, tables 6a: balances by item, quarterly from 2014; a quarter is published about 4–5 months after it ends. The ministry shows balances from Japan’s side; this page reverses the sign to Russia’s side. Goods are valued FOB in both directions here, so the balance differs from the customs-based one on the Trade page.'],
-        ['Direct investment', 'Ministry of Finance, tables 6d: monthly by country, including reinvested earnings; the latest months are preliminary. Year-end stock comes from Japan’s international investment position by country, published every May.'],
-        ['Invoicing currency', 'Japanese customs, by half-year. Not published for Russia alone, only for the region “Central and Eastern Europe, Russia etc.”; Russia’s share of trade with the region comes from customs statistics.'],
-        ['Conversion to dollars', 'flows at the period-average US Federal Reserve rate (EXJPUS), stocks at the rate of the last business day of the year (DEXJPUS). The JPY switch shows the original figures in yen.'],
-        ['Not included', 'company or bank names: the balance of payments is aggregate statistics. The financial account (portfolio investment, loans, deposits) is not shown: for Russia it is erratic and hard to interpret.'],
-      ],
-    },
-    ja: {
-      tabSettlements: '国際収支', stTitle: '日ロ間の国際収支',
-      stIntro: '日ロ間の資金の流れの中心は貿易ですが、それだけではありません。日本の国際収支統計からは、サービス、旅行、投資収益、直接投資もわかります。このページでは財務省のロシアとの国際収支をロシア側から見た符号で示しています。プラスはロシアの受取超過、マイナスは支払超過です。',
-      ariaYear: '年', ariaGran: 'グラフの単位', granY: '年', granQ: '四半期',
-      inYear: (y) => `${y}年`, atEnd: (y) => `${y}年末`, endOf: (y) => `${y}年末`,
-      kCurrent: '経常収支', kGoods: '貿易収支', kServices: 'サービス収支', kIncome: '第一次所得収支',
-      kFdi: '日本の対ロ直接投資', kDip: '日本の対ロ直接投資残高',
-      c1Title: '経常収支の内訳',
-      c1Note: (u, q) => `ロシア側から見た項目別収支（${u}）。点は経常収支の合計。データの最新四半期は${q}。`,
-      unitWord: { usd: '米ドル', jpy: '円' },
-      series: { goods: '貿易収支', services: 'サービス収支', primary: '第一次所得収支', secondary: '第二次所得収支', current: '合計' },
-      quarter: (p) => `${p.slice(0, 4)}年${p.slice(-1)}Q`,
-      half: (p) => `${p.slice(0, 4)}年${p.endsWith('1') ? '上期' : '下期'}`,
-      c2Title: (y) => `サービス・所得の項目別収支（${y}）`,
-      c2Note: '右向きの棒はロシアの受取超過、左向きは支払超過。小さい数字は前年の値です。',
-      groupServices: 'サービス', groupIncome: '所得',
-      items: {
-        travel: ['旅行', '訪日ロシア人の支出から訪ロ日本人の支出を差し引いた額'],
-        transport: ['輸送', '貨物・旅客輸送、港湾サービス'],
-        construction: ['建設', '日本企業のロシアでの工事とロシア企業の日本での工事'],
-        ip: ['知的財産権等使用料', '商標・特許・技術・ソフトウェアの使用料'],
-        business: ['その他業務サービス', 'エンジニアリング、コンサルティング、研究開発、貿易関連サービス'],
-        financial: ['金融サービス', '銀行手数料など'],
-        maintenance: ['維持修理', '船舶・航空機・機器の修理'],
-        insurance: ['保険・年金サービス', '保険料から保険金を差し引いた額'],
-        telecom: ['通信・コンピュータ・情報サービス', '通信、データ処理、情報サービス'],
-        government: ['公的サービス等', '大使館・領事館などの支出'],
-        personal: ['個人・文化・娯楽サービス', '音響映像などの個人向けサービス'],
-        manufacturing: ['委託加工サービス', '他者が所有する原材料の加工'],
-        primary: ['第一次所得収支', '配当、再投資収益、利子。主に日本企業のロシアへの投資による収益'],
-        secondary: ['第二次所得収支', '無償資金協力、援助、個人送金など'],
-      },
-      c3Title: '日本の対ロ直接投資', c3aTitle: '年間の投資額（ネット）', c3bTitle: '年末残高',
-      c3Note: (v, y) => ['日本企業によるロシアの子会社・合弁会社への投資で、ロシアに留保された利益（収益の再投資）を含みます。ロシアの対日直接投資はほぼゼロです（', `${y}年末で`, v, '）。'],
-      sReinv: '収益の再投資', sOther: '株式資本・負債性資本', sEquity: '株式資本', sDebt: '負債性資本（グループ内貸付）', sDipTotal: '合計',
-      tExec: '実行', tWd: '回収', tNet: 'ネット',
-      c4Title: '地域別の貿易取引通貨',
-      c4Note: (imp, exp, p) => ['財務省はロシア単独の通貨別比率を公表しておらず、「中東欧・ロシア等」の数値のみです。日本の同地域からの輸入に占めるロシアの割合は', imp, '、同地域への輸出では', exp, `（${p}）。最下行は比較のための世界全体です。`],
-      c4Imp: '同地域からの輸入', c4Exp: '同地域への輸出', world: '世界',
-      ccy: { JPY: '円', USD: '米ドル', EUR: 'ユーロ', other: 'その他' },
-      c5Title: '顧客開拓への示唆',
-      insights: {
-        subs: ['日系企業のロシア子会社', (dip, reinv, y, inc, yi) => [`日本の対ロ直接投資残高は${y}年末で`, dip, '、うちロシアに留保された利益は', reinv, `。${yi}年に日本の投資家がロシアへの投資から得た収益は`, inc, '。輸入代金、ロイヤルティ、配当の決済を必要とする企業ですが、このデータに企業名は含まれません。']],
-        travel: ['旅行', (v, y, v0, y0) => [`ロシア人の訪日支出は日本人の訪ロ支出を上回っています。${y}年の差額は`, v, `（${y0}年は`, v0, '）。旅行会社や個人による支払いです。']],
-        ccy: ['通貨', (jpy, usd, p) => ['ロシアを含む地域からの日本の輸入では、円の比率が', jpy, '、米ドルが', usd, `（${p}）で、人民元は上位5通貨に入っていません。対日輸出企業にとっては円建て決済を選ぶ根拠になります。`]],
-      },
-      srcTitleS: '出典と読み方',
-      stSources: [
-        ['地域別国際収支', '財務省・日本銀行（表6a）：2014年以降の四半期の項目別収支。四半期終了後おおむね4〜5か月で公表されます。財務省は日本側の符号で公表していますが、このページではロシア側の符号に反転しています。貿易収支は輸出入ともFOB建てのため、「貿易」ページの通関ベースの収支とは一致しません。'],
-        ['直接投資', '財務省（表6d）：国・地域別の月次で、収益の再投資を含みます。直近数か月は速報値です。年末残高は本邦対外資産負債残高の地域別統計で、毎年5月に公表されます。'],
-        ['貿易取引通貨', '財務省関税局、半期ごと。ロシア単独の数値はなく、「中東欧・ロシア等」の地域のみです。同地域との貿易に占めるロシアの割合は貿易統計から算出しています。'],
-        ['ドル換算', 'フローは期間平均の米連邦準備制度のレート（EXJPUS）、残高は年末最終営業日のレート（DEXJPUS）で換算。JPYに切り替えると円建ての元の数値を表示します。'],
-        ['含まれないもの', '企業名・銀行名（国際収支は集計統計です）。金融収支（証券投資、貸付、預金）はロシアについては不規則で解釈が難しいため表示していません。'],
-      ],
-    },
-  };
-  LANGS.forEach((l) => Object.assign(T[l], PAGE_T[l], SETTLE_T[l]));
+  // ---- interface texts and reference lists: texts.js ----
+  const { SECTIONS, HOUSES, KINDS, UNITS, LANGS, MON, MONTH_FULL, T, LEADS, DEFAULT_LINKS, ruPlural, OKVED_T, REGION_T, OBJ_KINDS, SME, PAGE_T, ABOUT, SETTLE_T } = window.RJ_TEXT;
 
   // ---- page ----
   const st = { lang: 'ru', cur: 'usd', level: 4, mode: 'value', unit: 'abs', period: null, filter: null, tab: 'ru_jp', sort: 'value', dir: -1, q: '', sel: null, portFlow: 'ru_jp', port: null };
@@ -2134,7 +1320,7 @@
     drawTable();
   }
   // ---- pages ----
-  const PAGES = ['about', 'trade', 'settlements', 'companies'];
+  const PAGES = ['about', 'trade', 'dynamics', 'settlements', 'companies'];
   st.page = PAGES.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'trade';
   function setPageVisibility() {
     PAGES.forEach((p) => { $('#' + p).hidden = p !== st.page; $('#tab-' + p).setAttribute('aria-selected', String(p === st.page)); });
@@ -2157,7 +1343,7 @@
       if (!st.period || !idx.periods.has(st.period)) st.period = p.data[0].period;
     }
     if (dash.data('trade').status === 'ok' && dash.data('products').status === 'ok') tradeIndex(dash.data('trade').data, dash.data('products').data);
-    if (st.page === 'about') drawAbout(); else drawCompanies();
+    if (st.page === 'about') drawAbout(); else if (st.page === 'dynamics') drawDynamics(); else drawCompanies();
   }
 
   function drawAbout() {
@@ -2288,6 +1474,189 @@
       const b = th.querySelector('button');
       if (b.dataset.csort === cst.sort) th.setAttribute('aria-sort', cst.dir > 0 ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort');
     });
+  }
+
+  // ---- dynamics page: top growing and falling products between any two periods ----
+  // Worked out here from the monthly rows of `trade`: periods the reader picks can't be a dash.calc,
+  // so the lists cite their datasets on the container instead of marking each figure.
+  const dst = { flow: 'ru_jp', level: 4, a0: null, a1: null, base: 'yoy', b0: null, b1: null, n: 10, sort: 'abs', scope: null };
+  const addMonths = (m, k) => new Date(Date.UTC(+m.slice(0, 4), +m.slice(5) - 1 + k, 1)).toISOString().slice(0, 7);
+  const monthRun = (a, b) => { const out = []; for (let m = a; m <= b; m = addMonths(m, 1)) out.push(m); return out; };
+  function dynBase() {
+    if (dst.base === 'custom') return [dst.b0, dst.b1];
+    if (dst.base === 'prev') { const n = monthRun(dst.a0, dst.a1).length; return [addMonths(dst.a0, -n), addMonths(dst.a0, -1)]; }
+    return [addMonths(dst.a0, -12), addMonths(dst.a1, -12)];
+  }
+  // the trade page's period, direction, level and filter as the starting point
+  function dynFromTrade() {
+    const p = idx && idx.periods.get(st.period), last = tIdx.months[tIdx.months.length - 1];
+    Object.assign(dst, { flow: st.tab, level: effLevel(), a0: p ? p.first : addMonths(last, -11), a1: p ? p.last : last, base: 'yoy', scope: st.filter });
+  }
+  const dynScopeFits = () => !dst.scope || (dst.scope.type === 'section' ? dst.level >= 2 : dst.scope.code.length < dst.level);
+  // sums of period A and of the base by code at the chosen level (sections are «S<id>», as in `views`)
+  function dynCompute() {
+    const [b0, b1] = dynBase(), A = new Set(monthRun(dst.a0, dst.a1)), B = new Set(monthRun(b0, b1));
+    const flows = dst.flow === 'both' ? ['ru_jp', 'jp_ru'] : [dst.flow], field = F('value'), lvl = dst.level, sc = dst.scope;
+    const keyOf = lvl === 1 ? (r) => 'S' + tIdx.sec.get(r.hs9.slice(0, 2)) : (r) => r.hs9.slice(0, lvl);
+    const inScope = !sc ? () => true : sc.type === 'section' ? (r) => tIdx.sec.get(r.hs9.slice(0, 2)) === sc.id : (r) => r.hs9.startsWith(sc.code);
+    const acc = new Map();
+    let ta = 0, tb = 0;
+    for (const f of flows) {
+      for (const r of tIdx.byFlow[f]) {
+        const inA = A.has(r.month), inB = B.has(r.month);
+        if ((!inA && !inB) || !inScope(r)) continue;
+        const k = keyOf(r), v = +r[field];
+        let o = acc.get(k);
+        if (!o) acc.set(k, (o = { code: k, a: 0, b: 0, df: { ru_jp: 0, jp_ru: 0 } }));
+        if (inA) { o.a += v; ta += v; o.df[f] += v; }
+        if (inB) { o.b += v; tb += v; o.df[f] -= v; }
+      }
+    }
+    const items = [...acc.values()].map((o) => ({ ...o, d: o.a - o.b, g: o.b > 0 ? o.a / o.b - 1 : null })).filter((o) => Math.abs(o.d) >= 0.5);
+    return { items, ta, tb, b0, b1 };
+  }
+
+  function segsD() {
+    const set = (id, v) => $(id).querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === String(v))));
+    set('#dy-flow', dst.flow); set('#dy-level', dst.level); set('#dy-cur', st.cur); set('#dy-n', dst.n); set('#dy-sort', dst.sort);
+    $('#dy-flow').querySelectorAll('button').forEach((b) => { if (b.dataset.v !== 'both') b.textContent = flowName(b.dataset.v); });
+    $('#dy-n').querySelectorAll('button').forEach((b) => { b.textContent = L().topN(+b.dataset.v); });
+    $('#dy-level button[data-v="9"]').disabled = dst.flow === 'both';
+  }
+  const segClick = (id, fn) => $(id).addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && !b.disabled) fn(b.dataset.v); });
+  segClick('#dy-flow', (v) => { dst.flow = v; if (v === 'both' && dst.level === 9) dst.level = 6; drawDynamics(); });
+  segClick('#dy-level', (v) => { dst.level = +v; if (!dynScopeFits()) dst.scope = null; drawDynamics(); });
+  segClick('#dy-cur', (v) => { if (v !== st.cur) { st.cur = v; draw(); } });
+  segClick('#dy-n', (v) => { dst.n = +v; drawDynamics(); });
+  segClick('#dy-sort', (v) => { dst.sort = v; drawDynamics(); });
+  segClick('#dy-presets', (v) => {
+    if (!tIdx) return;
+    const last = tIdx.months[tIdx.months.length - 1];
+    Object.assign(dst, { a1: last, a0: v === 'ytd' ? last.slice(0, 4) + '-01' : v === 'ltm' ? addMonths(last, -11) : v === 'q' ? addMonths(last, -2) : last });
+    drawDynamics();
+  });
+  [['#dy-a0', 'a0'], ['#dy-a1', 'a1'], ['#dy-b0', 'b0'], ['#dy-b1', 'b1']].forEach(([id, key]) => $(id).addEventListener('change', (e) => { dst[key] = e.target.value; drawDynamics(); }));
+  $('#dy-base').addEventListener('change', (e) => {
+    if (e.target.value === 'custom') { const [b0, b1] = dynBase(); Object.assign(dst, { b0, b1 }); }
+    dst.base = e.target.value;
+    drawDynamics();
+  });
+  $('#to-dyn').addEventListener('click', () => { if (!tIdx) return; dynFromTrade(); showPage('dynamics'); });
+
+  function drawDynamics() {
+    segsD();
+    const t = dash.data('trade'), pr = dash.data('products'), boxes = ['#dy-up .rows', '#dy-down .rows'];
+    if (t.status !== 'ok' || pr.status !== 'ok' || !tIdx) {
+      boxes.forEach((s) => { if (t.status === 'error' || pr.status === 'error') failed($(s)); else $(s).classList.add('dash-skeleton'); });
+      return;
+    }
+    boxes.forEach((s) => $(s).classList.remove('dash-skeleton'));
+    const months = tIdx.months, first = months[0], last = months[months.length - 1];
+    if (!dst.a0) dynFromTrade();
+    // periods stay inside the data and in order
+    const clamp = (m) => (m < first ? first : m > last ? last : m);
+    const order = (a, b) => { dst[a] = clamp(dst[a]); dst[b] = clamp(dst[b]); if (dst[a] > dst[b]) [dst[a], dst[b]] = [dst[b], dst[a]]; };
+    order('a0', 'a1');
+    if (dst.base === 'custom') order('b0', 'b1');
+    if (dst.flow === 'both' && dst.level === 9) dst.level = 6;
+    if (!dynScopeFits()) dst.scope = null;
+    segsD();
+    for (const [id, key] of [['#dy-a0', 'a0'], ['#dy-a1', 'a1'], ['#dy-b0', 'b0'], ['#dy-b1', 'b1']]) {
+      const s = $(id);
+      s.replaceChildren(...months.slice().reverse().map((m) => new Option(L().mon(m), m)));
+      s.value = dst[key] || '';
+    }
+    $('#dy-base').value = dst.base;
+    $('#dy-bcustom').hidden = dst.base !== 'custom';
+    const { items, ta, tb, b0, b1 } = dynCompute();
+    $('#dy-blabel').textContent = dst.base === 'custom' ? '' : L().range(b0, b1);
+
+    const nameFlow = dst.flow === 'both' ? 'ru_jp' : dst.flow;
+    const scope = $('#dy-scope');
+    scope.replaceChildren();
+    if (dst.scope) {
+      const label = dst.scope.type === 'section' ? secName(dst.scope.id) : `${dst.scope.code} ${codeName(dst.scope.code, nameFlow)}`;
+      const b = el('button', 'rj-chip', `${L().scopeOnly}: ${label} ×`);
+      b.type = 'button'; b.title = L().scopeClear; b.setAttribute('aria-label', `${L().scopeClear}: ${label}`);
+      b.addEventListener('click', () => { dst.scope = null; drawDynamics(); });
+      scope.append(b);
+    }
+    const g = tb > 0 ? ta / tb - 1 : null;
+    compose($('#dy-summary'), L().summary(L().dirTitle[dst.flow], L().range(dst.a0, dst.a1), L().range(b0, b1),
+      el('b', '', fmtMoney(ta)), el('b', '', fmtMoney(tb)), fmtSigned(ta - tb), g === null ? L().na : fmtGrowth(g)));
+
+    // top lists: by the change in money, or by % among items of at least 0.1% of the flow
+    const thr = 0.001 * Math.max(ta, tb);
+    const growth = (o) => (o.g === null ? Infinity : o.g);
+    const rank = (list, sign) => (dst.sort === 'abs'
+      ? list.slice().sort((x, y) => sign * (y.d - x.d))
+      : list.filter((o) => Math.max(o.a, o.b) >= thr).sort((x, y) => sign * (growth(y) - growth(x)) || sign * (y.d - x.d)));
+    const up = items.filter((o) => o.d > 0), down = items.filter((o) => o.d < 0);
+    const topUp = rank(up, 1).slice(0, dst.n), topDown = rank(down, -1).slice(0, dst.n);
+    const maxAbs = d3.max([...topUp, ...topDown], (o) => Math.abs(o.d)) || 1;
+    dynList($('#dy-up'), topUp, up, maxAbs, 'var(--color-ok)', nameFlow);
+    dynList($('#dy-down'), topDown, down, maxAbs, 'var(--color-bad)', nameFlow);
+    $('#dy-note').textContent = [dst.sort === 'pct' ? L().pctNote(fmtMoney(thr)) : L().absNote, b0 < first ? L().baseOut : ''].filter(Boolean).join(' ');
+  }
+
+  function dynList(card, list, all, maxAbs, color, nameFlow) {
+    const box = card.querySelector('.rows'), sum = d3.sum(all, (o) => o.d), shown = d3.sum(list, (o) => o.d);
+    card.querySelector('.rj-note').textContent = all.length ? L().listNote(all.length, fmtSigned(sum), fmtPct(sum ? shown / sum : 0, 0)) : L().listNone;
+    box.replaceChildren();
+    list.forEach((o, i) => {
+      const isSec = dst.level === 1, code = o.code, name = isSec ? secName(code.slice(1)) : codeName(code, nameFlow);
+      const row = el('div', 'rj-mrow');
+      row.tabIndex = 0; row.setAttribute('role', 'button'); row.title = L().openTip;
+      const nmEl = el('div', 'nm'), sw = el('i', 'rj-sw');
+      sw.style.background = secColor(isSec ? code.slice(1) : tIdx.sec.get(code.slice(0, 2)));
+      nmEl.append(sw, document.createTextNode(isSec ? name : `${code} ${name}`));
+      if (dst.level < 9 && (isSec || drillable(code))) {
+        const dr = el('button', 'rj-drill', '▸');
+        dr.type = 'button'; dr.setAttribute('aria-label', L().drill(isSec ? name : code));
+        dr.addEventListener('click', (e) => {
+          e.stopPropagation();
+          Object.assign(dst, isSec ? { scope: { type: 'section', id: code.slice(1) }, level: 2 } : { scope: { type: 'code', code }, level: nextLevel(code.length) });
+          drawDynamics();
+        });
+        nmEl.append(dr);
+      }
+      nmEl.append(el('small', '', `${fmtMoney(o.b)} → ${fmtMoney(o.a)}`));
+      // exporters approved for Japan in this category (Cerberus), as on the product card
+      const comps = dst.flow !== 'jp_ru' && !isSec ? companiesFor(code, 'ru_jp') : [];
+      if (comps.length) {
+        const ch = el('button', 'rj-chip', L().compChip(comps.length));
+        ch.type = 'button'; ch.title = L().compChipTip;
+        ch.addEventListener('click', (e) => {
+          e.stopPropagation();
+          cst.cat = code.length >= 4 ? code.slice(0, 4) : code.slice(0, 2); cst.region = ''; cst.q = ''; $('#comp-search').value = '';
+          showPage('companies');
+        });
+        nmEl.append(ch);
+      }
+      const bar = el('div', 'bar'), fill = el('i');
+      fill.style.width = (Math.abs(o.d) / maxAbs) * 100 + '%'; fill.style.background = color;
+      bar.append(fill);
+      const v = el('div', 'v');
+      v.append(el('b', '', fmtSigned(o.d)), el('small', '', o.b > 0 ? fmtGrowth(o.g) : L().isNew));
+      row.append(el('span', 'rk', String(i + 1)), nmEl, bar, v);
+      row.addEventListener('click', () => dynOpen(o));
+      row.addEventListener('keydown', (e) => { if (e.target === row && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); dynOpen(o); } });
+      box.append(row);
+    });
+  }
+
+  // a row opens on the trade page: the product selected (a section as the filter), its period if it is a standard one
+  function dynOpen(o) {
+    const lvl = dst.level, code = o.code;
+    remember();
+    if (lvl === 1) Object.assign(st, { filter: { type: 'section', id: code.slice(1) }, level: 2, sel: null, port: null });
+    else {
+      const flow = dst.flow !== 'both' ? dst.flow : Math.abs(o.df.ru_jp) >= Math.abs(o.df.jp_ru) ? 'ru_jp' : 'jp_ru';
+      Object.assign(st, { filter: lvl > 2 ? { type: 'code', code: code.slice(0, prevLen(lvl)) } : null, level: lvl, sel: { flow, level: lvl, code }, portFlow: flow, tab: flow, port: null });
+    }
+    const same = idx && idx.list.find((p) => p.first === dst.a0 && p.last === dst.a1);
+    if (same) st.period = same.period;
+    showPage('trade');
   }
 
   // ---- settlements page: Japan's balance of payments with Russia (Ministry of Finance), shown from Russia's side ----
