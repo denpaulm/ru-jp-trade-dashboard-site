@@ -647,6 +647,14 @@
       });
     },
   });
+
+  dash.calc('settle_abs', {
+    inputs: ['settlements'],
+    title: 'Платежи России по статьям',
+    description: 'Суммы по модулю для статей, по которым Россия платит Японии больше, чем получает (доходы японских инвесторов, поездки), — для текста выводов на листе «Расчёты».',
+    fn: (settlements) => settlements.filter((r) => r.group === 'bop' && r.freq === 'Y' && (r.item === 'primary' || r.item === 'travel'))
+      .map((r) => ({ key: r.key, value: Math.abs(+r.value), value_jpy: Math.abs(+r.value_jpy) })),
+  });
 </script>
 <script>
   // ---- interface text in three languages ----
@@ -2599,11 +2607,18 @@
       parts.forEach((x) => li.append(typeof x === 'string' ? document.createTextNode(x) : x));
       ul.append(li);
     };
-    const abs = (v) => fmtMoney(Math.abs(v));
+    // what Russia pays (investment income, travel) is shown as a positive amount: those figures come from the settle_abs calc
+    const absFig = (item, period) => {
+      const c = dash.data('settle_abs'), r = c.status === 'ok' ? c.data.find((x) => x.key === item + '|' + period) : null, e = el('b');
+      if (!r) { e.textContent = L().na; return e; }
+      e.dataset.source = 'settle_abs'; e.dataset.field = F('value'); e.dataset.where = 'key=' + encodeURIComponent(r.key).replace(/%7C/g, '|');
+      e.textContent = fmtMoney(val(r, 'value'));
+      return e;
+    };
     const ly = sIdx.dipYears[sIdx.dipYears.length - 1];
-    if (ly) item(I.subs[0], I.subs[1](sFig(sRow('dip_assets', ly), fmtMoney), sFig(sRow('dip_assets_reinv', ly), fmtMoney), ly, sFig(sRow('primary', y), abs), y));
+    if (ly) item(I.subs[0], I.subs[1](sFig(sRow('dip_assets', ly), fmtMoney), sFig(sRow('dip_assets_reinv', ly), fmtMoney), ly, absFig('primary', y), y));
     const base = +y > 2019 ? '2019' : String(+y - 1);
-    item(I.travel[0], I.travel[1](sFig(sRow('travel', y), abs), y, sFig(sRow('travel', base), abs), base));
+    item(I.travel[0], I.travel[1](absFig('travel', y), y, absFig('travel', base), base));
     const last = sIdx.halves[sIdx.halves.length - 1];
     if (last) item(I.ccy[0], I.ccy[1](sFig(sRow('cur_imp_region_JPY', last), fmtShare), sFig(sRow('cur_imp_region_USD', last), fmtShare), L().half(last)));
   }
