@@ -312,23 +312,33 @@
   </section>
 
   <section class="rj-page" id="companies" hidden>
-    <div class="rj-head2">
+    <div class="rj-head2 rj-chead">
       <h2 data-i18n="compTitle">—</h2>
       <p class="rj-take" data-i18n="compIntro">—</p>
-      <p class="rj-note" id="comp-levels" data-i18n="compLevels">—</p>
     </div>
-    <div class="rj-kpis" id="comp-kpis" data-source="companies"></div>
+    <div class="rj-kpis rj-ckpis" id="comp-kpis" data-source="companies"></div>
     <div class="rj-tools rj-ctools">
       <div class="rj-seg" role="group" data-i18n-aria="compDir" id="comp-flow" data-source="companies">
         <button type="button" data-v="all">—</button>
         <button type="button" data-v="ru_jp">—</button>
         <button type="button" data-v="jp_ru">—</button>
       </div>
+      <div class="rj-seg rj-lvseg" role="group" data-i18n-aria="compLevel" id="comp-level" data-source="companies" data-field="level">
+        <button type="button" data-v="">—</button>
+        <button type="button" data-v="A">—</button>
+        <button type="button" data-v="B">—</button>
+        <button type="button" data-v="C">—</button>
+      </div>
+      <span class="rj-break" aria-hidden="true"></span>
       <select class="rj-period rj-csel" id="comp-cat" data-i18n-aria="compCat" data-source="companies products"></select>
       <select class="rj-period rj-csel" id="comp-region" data-i18n-aria="compRegion" data-source="companies"></select>
       <input class="rj-search" id="comp-search" type="search" data-i18n-ph="compSearch" data-i18n-aria="compSearch">
     </div>
-    <p class="rj-note" id="comp-cat-note" data-source="views">—</p>
+    <div class="rj-cnote">
+      <p class="rj-note" id="comp-cat-note" data-source="views">—</p>
+      <button type="button" class="rj-linkbtn" id="comp-legend-btn" aria-expanded="false" aria-controls="comp-legend">—</button>
+    </div>
+    <div class="rj-card rj-clegend" id="comp-legend" hidden></div>
     <div class="rj-tablebox">
       <table class="rj-table rj-ctable" id="comp-table" data-source="companies" data-row-key="key">
         <thead><tr>
@@ -338,8 +348,8 @@
           <th class="l" data-field="hs4"><button type="button" data-csort="hs4" data-i18n="cCats">Категории</button></th>
           <th class="l opt" data-field="okved"><button type="button" data-csort="okved" data-i18n="cOkved">Деятельность</button></th>
           <th data-field="employees"><button type="button" data-csort="employees" data-i18n="cSize">Размер</button></th>
-          <th class="l" data-field="evidence"><button type="button" data-csort="since" data-i18n="cEvidence">Подтверждение</button></th>
-          <th data-field="level"><button type="button" data-csort="level" data-i18n="cLevel">Уровень</button></th>
+          <th class="l" data-field="evidence"><button type="button" data-csort="last" data-i18n="cEvidence" data-i18n-title="cEvidenceTip">Подтверждение</button></th>
+          <th data-field="level"><button type="button" data-csort="level" data-i18n="cLevel" data-i18n-title="cLevelTip">Уровень</button></th>
         </tr></thead>
         <tbody></tbody>
       </table>
@@ -649,6 +659,7 @@
     root.querySelectorAll('[data-i18n]').forEach((e) => { e.textContent = L()[e.dataset.i18n]; });
     root.querySelectorAll('[data-i18n-aria]').forEach((e) => e.setAttribute('aria-label', L()[e.dataset.i18nAria]));
     root.querySelectorAll('[data-i18n-ph]').forEach((e) => e.setAttribute('placeholder', L()[e.dataset.i18nPh]));
+    root.querySelectorAll('[data-i18n-title]').forEach((e) => e.setAttribute('title', L()[e.dataset.i18nTitle]));
     $('#tabs').querySelectorAll('button').forEach((b) => { b.textContent = flowName(b.dataset.v); });
     $('#th-name').dataset.field = 'name_' + st.lang;
     $('#langs').querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === st.lang)));
@@ -1094,7 +1105,7 @@
     if (comps.length) {
       const b = el('button', 'rj-btn pick', L().compInCat(comps.length)); b.type = 'button';
       b.addEventListener('click', () => {
-        Object.assign(cst, { flow: s.flow, cat: s.code.length >= 4 ? s.code.slice(0, 4) : s.code.slice(0, 2), region: '', q: '', limit: COMP_PAGE });
+        Object.assign(cst, { flow: s.flow, level: '', cat: s.code.length >= 4 ? s.code.slice(0, 4) : s.code.slice(0, 2), region: '', q: '', limit: COMP_PAGE });
         $('#comp-search').value = ''; showPage('companies');
       });
       body.append(b);
@@ -1369,7 +1380,9 @@
 
   // ---- companies page ----
   const COMP_PAGE = 300;  // строк таблицы за раз: импортёров тысячи
-  const cst = { flow: 'all', cat: '', region: '', q: '', sort: 'name', dir: 1, limit: COMP_PAGE };
+  // по умолчанию — по уровню, внутри уровня свежие сверху: таблица сразу идёт в порядке обзвона
+  const cst = { flow: 'all', level: '', cat: '', region: '', q: '', sort: 'level', dir: 1, limit: COMP_PAGE };
+  const LV = { A: 0, B: 1, C: 2 };
   const compName = (r) => (st.lang === 'ru' ? r.name : r.name_lat || r.name);
   const regionName = (code) => (REGION_T[+code] ? REGION_T[+code][li()] : code);
   const okvedName = (r) => (st.lang === 'ru' ? r.okved_name : (OKVED_T[r.okved] || [])[li()] || '');
@@ -1401,6 +1414,13 @@
   };
   const codesOf = (r) => r.hs4.split(';').filter(Boolean);
   const hasFlag = (r, f) => (r.flags || '').split(';').includes(f);
+  // подсказка у буквы уровня (уровень и коды причин why считает company_levels.py): почему A, чего не хватает до A, почему C
+  const levelTip = (r) => {
+    const name = L().levelName[r.level] || r.level, why = (r.why || '').split(';').filter(Boolean)
+      .map((c) => (c === 'noflow' ? L().whyT[r.flow === 'jp_ru' ? 'noflowIm' : 'noflowEx'] : L().whyT[c] || c)).join('; ');
+    if (r.level === 'A') return `${name}: ${L().levelOk[r.flow]}`;
+    return why ? `${name}${r.level === 'B' ? `; ${L().levelMiss}` : ''}: ${why}` : name;
+  };
   // код компании может быть главой (03 — «рыба и морепродукты» без уточнения): такая компания входит в любую категорию главы
   const hasCat = (r, cat) => !cat || codesOf(r).some((h) => (h.length === 2 ? cat.startsWith(h) : h.startsWith(cat)));
   // торговля товарами категорий компании за последние 12 месяцев в её направлении: у экспортёра — ввоз в Японию из России,
@@ -1422,27 +1442,51 @@
     return cd.data.filter((r) => r.flow === flow && hasCat(r, code.length >= 4 ? code.slice(0, 4) : code));
   }
   $('#comp-flow').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { cst.flow = b.dataset.v; cst.limit = COMP_PAGE; drawCompanies(); } });
+  $('#comp-level').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { cst.level = b.dataset.v; cst.limit = COMP_PAGE; drawCompanies(); } });
+  $('#comp-legend-btn').addEventListener('click', () => { $('#comp-legend').hidden = !$('#comp-legend').hidden; drawLegend(); });
   $('#comp-cat').addEventListener('change', (e) => { cst.cat = e.target.value; cst.limit = COMP_PAGE; drawCompanies(); });
   $('#comp-region').addEventListener('change', (e) => { cst.region = e.target.value; cst.limit = COMP_PAGE; drawCompanies(); });
   $('#comp-search').addEventListener('input', (e) => { cst.q = e.target.value.trim().toLowerCase(); cst.limit = COMP_PAGE; drawCompanies(); });
   $('#comp-more').addEventListener('click', () => { cst.limit += COMP_PAGE; drawCompanies(); });
   $('#comp-table').querySelector('thead').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-csort]'); if (!b) return;
-    if (cst.sort === b.dataset.csort) cst.dir = -cst.dir; else { cst.sort = b.dataset.csort; cst.dir = ['employees', 'since'].includes(cst.sort) ? -1 : 1; }
+    if (cst.sort === b.dataset.csort) cst.dir = -cst.dir; else { cst.sort = b.dataset.csort; cst.dir = ['employees', 'last'].includes(cst.sort) ? -1 : 1; }
     drawCompanies();
   });
   $('#comp-table').querySelector('tbody').addEventListener('click', (e) => {
     const chip = e.target.closest('button.rj-chip');
     if (chip) { cst.cat = chip.dataset.code; cst.limit = COMP_PAGE; drawCompanies(); }
   });
+  // пояснения к уровням и отметкам: свёрнуты под кнопкой, отметки нарисованы так же, как в таблице
+  function drawLegend() {
+    const box = $('#comp-legend'), btn = $('#comp-legend-btn');
+    btn.textContent = box.hidden ? L().legendBtn : L().legendHide;
+    btn.setAttribute('aria-expanded', String(!box.hidden));
+    if (box.hidden) return;
+    box.replaceChildren(...L().legend.map(([h, items]) => {
+      const sec = el('section'), ul = el('ul');
+      sec.append(el('h3', '', h), ul);
+      items.forEach(([kind, k, text]) => {
+        const label = kind === 'lv' ? el('span', 'rj-badge lv-' + k, k) : kind === 'tx' ? el('b', '', k)
+          : el('span', 'rj-status ' + k, (kind === 'st' ? L().statusT : L().flagT)[k]);
+        const item = el('li'); item.append(label, document.createTextNode(' — ' + text)); ul.append(item);
+      });
+      return sec;
+    }));
+  }
   function drawCompanies() {
     const cd = dash.data('companies');
     const tb = $('#comp-table').querySelector('tbody');
     tb.replaceChildren();
     $('#comp-more').hidden = true;
-    $('#comp-sources-list').replaceChildren(...L().sources.map(([k, t]) => { const item = el('li'); item.append(el('b', '', k + ': '), document.createTextNode(t)); return item; }));
+    drawLegend();
+    const source = (k, t) => { const item = el('li'); item.append(el('b', '', k + ': '), document.createTextNode(t)); return item; };
+    $('#comp-sources-list').replaceChildren(...L().sources.map(([k, t]) => source(k, t)));
     if (cd.status !== 'ok') { if (cd.status === 'error') failed($('#comp-kpis')); return; }
     const all = cd.data;
+    const captured = (src) => all.reduce((m, r) => (r.source === src && r.captured > m ? r.captured : m), '');
+    const year = (captured('fsa') || captured('cerberus')).slice(0, 4);  // «этот год» — год последних данных реестров
+    if (captured('cerberus') && captured('fsa')) $('#comp-sources-list').prepend(source(L().dataDateK, L().dataDate(L().day(captured('cerberus')), L().day(captured('fsa')))));
     // direction: the buttons count companies of each kind; the lists below come from the chosen kind only
     $('#comp-flow').querySelectorAll('button').forEach((b) => {
       const v = b.dataset.v;
@@ -1470,23 +1514,37 @@
     // search also covers the evidence (Japanese manufacturers of importers, register objects of exporters) and, in Russian, products
     if (cst.q) rows = rows.filter((r) => [r.name, r.name_full, r.name_lat, r.inn, r.evidence, st.lang === 'ru' ? r.products : '']
       .some((x) => (x || '').toLowerCase().includes(cst.q)));
+    // level buttons count the companies of the other filters, so they show how a category or region splits into A, B and C
+    $('#comp-level').querySelectorAll('button').forEach((b) => {
+      const v = b.dataset.v;
+      b.textContent = v ? `${v} \u00b7 ${fmtInt(rows.filter((r) => r.level === v).length)}` : L().levelAll;
+      b.title = v ? L().levelName[v] : '';
+      b.setAttribute('aria-pressed', String(v === cst.level));
+    });
+    if (cst.level) rows = rows.filter((r) => r.level === cst.level);
     const key = {
       name: compName, inn: (r) => r.inn, region: (r) => regionName(r.region_code), hs4: (r) => codesOf(r)[0] || '',
-      okved: (r) => r.okved, employees: (r) => +r.employees || 0, since: (r) => r.since,
-      level: (r) => ({ open: 0, limited: 1, pending: 2, rep: 3, importer: 4 }[r.status] ?? 5),
+      okved: (r) => r.okved, employees: (r) => +r.employees || 0, last: (r) => r.last || '', level: (r) => LV[r.level] ?? 3,
     }[cst.sort];
-    rows.sort((a, b) => { const va = key(a), vb = key(b); return typeof va === 'number' ? cst.dir * (va - vb) : cst.dir * String(va).localeCompare(String(vb), st.lang); });
+    // equal keys: the most recent declaration or register entry first, then the name — a level or a region reads as a call list
+    rows.sort((a, b) => {
+      const va = key(a), vb = key(b);
+      return cst.dir * (typeof va === 'number' ? va - vb : String(va).localeCompare(String(vb), st.lang))
+        || (b.last || '').localeCompare(a.last || '') || compName(a).localeCompare(compName(b), st.lang);
+    });
     // headline figures
-    const kpi = (v, label) => { const d = el('div', 'rj-kpi'); d.append(el('b', '', String(v)), el('span', '', label(v))); return d; };
-    $('#comp-kpis').replaceChildren(kpi(rows.length, L().kCompanies), kpi(new Set(rows.flatMap(codesOf).filter((h) => h.length === 4)).size, L().kCats),
-      kpi(new Set(rows.map((r) => r.region_code)).size, L().kRegions),
+    const kpi = (v, label, tip) => { const d = el('div', 'rj-kpi'); d.append(el('b', '', fmtInt(v)), el('span', '', label(v))); if (tip) d.title = tip; return d; };
+    $('#comp-kpis').replaceChildren(kpi(rows.length, L().kCompanies),
+      kpi(rows.filter((r) => (r.last || '').startsWith(year)).length, () => L().kActive(year), L().kActiveTip(year)),
       ...(cst.flow !== 'jp_ru' ? [kpi(rows.filter((r) => r.status === 'open').length, L().kOpen)] : []),
-      ...(cst.flow !== 'ru_jp' ? [kpi(rows.filter((r) => r.status === 'rep').length, L().kRep), kpi(rows.filter((r) => hasFlag(r, 'pp353')).length, L().kPp353)] : []),
-      kpi(rows.filter((r) => r.sme && r.sme !== '-').length, L().kSme));
+      ...(cst.flow !== 'ru_jp' ? [kpi(rows.filter((r) => hasFlag(r, 'contract')).length, L().kContract, L().flagTip.contract),
+        kpi(rows.filter((r) => hasFlag(r, 'pp353')).length, L().kPp353, L().flagTip.pp353)] : []),
+      kpi(rows.filter((r) => r.sme && r.sme !== '-').length, L().kSme),
+      kpi(new Set(rows.map((r) => r.region_code)).size, L().kRegions), kpi(new Set(rows.flatMap(codesOf).filter((h) => h.length === 4)).size, L().kCats));
     // how big the chosen category is in trade, in the chosen direction (both directions for «all»)
     const catVal = (f) => { const vr = idx ? idx.byKey.get(`${st.period}|${f}|${cst.cat}`) : null; return fmtMoney(vr ? val(vr, 'value') : 0); };
     const per = periodLabel(idx && idx.periods.get(st.period)), catLabel = `${cst.cat} ${codeName(cst.cat, cst.flow === 'jp_ru' ? 'jp_ru' : 'ru_jp')}`;
-    $('#comp-cat-note').textContent = !cst.cat ? L().catNoteAll(rows.length)
+    $('#comp-cat-note').textContent = !cst.cat ? L().catNoteAll(fmtInt(rows.length))
       : cst.flow === 'ru_jp' ? L().catNote(catLabel, catVal('ru_jp'), per)
         : cst.flow === 'jp_ru' ? L().catNoteJp(catLabel, catVal('jp_ru'), per)
           : L().catNoteBoth(catLabel, catVal('ru_jp'), catVal('jp_ru'), per);
@@ -1521,17 +1579,25 @@
       if (+r.employees) c5.append(el('small', '', L().employees(fmtInt(+r.employees))));
       const c6 = td('l'), fsa = r.source === 'fsa';
       c6.append(document.createTextNode(fsa ? L().evidFsa(+r.n_objects, makersText(r)) : L().evid({ ...r, objectsText: objectsText(r) })));
-      if (r.since) c6.append(el('small', '', L().since(r.since.slice(0, 4), r.last.slice(0, 4))));
+      // годы записей и дата последней: дата этого года выделена — с этих компаний удобно начинать
+      if (r.last) {
+        const yrs = L().years((r.since || r.last).slice(0, 4), r.last.slice(0, 4));
+        const [pre, post] = fsa ? L().datesFsa(yrs, +r.n_recent || 0) : L().datesCer(yrs);
+        const dates = el('small');
+        dates.append(document.createTextNode(pre), el('b', r.last.startsWith(year) ? 'rj-fresh' : '', L().day(r.last)), document.createTextNode(post));
+        c6.append(dates);
+      }
       const tv = tradeOf(r);
       if (tv !== null) {
         const [ok, none] = r.flow === 'jp_ru' ? [L().tradeOkJp, L().tradeNoneJp] : [L().tradeOk, L().tradeNone];
         c6.append(el('small', 'rj-trade' + (tv > 0 ? '' : ' none'), tv > 0 ? ok(fmtUsd(tv)) : none));
       }
-      const c7 = td(''); const badge = el('span', 'rj-badge', L().levelB); badge.title = fsa ? L().levelBTipFsa : L().levelBTip; c7.append(badge);
+      const c7 = td(''); const badge = el('span', 'rj-badge lv-' + r.level, r.level); badge.title = levelTip(r); c7.append(badge);
       const stx = el('span', 'rj-status ' + r.status, L().statusT[r.status] || r.status); stx.title = L().statusTip[r.status] || ''; c7.append(stx);
-      // отметки импортёра: ввоз по особому порядку ПП 353 — обычно параллельный импорт через третьи страны
-      for (const f of ['pp353'].filter((x) => hasFlag(r, x))) { const fx = el('span', 'rj-status ' + f, L().flagT[f]); fx.title = L().flagTip[f]; c7.append(fx); }
-      c7.append(el('small', '', L().dirTag[r.flow]));
+      // отметки импортёра: договор с японским изготовителем в карточке декларации; ввоз по особому порядку ПП 353 —
+      // обычно параллельный импорт через третьи страны
+      for (const f of ['contract', 'pp353'].filter((x) => hasFlag(r, x))) { const fx = el('span', 'rj-status ' + f, L().flagT[f]); fx.title = L().flagTip[f]; c7.append(fx); }
+      if (cst.flow === 'all') c7.append(el('small', '', L().dirTag[r.flow]));
       tb.append(tr);
     }
     const more = $('#comp-more');
@@ -1649,7 +1715,7 @@
       scope.append(b);
     }
     const g = tb > 0 ? ta / tb - 1 : null;
-    compose($('#dy-summary'), L().summary(L().dirTitle[dst.flow], L().range(dst.a0, dst.a1), L().range(b0, b1),
+    compose($('#dy-summary'), L().dySummary(L().dirTitle[dst.flow], L().range(dst.a0, dst.a1), L().range(b0, b1),
       el('b', '', fmtMoney(ta)), el('b', '', fmtMoney(tb)), fmtSigned(ta - tb), g === null ? L().na : fmtGrowth(g)));
 
     // top lists: by the change in money, or by % among items of at least 0.1% of the flow
@@ -1695,7 +1761,7 @@
         ch.type = 'button'; ch.title = L().compChipTip;
         ch.addEventListener('click', (e) => {
           e.stopPropagation();
-          Object.assign(cst, { flow: dst.flow === 'both' ? 'all' : dst.flow, cat: code.length >= 4 ? code.slice(0, 4) : code.slice(0, 2), region: '', q: '', limit: COMP_PAGE });
+          Object.assign(cst, { flow: dst.flow === 'both' ? 'all' : dst.flow, level: '', cat: code.length >= 4 ? code.slice(0, 4) : code.slice(0, 2), region: '', q: '', limit: COMP_PAGE });
           $('#comp-search').value = '';
           showPage('companies');
         });
