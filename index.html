@@ -1537,7 +1537,8 @@
     $('#comp-kpis').replaceChildren(kpi(rows.length, L().kCompanies),
       kpi(rows.filter((r) => (r.last || '').startsWith(year)).length, () => L().kActive(year), L().kActiveTip(year)),
       ...(cst.flow !== 'jp_ru' ? [kpi(rows.filter((r) => r.status === 'open').length, L().kOpen)] : []),
-      ...(cst.flow !== 'ru_jp' ? [kpi(rows.filter((r) => hasFlag(r, 'contract')).length, L().kContract, L().flagTip.contract),
+      ...(cst.flow !== 'ru_jp' ? [kpi(rows.filter((r) => +r.n_certs > 0).length, L().kCerts, L().kCertsTip),
+        kpi(rows.filter((r) => hasFlag(r, 'contract')).length, L().kContract, L().flagTip.contract),
         kpi(rows.filter((r) => hasFlag(r, 'pp353')).length, L().kPp353, L().flagTip.pp353)] : []),
       kpi(rows.filter((r) => r.sme && r.sme !== '-').length, L().kSme),
       kpi(new Set(rows.map((r) => r.region_code)).size, L().kRegions), kpi(new Set(rows.flatMap(codesOf).filter((h) => h.length === 4)).size, L().kCats));
@@ -1578,11 +1579,13 @@
       else c5.append(document.createTextNode(r.sme ? SME[r.sme][li()] : L().notSme));
       if (+r.employees) c5.append(el('small', '', L().employees(fmtInt(+r.employees))));
       const c6 = td('l'), fsa = r.source === 'fsa';
-      c6.append(document.createTextNode(fsa ? L().evidFsa(+r.n_objects, makersText(r)) : L().evid({ ...r, objectsText: objectsText(r) })));
+      // у импортёра — декларации и сертификаты Росаккредитации (n_objects — декларации, n_certs — сертификаты)
+      const nd = +r.n_objects || 0, nc = +r.n_certs || 0;
+      c6.append(document.createTextNode(fsa ? L().evidFsa(nd, nc, makersText(r)) : L().evid({ ...r, objectsText: objectsText(r) })));
       // годы записей и дата последней: дата этого года выделена — с этих компаний удобно начинать
       if (r.last) {
         const yrs = L().years((r.since || r.last).slice(0, 4), r.last.slice(0, 4));
-        const [pre, post] = fsa ? L().datesFsa(yrs, +r.n_recent || 0) : L().datesCer(yrs);
+        const [pre, post] = fsa ? L().datesFsa(yrs, +r.n_recent || 0, nd && nc ? 'both' : nc ? 'cert' : 'decl') : L().datesCer(yrs);
         const dates = el('small');
         dates.append(document.createTextNode(pre), el('b', r.last.startsWith(year) ? 'rj-fresh' : '', L().day(r.last)), document.createTextNode(post));
         c6.append(dates);
