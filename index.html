@@ -6,8 +6,7 @@
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
 <meta name="googlebot" content="noindex, nofollow">
 <title>Торговля Россия — Япония</title>
-<script src="d3.min.js?v=a029baa9"></script>
-<link rel="stylesheet" href="style.css?v=3d72fe9d">
+<link rel="stylesheet" href="style.3d72fe9d.css">
 <style>
   /* токены, которые на платформе Claude задаёт оболочка дашборда */
   :root {
@@ -592,17 +591,18 @@
   </section>
 </div>
 
-<script src="refs.js?v=4266582c"></script>
-<script src="texts.js?v=a2ecc551"></script>
-<script src="makers.js?v=3ebb315d"></script>
-<script src="autos.js?v=8cd8027b"></script>
+<script src="refs.4266582c.js"></script>
+<script src="texts.9b771b38.js"></script>
+<script src="makers.3ebb315d.js"></script>
+<script src="autos.8cd8027b.js"></script>
 
 </main>
+<script src="d3.min.a029baa9.js"></script>
 <script>
   // Замена объекта `dash` платформы Claude: те же методы, данные — из файлов site/data/. Набор грузится при первом
   // обращении к нему (dash.data), расчёт (dash.calc) — когда загружены его входы; после каждого файла — перерисовка.
   (function () {
-    const files = {trade: 'trade.csv', products: 'products.csv', ports: 'ports.csv', offices: 'offices.csv', basemap: 'basemap.json', companies: 'companies.csv', settlements: 'settlements.csv', makers: 'makers.csv', maker_links: 'maker_links.csv', autos: 'autos.csv', dfomap: 'dfomap.json'}, ver = {trade: 'e1f1a601', products: 'ac2af64f', ports: '3c42e14f', offices: '71b7bc91', basemap: 'c82f4e77', companies: '959bfb46', settlements: '5fd1d049', makers: '6aca7552', maker_links: '6ca82268', autos: 'f92300b7', dfomap: '8999ccdf'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4945376, settlements: 139551, makers: 553160, maker_links: 1330148, autos: 4722912, dfomap: 224211};  // ver — метки версий файлов: новый файл не берётся из кэша браузера; size — байты (для полоски)
+    const files = {trade: 'trade.e1f1a601.csv', products: 'products.ac2af64f.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.329b9504.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.6aca7552.csv', maker_links: 'maker_links.96f30d9a.csv', autos: 'autos.25d86fd6.csv', dfomap: 'dfomap.8999ccdf.json'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4945353, settlements: 139551, makers: 553160, maker_links: 1330138, autos: 4723023, dfomap: 224211};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
     const store = {}, status = {}, calcs = {}, order = [], handlers = [], loads = {}, got = {};
     const run = () => handlers.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
     // полоска загрузки: доля полученных байтов у файлов, которые сейчас идут
@@ -630,7 +630,7 @@
     async function load(id) {
       const f = files[id];
       try {
-        const r = await fetch('data/' + f + '?v=' + ver[id]);
+        const r = await fetch('data/' + f);
         if (!r.ok) throw new Error(r.status);
         let t;
         if (r.body && r.body.getReader) {
@@ -2000,7 +2000,7 @@
       if (off && st.lang === 'ru') c0.title = r.name_full;  // название представительства или филиала в реестре
       const c1 = td('l nw c-inn');
       if (off) c1.textContent = r.inn || '—';  // ИНН иностранной организации (9909…): карточки на rusprofile.ru у неё нет
-      else if (r.inn) { const a = el('a', '', r.inn); a.href = 'https://www.rusprofile.ru/search?query=' + r.inn; a.target = '_blank'; a.rel = 'noopener'; a.title = L().innLink; c1.append(a); }
+      else if (r.inn) { const a = el('a', '', r.inn); a.href = 'https://www.rusprofile.ru/search?query=' + encodeURIComponent(r.inn); a.target = '_blank'; a.rel = 'noopener'; a.title = L().innLink; c1.append(a); }
       else c1.append(document.createTextNode('—'));
       if (r.inn_check) { const w = el('small', 'rj-warn', L().innCheck); w.title = L().innCheckTip; c1.append(w); }
       td('l c-reg').textContent = regionName(r.region_code);
@@ -2222,7 +2222,7 @@
       if (+e.n_docs) meta.push(L().dDocs(fmtInt(+e.n_docs)) + (e.first ? `, ${L().dYears(e.first.slice(0, 4), e.last.slice(0, 4))}` : ''));
       if (meta.length) item.append(el('small', '', meta.join(' · ')));
       if (e.corp_no) {
-        const a = el('a', '', `${L().dCorpNo} ${e.corp_no}`); a.href = 'https://www.houjin-bangou.nta.go.jp/henkorireki-johoto.html?selHouzinNo=' + e.corp_no;
+        const a = el('a', '', `${L().dCorpNo} ${e.corp_no}`); a.href = 'https://www.houjin-bangou.nta.go.jp/henkorireki-johoto.html?selHouzinNo=' + encodeURIComponent(e.corp_no);
         a.target = '_blank'; a.rel = 'noopener'; a.title = L().dCorpTip; item.append(document.createTextNode(' '), a);
       }
       ul.append(item);
@@ -2644,11 +2644,13 @@
     // таблица: по умолчанию — по числу сигналов, при равном — по выручке, затем свежие сверху
     const sizeKey = (x) => (+x.r.revenue || 0) * 1e6 + (+x.r.sme || 0) * 1e5 + Math.min(+x.r.employees || 0, 99999);
     const key = {
-      score: (x) => x.score, name: (x) => auName(x.r), inn: (x) => x.r.inn, region: (x) => regionName(x.r.region_code) + ' ' + x.r.city,
+      // регион и город — как в таблице, на языке страницы (в EN/JA город латиницей: по кириллице порядок был бы чужим)
+      score: (x) => x.score, name: (x) => auName(x.r), inn: (x) => x.r.inn, region: (x) => auReg(x.r.region_code) + ' ' + auCity(x.r.city),
       okved: (x) => x.r.okved, since: (x) => x.start, size: sizeKey,
     }[ast.sort];
+    const keys = new Map(rows.map((x) => [x, key(x)]));  // ключ один раз на строку, а не при каждом сравнении
     rows.sort((a, b) => {
-      const va = key(a), vb = key(b);
+      const va = keys.get(a), vb = keys.get(b);
       return ast.dir * (typeof va === 'number' ? va - vb : String(va).localeCompare(String(vb), st.lang))
         || sizeKey(b) - sizeKey(a) || b.start - a.start || auName(a.r).localeCompare(auName(b.r), st.lang);
     });
@@ -2676,7 +2678,7 @@
     if (r.city) c1.append(el('small', '', auCity(r.city)));
     if (r.kind === 'ul' && st.lang === 'ru' && r.name_full) c1.title = r.name_full;
     const c2 = td('l nw c-inn'), a = el('a', '', r.inn);
-    a.href = 'https://www.rusprofile.ru/search?query=' + r.inn; a.target = '_blank'; a.rel = 'noopener'; a.title = L().innLink;
+    a.href = 'https://www.rusprofile.ru/search?query=' + encodeURIComponent(r.inn); a.target = '_blank'; a.rel = 'noopener'; a.title = L().innLink;
     c2.append(a, el('small', '', L().auKindOne[r.kind]));
     td('l c-reg').textContent = auReg(r.region_code);
     const c4 = td('l opt c-okved'), okb = el('button', 'rj-chip au-okv'); okb.type = 'button'; okb.dataset.okved = r.okved;
