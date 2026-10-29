@@ -7,7 +7,7 @@ texts.728961f3.js
 data/autos.9ebf359c.csv
 data/basemap.c82f4e77.json
 data/companies.01a6b871.csv
-data/dfomap.8999ccdf.json
+data/dfomap.176b8862.json
 data/maker_links.0c170320.csv
 data/makers.9e557359.csv
 data/offices.71b7bc91.csv

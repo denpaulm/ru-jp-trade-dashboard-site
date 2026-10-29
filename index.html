@@ -518,7 +518,7 @@
   <section class="rj-page" id="pg-autos" hidden>
     <div class="rj-head2 rj-chead">
       <h2 data-i18n="auTitle">—</h2>
-      <p class="rj-take" id="au-intro" data-src="trade products autos">—</p>
+      <p class="rj-take" id="au-intro" data-src="dfomap autos">—</p>
     </div>
     <div class="rj-kpis rj-ckpis" id="au-kpis" data-src="autos"></div>
     <div class="rj-tools rj-ctools rj-autools">
@@ -547,7 +547,7 @@
     <div class="rj-augrid">
       <section class="rj-card rj-aumap">
         <h2 data-i18n="auMapTitle">—</h2>
-        <div class="rj-aumapbox" id="au-map" data-src="autos dfomap ports products offices"></div>
+        <div class="rj-aumapbox" id="au-map" data-src="autos dfomap offices"></div>
         <p class="rj-note" id="au-map-note">—</p>
       </section>
       <div class="rj-auside">
@@ -602,7 +602,7 @@
   // Замена объекта `dash` платформы Claude: те же методы, данные — из файлов site/data/. Набор грузится при первом
   // обращении к нему (dash.data), расчёт (dash.calc) — когда загружены его входы; после каждого файла — перерисовка.
   (function () {
-    const files = {trade: 'trade.e1f1a601.csv', products: 'products.ac2af64f.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.01a6b871.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.9e557359.csv', maker_links: 'maker_links.0c170320.csv', autos: 'autos.9ebf359c.csv', dfomap: 'dfomap.8999ccdf.json'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4942707, settlements: 139551, makers: 553165, maker_links: 1330151, autos: 4718013, dfomap: 224211};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
+    const files = {trade: 'trade.e1f1a601.csv', products: 'products.ac2af64f.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.01a6b871.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.9e557359.csv', maker_links: 'maker_links.0c170320.csv', autos: 'autos.9ebf359c.csv', dfomap: 'dfomap.176b8862.json'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4942707, settlements: 139551, makers: 553165, maker_links: 1330151, autos: 4718013, dfomap: 224664};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
     const store = {}, status = {}, calcs = {}, order = [], handlers = [], loads = {}, got = {};
     const run = () => handlers.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
     // полоска загрузки: доля полученных байтов у файлов, которые сейчас идут
@@ -1686,13 +1686,14 @@
     if (st.page === 'trade') { drawTrade(); return; }
     if (st.page === 'settlements') { drawSettlements(); return; }
     if (st.page === 'about') { drawAbout(); return; }  // «Описанию» данные не нужны
+    if (st.page === 'autos') { drawAutos(); return; }  // «Автоимпорту» торговля не нужна: цифры 12 месяцев — в dfomap.json (build_dfomap.ltm_used)
     const v = dash.data('views'), p = dash.data('periods');
     if (v.status === 'ok' && p.status === 'ok') {
       index(v.data, p.data);
       if (!st.period || !idx.periods.has(st.period)) st.period = p.data[0].period;
     }
     if (dash.data('trade').status === 'ok' && dash.data('products').status === 'ok') tradeIndex(dash.data('trade').data, dash.data('products').data);
-    if (st.page === 'dynamics') drawDynamics(); else if (st.page === 'makers') drawMakers(); else if (st.page === 'autos') drawAutos(); else drawCompanies();
+    if (st.page === 'dynamics') drawDynamics(); else if (st.page === 'makers') drawMakers(); else drawCompanies();
   }
 
   function drawAbout() {
@@ -2471,39 +2472,27 @@
 
   // подержанные легковые машины в статистике Японии: коды 8703 с «中古» в названии (вывоз в Россию)
   let auUsed = null, auPorts = null;
-  function usedCodes() {
-    const pr = dash.data('products');
-    if (pr.status !== 'ok') return null;
-    if (!auUsed || auUsed.rows !== pr.data) {
-      auUsed = { rows: pr.data, set: new Set(pr.data.filter((p) => p.level === '9' && p.flow === 'jp_ru' && p.code.startsWith('8703') && /中古/.test(p.name_ja)).map((p) => p.code)) };
-    }
-    return auUsed.set;
-  }
+  // цифры за 12 месяцев — из dfomap.json (build_dfomap.ltm_used): страница не грузит trade.csv, ports.csv и products.csv ради них
+  const auMeta = (kind) => { const md = dash.data('dfomap'); return md.status === 'ok' ? md.data.find((r) => r.kind === kind && r.id === 'ltm') : null; };
   // доля подержанных машин в вывозе Японии в Россию за 12 месяцев (вводная листа)
   let auShare = null;
   function usedShare() {
-    const used = usedCodes();
-    if (!used || !tIdx) return null;
-    if (auShare && auShare.rows === tIdx.rows && auShare.cur === st.cur) return auShare;
-    const months = tIdx.months.slice(-12), ms = new Set(months), vf = F('value');
-    let u = 0, p = 0, t = 0;
-    for (const r of tIdx.byFlow.jp_ru) {
-      if (!ms.has(r.month)) continue;
-      const v = +r[vf]; t += v;
-      if (used.has(r.hs9)) u += v; else if (r.hs9.startsWith('8707') || r.hs9.startsWith('8708')) p += v;
-    }
-    auShare = { rows: tIdx.rows, cur: st.cur, u, p, t, first: months[0], last: months[months.length - 1] };
+    const u = auMeta('used'), p = auMeta('parts');
+    if (!u || !p) return null;
+    const md = dash.data('dfomap');
+    if (auShare && auShare.rows === md.data && auShare.cur === st.cur) return auShare;
+    const jpy = st.cur === 'jpy', [first, last] = String(u.d).split('..');
+    auShare = { rows: md.data, cur: st.cur, u: +(jpy ? u.y : u.x), p: +(jpy ? p.y : p.x), t: +(jpy ? u.h : u.w), first, last };
     return auShare;
   }
   // вывоз подержанных машин в Россию по портам Японии за 12 месяцев (круги на карте)
   function usedPorts() {
-    const used = usedCodes(), pd = dash.data('ports'), od = dash.data('offices');
-    if (!used || pd.status !== 'ok' || od.status !== 'ok') return null;
-    if (auPorts && auPorts.rows === pd.data && auPorts.cur === st.cur) return auPorts;
-    const months = [...new Set(pd.data.map((r) => r.month))].sort().slice(-12), ms = new Set(months), vf = F('value'), by = new Map();
-    let total = 0;
-    for (const r of pd.data) if (r.flow === 'jp_ru' && ms.has(r.month) && used.has(r.hs9)) { const v = +r[vf]; by.set(r.custom, (by.get(r.custom) || 0) + v); total += v; }
-    auPorts = { rows: pd.data, cur: st.cur, by, total, first: months[0], last: months[months.length - 1], off: new Map(od.data.map((o) => [o.custom, o])) };
+    const md = dash.data('dfomap'), od = dash.data('offices'), meta = auMeta('ports');
+    if (!meta || od.status !== 'ok') return null;
+    if (auPorts && auPorts.rows === md.data && auPorts.cur === st.cur) return auPorts;
+    const jpy = st.cur === 'jpy', by = new Map(), [first, last] = String(meta.d).split('..');
+    for (const r of md.data) if (r.kind === 'jpport' && +(jpy ? r.h : r.w) > 0) by.set(r.id, +(jpy ? r.h : r.w));
+    auPorts = { rows: md.data, cur: st.cur, by, total: +(jpy ? meta.y : meta.x), first, last, off: new Map(od.data.map((o) => [o.custom, o])) };
     return auPorts;
   }
 
