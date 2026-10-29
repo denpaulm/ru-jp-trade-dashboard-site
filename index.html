@@ -594,7 +594,7 @@
 <script src="refs.4266582c.js"></script>
 <script src="texts.728961f3.js"></script>
 <script src="makers.249098eb.js"></script>
-<script src="autos.6e3d18a0.js"></script>
+<script src="autos.d3034d09.js"></script>
 
 </main>
 <script src="d3.min.a029baa9.js"></script>
@@ -2413,7 +2413,10 @@
   const AU_LENS = [2, 4, 5, 7, 8];  // длина кода ОКВЭД по уровням: 45 (машины и запчасти) → 45.1 → 45.11 → 45.11.4 → 45.11.41
   const AST0 = { kind: 'all', okved: '45', region: '', city: '', y0: null, y1: null, cut: 2022, q: '', only: '', sort: 'score', dir: -1, limit: AU_PAGE };
   const ast = { ...AST0 };
-  const AU_POS = ['country', 'agent', 'broker', 'sheet', 'grew'];  // признаки, которые складываются в «сигналы»
+  // признаки, которые складываются в «сигналы». Проверка по открытым источникам (2026-10-30, reports/autos_precision_*.csv):
+  // японское в названии, агентская схема, брокер/УЭО и торговля машинами (45.1) предсказывают японский след, «на листе «Компании»»
+  // и «рост выручки» — нет: они остались отметками, но в счёт не входят
+  const AU_POS = ['country', 'agent', 'broker', 'cars'];
   const auTr = { а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i', й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o',
     п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'shch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya' };
   const translit = (s) => s.replace(/[А-Яа-яЁё]/g, (ch) => { const lo = ch.toLowerCase(), t = auTr[lo] ?? ch; return ch === lo ? t : t.charAt(0).toUpperCase() + t.slice(1); });
@@ -2443,6 +2446,7 @@
       const start = +(r.ip_since || r.reg_year) || 0;
       const sig = {
         country: ['jp', 'jpbrand'].includes(r.country), agent: f.has('agent'), broker: f.has('broker') || f.has('aeo'), sheet: f.has('sheet'), grew: f.has('grew'),
+        cars: (r.okved || '').startsWith('45.1'),  // торговля машинами, а не запчастями
       };
       // «сигналы» — сколько признаков работы с Японией и с ввозом; страна другая в названии (Корея, Китай) — минус один
       const score = Math.max(0, AU_POS.filter((k) => sig[k]).length - (['kr', 'cn'].includes(r.country) ? 1 : 0));
