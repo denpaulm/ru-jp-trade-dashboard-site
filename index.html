@@ -592,9 +592,9 @@
 </div>
 
 <script src="refs.4266582c.js"></script>
-<script src="texts.9b771b38.js"></script>
-<script src="makers.3ebb315d.js"></script>
-<script src="autos.8cd8027b.js"></script>
+<script src="texts.728961f3.js"></script>
+<script src="makers.249098eb.js"></script>
+<script src="autos.6e3d18a0.js"></script>
 
 </main>
 <script src="d3.min.a029baa9.js"></script>
@@ -602,15 +602,17 @@
   // Замена объекта `dash` платформы Claude: те же методы, данные — из файлов site/data/. Набор грузится при первом
   // обращении к нему (dash.data), расчёт (dash.calc) — когда загружены его входы; после каждого файла — перерисовка.
   (function () {
-    const files = {trade: 'trade.e1f1a601.csv', products: 'products.ac2af64f.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.329b9504.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.6aca7552.csv', maker_links: 'maker_links.96f30d9a.csv', autos: 'autos.9ebf359c.csv', dfomap: 'dfomap.8999ccdf.json'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4945353, settlements: 139551, makers: 553160, maker_links: 1330138, autos: 4718013, dfomap: 224211};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
+    const files = {trade: 'trade.e1f1a601.csv', products: 'products.ac2af64f.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.01a6b871.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.9e557359.csv', maker_links: 'maker_links.0c170320.csv', autos: 'autos.9ebf359c.csv', dfomap: 'dfomap.8999ccdf.json'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4942707, settlements: 139551, makers: 553165, maker_links: 1330151, autos: 4718013, dfomap: 224211};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
     const store = {}, status = {}, calcs = {}, order = [], handlers = [], loads = {}, got = {};
     const run = () => handlers.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
     // полоска загрузки: доля полученных байтов у файлов, которые сейчас идут
     const LOAD_T = { ru: (a, b) => `Загрузка данных: ${a} из ${b} МБ`, en: (a, b) => `Loading data: ${a} of ${b} MB`, ja: (a, b) => `データを読み込み中：${a} / ${b} MB` };
     let bar = null;
+    const seen = new Set();  // файлы, запрошенные на этой странице: доля считается по всем, а не по текущей партии (иначе полоска начиналась с нуля на каждой)
     const progress = () => {
-      const ids = Object.keys(loads).filter((id) => id in files && !(id in store) && status[id] !== 'error');
-      if (!ids.length) { if (bar) bar.hidden = true; return; }
+      Object.keys(loads).forEach((id) => { if (id in files) seen.add(id); });
+      const ids = [...seen].filter((id) => status[id] !== 'error');
+      if (!ids.some((id) => !(id in store))) { if (bar) bar.hidden = true; return; }
       if (!bar) { bar = document.createElement('div'); bar.className = 'dash-load'; bar.setAttribute('role', 'status'); bar.append(document.createElement('i'), document.createElement('span')); document.body.append(bar); }
       const all = ids.reduce((a, id) => a + size[id], 0), done = ids.reduce((a, id) => a + Math.min(got[id] || 0, size[id]), 0);
       const lang = document.documentElement.lang in LOAD_T ? document.documentElement.lang : 'ru', mb = (b) => (b / 1e6).toFixed(1);
@@ -994,7 +996,7 @@
   $('#tabs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.tab = b.dataset.v; drawTable(); segs(); } });
   $('#port-tabs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && !st.sel) { st.portFlow = b.dataset.v; st.port = null; drawPorts(); segs(); } });
   const drawTableLater = later(() => drawTable());
-  $('#search').addEventListener('input', (e) => { st.q = e.target.value.trim().toLowerCase(); drawTableLater(); });
+  $('#search').addEventListener('input', (e) => { st.q = e.target.value.trim(); drawTableLater(); });
   $('#table').querySelector('thead').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-sort]'); if (!b) return;
     if (st.sort === b.dataset.sort) st.dir = -st.dir; else { st.sort = b.dataset.sort; st.dir = ['code', 'name'].includes(st.sort) ? 1 : -1; }
@@ -1552,7 +1554,7 @@
     if (!idx || !st.period) return;
     const level = effLevel();
     let rows = rowsFor(st.tab, level).filter((r) => r.value > 0 || st.mode === 'growth');
-    if (st.q) rows = rows.filter((r) => r.code.toLowerCase().includes(st.q) || LANGS.some((l) => (r['name_' + l] || '').toLowerCase().includes(st.q)));
+    if (st.q) rows = rows.filter((r) => r.code.toLowerCase().includes(st.q.toLowerCase()) || LANGS.some((l) => (r['name_' + l] || '').toLowerCase().includes(st.q.toLowerCase())));
     const key = st.sort, dir = st.dir;
     const money = ['value', 'share', 'prev', 'change', 'growth', 'price'];
     const sortVal = (r) => (key === 'name' ? nm(r) : money.includes(key) ? val(r, key) : r[key]);
@@ -1806,7 +1808,7 @@
   $('#comp-cat').addEventListener('change', (e) => { cst.cat = e.target.value; cst.limit = COMP_PAGE; drawCompanies(); });
   $('#comp-region').addEventListener('change', (e) => { cst.region = e.target.value; cst.limit = COMP_PAGE; drawCompanies(); });
   const drawCompaniesLater = later(() => drawCompanies());
-  $('#comp-search').addEventListener('input', (e) => { cst.q = e.target.value.trim().toLowerCase(); cst.limit = COMP_PAGE; drawCompaniesLater(); });
+  $('#comp-search').addEventListener('input', (e) => { cst.q = e.target.value.trim(); cst.limit = COMP_PAGE; drawCompaniesLater(); });
   $('#comp-more').addEventListener('click', () => { cst.limit += COMP_PAGE; drawCompanies(); });
   // цифра шапки оставляет в таблице только компании с её признаком; повторный клик или цифра «компаний» — снова все
   // цифры рисуются заново, поэтому фокус клавиатуры возвращается на ту же цифру (или на первую, если та стала обычной цифрой)
@@ -1905,7 +1907,7 @@
     let rows = pool.filter((r) => (offices || hasCat(r, cst.cat)) && (!cst.region || r.region_code === cst.region));
     // search also covers the evidence (Japanese manufacturers of importers, register objects of exporters) and, in Russian, products
     if (cst.q) rows = rows.filter((r) => [r.name, r.name_full, r.name_lat, r.inn, r.evidence, r.ru_makers, r.rx_makers, r.founders, st.lang === 'ru' ? r.products : '']
-      .some((x) => (x || '').toLowerCase().includes(cst.q)));
+      .some((x) => (x || '').toLowerCase().includes(cst.q.toLowerCase())));
     // \u043f\u0440\u0438\u0437\u043d\u0430\u043a\u0438 \u0446\u0438\u0444\u0440 \u0448\u0430\u043f\u043a\u0438, \u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u043c\u043e\u0436\u043d\u043e \u0432\u044b\u0431\u0440\u0430\u0442\u044c \u0432 \u044d\u0442\u043e\u043c \u043d\u0430\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0438; \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u0430\u044f \u0446\u0438\u0444\u0440\u0430, \u043a\u043e\u0442\u043e\u0440\u043e\u0439 \u0437\u0434\u0435\u0441\u044c \u043d\u0435\u0442, \u0441\u043d\u0438\u043c\u0430\u0435\u0442\u0441\u044f
     const ex = cst.flow === 'all' || cst.flow === 'ru_jp', im = cst.flow === 'all' || cst.flow === 'jp_ru';
     const fresh = (r) => (r.last || '').startsWith(year);
@@ -2175,7 +2177,7 @@
   $('#mk-y1').addEventListener('change', (e) => { mst.y1 = e.target.value; if (mst.y0 && mst.y1 < mst.y0) mst.y0 = mst.y1; mst.limit = MK_PAGE; drawMakers(); });
   $('#mk-cat').addEventListener('change', (e) => { mst.cat = e.target.value; mst.limit = MK_PAGE; drawMakers(); });
   const drawMakersLater = later(() => drawMakers());
-  $('#mk-search').addEventListener('input', (e) => { mst.q = e.target.value.trim().toLowerCase(); mst.limit = MK_PAGE; drawMakersLater(); });
+  $('#mk-search').addEventListener('input', (e) => { mst.q = e.target.value.trim(); mst.limit = MK_PAGE; drawMakersLater(); });
   $('#mk-more').addEventListener('click', () => { mst.limit += MK_PAGE; drawMakers(); });
   $('#mk-kpis').addEventListener('click', (e) => {
     const b = e.target.closest('button.rj-kpi'); if (!b || b.disabled) return;
@@ -2192,7 +2194,7 @@
     const chip = e.target.closest('button.rj-chip[data-code]');
     if (chip) { mst.cat = chip.dataset.code; mst.limit = MK_PAGE; drawMakers(); return; }
     const sim = e.target.closest('button.rj-chip[data-group]');
-    if (sim) { mst.q = sim.dataset.name.toLowerCase(); $('#mk-search').value = sim.dataset.name; mst.open.add(sim.dataset.group); drawMakers(); return; }
+    if (sim) { mst.q = sim.dataset.name; $('#mk-search').value = sim.dataset.name; mst.open.add(sim.dataset.group); drawMakers(); return; }
     const det = e.target.closest('button[data-open]');
     if (det) { const g = det.dataset.open; if (mst.open.has(g)) mst.open.delete(g); else mst.open.add(g); drawMakers(); return; }
     const go = e.target.closest('button[data-keys]');
@@ -2285,7 +2287,7 @@
     $('#mk-cat').replaceChildren(...opts);
     $('#mk-cat').value = mst.cat;
     const rowsBase = rowsAll;  // похожие компании ищутся среди всех, а не только найденных поиском
-    if (mst.q) rowsAll = rowsAll.filter((x) => x.g.text.includes(mst.q));
+    if (mst.q) rowsAll = rowsAll.filter((x) => x.g.text.includes(mst.q.toLowerCase()));
     const dataYear = yMax, quietFrom = String(+dataYear - 1);
     const ONLY = {
       contract: (x) => x.s.contract.size > 0, norep: (x) => x.s.docs > 0 && !x.s.rep, pp353: (x) => x.s.pp > 0, abroad: (x) => x.s.abroad > 0,
@@ -2463,7 +2465,7 @@
       && (skip.includes('year') || (x.yb >= y0 && x.yb <= y1))
       && (skip.includes('region') || !ast.region || x.r.region_code === ast.region)
       && (skip.includes('city') || !ast.city || x.ck === ast.city)
-      && (!ast.q || x.text.includes(ast.q))
+      && (!ast.q || x.text.includes(ast.q.toLowerCase()))
       && (skip.includes('only') || !only || only(x)));
   }
 
@@ -2524,7 +2526,7 @@
   });
   $('#au-region').addEventListener('change', (e) => { ast.region = e.target.value; ast.city = ''; ast.limit = AU_PAGE; drawAutos(); });
   const drawAutosLater = later(() => drawAutos());
-  $('#au-search').addEventListener('input', (e) => { ast.q = e.target.value.trim().toLowerCase(); ast.limit = AU_PAGE; drawAutosLater(); });
+  $('#au-search').addEventListener('input', (e) => { ast.q = e.target.value.trim(); ast.limit = AU_PAGE; drawAutosLater(); });
   $('#au-more').addEventListener('click', () => { ast.limit += AU_PAGE; drawAutos(); });
   $('#au-legend-btn').addEventListener('click', () => { $('#au-legend').hidden = !$('#au-legend').hidden; drawAuLegend(); });
   $('#au-kpis').addEventListener('click', (e) => {
