@@ -7,7 +7,7 @@
 <meta name="googlebot" content="noindex, nofollow">
 <title>Торговля Россия — Япония</title>
 <script src="d3.min.js?v=a029baa9"></script>
-<link rel="stylesheet" href="style.css?v=c962a30e">
+<link rel="stylesheet" href="style.css?v=3d72fe9d">
 <style>
   /* токены, которые на платформе Claude задаёт оболочка дашборда */
   :root {
@@ -173,11 +173,13 @@
     </nav>
   </header>
 
-  <section class="rj-page" id="about" hidden>
+  <!-- id секций листов — с приставкой pg-: хэш ссылки (#companies) не должен совпадать с id элемента, иначе браузер при открытии
+       ссылки и при «Назад» прокручивает страницу к секции — мимо заголовка, языков и вкладок -->
+  <section class="rj-page" id="pg-about" hidden>
     <div class="rj-about" id="about-body"></div>
   </section>
 
-  <section class="rj-page" id="trade">
+  <section class="rj-page" id="pg-trade">
   <p class="rj-take" id="takeaway"></p>
   <div class="rj-wrap"><div class="rj-main">
     <aside class="rj-panel" id="controls">
@@ -287,7 +289,7 @@
   <p class="rj-foot" id="source-note" data-i18n="footShort">—</p>
   </section>
 
-  <section class="rj-page" id="dynamics" hidden>
+  <section class="rj-page" id="pg-dynamics" hidden>
     <div class="rj-head2">
       <h2 data-i18n="dyTitle">—</h2>
       <p class="rj-take" data-i18n="dyIntro">—</p>
@@ -359,7 +361,7 @@
     <p class="rj-foot" data-i18n="footDy">—</p>
   </section>
 
-  <section class="rj-page" id="settlements" hidden>
+  <section class="rj-page" id="pg-settlements" hidden>
     <div class="rj-head2">
       <h2 data-i18n="stTitle">—</h2>
       <p class="rj-take" data-i18n="stIntro">—</p>
@@ -424,7 +426,7 @@
     </div>
   </section>
 
-  <section class="rj-page" id="companies" hidden>
+  <section class="rj-page" id="pg-companies" hidden>
     <div class="rj-head2 rj-chead">
       <h2 data-i18n="compTitle">—</h2>
       <p class="rj-take" data-i18n="compIntro">—</p>
@@ -478,7 +480,7 @@
     </div>
   </section>
 
-  <section class="rj-page" id="makers" hidden>
+  <section class="rj-page" id="pg-makers" hidden>
     <div class="rj-head2 rj-chead">
       <h2 data-i18n="mkTitle">—</h2>
       <p class="rj-take" data-i18n="mkIntro">—</p>
@@ -514,7 +516,7 @@
   </section>
 
   <!-- Автоимпорт: ИП и компании Дальнего Востока, Иркутской и Новосибирской областей с основным ОКВЭД 45.1 или 45.3 — агенты по ввозу машин и запчастей из Японии (fetch_autos.py) -->
-  <section class="rj-page" id="autos" hidden>
+  <section class="rj-page" id="pg-autos" hidden>
     <div class="rj-head2 rj-chead">
       <h2 data-i18n="auTitle">—</h2>
       <p class="rj-take" id="au-intro" data-src="trade products autos">—</p>
@@ -1662,9 +1664,9 @@
   const PAGES = ['about', 'trade', 'dynamics', 'settlements', 'companies', 'makers', 'autos'];
   st.page = PAGES.includes(location.hash.slice(1).split('?')[0]) ? location.hash.slice(1).split('?')[0] : 'trade';
   function setPageVisibility() {
-    PAGES.forEach((p) => { $('#' + p).hidden = p !== st.page; $('#tab-' + p).setAttribute('aria-selected', String(p === st.page)); });
+    PAGES.forEach((p) => { $('#pg-' + p).hidden = p !== st.page; $('#tab-' + p).setAttribute('aria-selected', String(p === st.page)); });
     // метки источников листа включаются, когда он показан: на платформе метка data-source грузит свой набор и на скрытом листе
-    $('#' + st.page).querySelectorAll('[data-src]').forEach((e) => { e.dataset.source = e.dataset.src; e.removeAttribute('data-src'); });
+    $('#pg-' + st.page).querySelectorAll('[data-src]').forEach((e) => { e.dataset.source = e.dataset.src; e.removeAttribute('data-src'); });
     // на телефоне вкладки — строка с прокруткой вбок: выбранная вкладка всегда в середине строки (прокручивается только строка)
     const nav = $('#pages'), tab = $('#tab-' + st.page);
     if (nav.scrollWidth > nav.clientWidth) nav.scrollLeft += tab.getBoundingClientRect().left - nav.getBoundingClientRect().left - (nav.clientWidth - tab.offsetWidth) / 2;
@@ -2562,7 +2564,8 @@
       const sec = el('section'), ul = el('ul');
       sec.append(el('h3', '', h), ul);
       items.forEach(([k, text]) => {
-        const label = k.startsWith('s') ? el('span', 'rj-badge au-s' + k.slice(1), k.slice(1)) : el('span', 'rj-status au-' + k, L().auFlagT[k]);
+        // сигналы — ключи s3/s1/s0 (столько признаков), остальное — признаки с подписью из auFlagT (ключ sheet — тоже признак)
+        const label = /^s\d$/.test(k) ? el('span', 'rj-badge au-s' + k.slice(1), k.slice(1)) : el('span', 'rj-status au-' + k, L().auFlagT[k]);
         const item = el('li'); item.append(label, document.createTextNode(' — ' + text)); ul.append(item);
       });
       return sec;

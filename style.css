@@ -227,7 +227,7 @@
   /* лист — контейнер: сетка цифр, таблица и карточки перестраиваются по его ширине (на платформе она уже окна,
      когда открыта панель источников); на телефоне кнопки направления — сеткой 2 × 2 */
   .rj > .rj-page { min-width: 0; }
-  #companies { grid-template-columns: minmax(0, 1fr); container: comp / inline-size; }
+  #pg-companies { grid-template-columns: minmax(0, 1fr); container: comp / inline-size; }
   @container comp (max-width: 600px) { #comp-flow { grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); flex: 1 1 100%; border-radius: 18px; } #comp-flow button { line-height: 1.25; } }
   .rj-cnote { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; justify-content: space-between; }
   .rj-linkbtn { font: inherit; font-size: var(--cds-font-size-caption); background: none; border: 0; padding: 0; color: var(--color-fg); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
@@ -386,7 +386,7 @@
   }
   /* «Поставщики из Японии»: лист — тот же контейнер comp, что у «Компаний» (сетка цифр перестраивается по ширине листа);
      ширины колонок заданы — без прокрутки вбок; уже 900 px строки — карточки */
-  #makers { grid-template-columns: minmax(0, 1fr); container: comp / inline-size; }
+  #pg-makers { grid-template-columns: minmax(0, 1fr); container: comp / inline-size; }
   .rj-mkyears { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   .rj-mkyears .rj-period { width: auto; padding: 6px 12px; }
   .rj-keychip { padding: 5px 12px; font-weight: 600; background: var(--rj-pick); color: var(--rj-pick-ink); border-color: transparent; margin: 0; }
@@ -432,7 +432,7 @@
   }
   /* Автоимпорт ДФО: ИП и компании Дальнего Востока с ОКВЭД 45.1 — лист-контейнер autos (как comp у «Компаний»):
      сетка цифр, карта с карточками и таблица перестраиваются по ширине листа */
-  #autos { grid-template-columns: minmax(0, 1fr); container: autos / inline-size; }
+  #pg-autos { grid-template-columns: minmax(0, 1fr); container: autos / inline-size; }
   @container autos (min-width: 600px) { #au-kpis { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } }
   @container autos (min-width: 1100px) { #au-kpis { grid-template-columns: repeat(var(--kpi-cols, 10), minmax(0, 1fr)); } }
   .rj-autools { gap: var(--cds-gap-sm) var(--cds-gap-md); }
