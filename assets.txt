@@ -3,7 +3,7 @@ autos.d3034d09.js
 makers.249098eb.js
 refs.4266582c.js
 style.3d72fe9d.css
-texts.728961f3.js
+texts.9d99a5d7.js
 data/autos.9ebf359c.csv
 data/basemap.c82f4e77.json
 data/companies.01a6b871.csv

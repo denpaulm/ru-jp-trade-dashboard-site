@@ -592,7 +592,7 @@
 </div>
 
 <script src="refs.4266582c.js"></script>
-<script src="texts.728961f3.js"></script>
+<script src="texts.9d99a5d7.js"></script>
 <script src="makers.249098eb.js"></script>
 <script src="autos.d3034d09.js"></script>
 
@@ -1780,8 +1780,10 @@
       .map((c) => (c === 'noflow' ? L().whyT[r.flow === 'jp_ru' ? 'noflowIm' : 'noflowEx'] : L().whyT[c] || c)).join('; ');
     const y = r.source === 'cerberus' && r.last && r.captured && +r.captured.slice(0, 4) - +r.last.slice(0, 4) >= 2 ? r.last.slice(0, 4) : '';
     const old = y ? L().lastRec(y) : '';
-    if (r.level === 'A') return `${name}: ${L().levelOk[r.flow]}${old}`;
-    return why ? `${name}${r.level === 'B' ? `; ${L().levelMiss}` : ''}: ${why}${old}` : name;
+    // у импортёров — сколько документов за 12 месяцев до даты выгрузки: у 41 % A он один (оценка 2026-10-29), это видно у буквы
+    const recent = r.source !== 'cerberus' && r.n_recent !== '' && r.n_recent !== undefined ? L().recentTip(+r.n_recent || 0) : '';
+    if (r.level === 'A') return `${name}: ${L().levelOk[r.flow]}${old}${recent}`;
+    return why ? `${name}${r.level === 'B' ? `; ${L().levelMiss}` : ''}: ${why}${old}${recent}` : name;
   };
   // код компании может быть главой (03 — «рыба и морепродукты» без уточнения): такая компания входит в любую категорию главы
   const hasCat = (r, cat) => !cat || codesOf(r).some((h) => (h.length === 2 ? cat.startsWith(h) : h.startsWith(cat)));
