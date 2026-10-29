@@ -13,6 +13,14 @@
     gap: var(--cds-gap-lg);
     font-variant-numeric: tabular-nums;
   }
+  /* браузеры без color-mix (до весны 2023 г.): те же оттенки без смешения — иначе фон карт и дорожки кнопок пропадают
+     (заливку регионов «Автоимпорта» в таких браузерах смешивает скрипт); браузеры без @container получают правила
+     по ширине окна из build_site.py */
+  @supports not (color: color-mix(in srgb, red, blue)) {
+    .rj { --rj-track: rgba(128, 128, 136, .14); --rj-sea: var(--color-panel); --rj-land-other: var(--color-border-line); }
+    .rj-badge.au-s1 { background: rgba(60, 160, 100, .28); }
+    .rj-badge.au-s2 { background: rgba(60, 160, 100, .6); }
+  }
   .rj-head { display: grid; gap: var(--cds-gap-xs); }
   .rj-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
   /* вводный текст и итог под заголовком листа: одна ширина на всех листах — на ноутбуке одна-две строки
@@ -507,4 +515,27 @@
     #au-kind { flex: 1 1 100%; }
     .rj-auper { flex: 1 1 100%; }
     #au-region, #au-search { flex: 1 1 100%; max-width: none; }
+  }
+
+  /* печать: выбранный лист целиком — без вкладок, переключателя языка, подсказок и кнопок «показать ещё»; выбранные фильтры
+     остаются видны (по ним понятно, что напечатано); таблицы — без прилипшего заголовка, заголовок повторяется на каждой
+     странице, строка не рвётся; тексты, сокращённые на экране, — целиком; альбомный A4: таблица компаний остаётся таблицей */
+  @media print {
+    @page { size: A4 landscape; margin: 10mm; }
+    .rj { gap: 12px; -webkit-print-color-adjust: exact; print-color-adjust: exact; color: var(--color-fg); background: var(--color-bg);
+      --color-fg: #000; --color-fg-muted: #444; --color-bg: #fff; --color-panel: #f4f4f5; --color-border-line: #ccc; }
+    .rj-langs, .rj-pages, .rj-tip, .rj-more, .rj-linkbtn, .rj-selbar, .rj-search:placeholder-shown, #to-dyn { display: none !important; }
+    .rj-page[hidden] { display: none !important; }
+    .rj-card, .rj-map, .rj-kpi, figure, svg { break-inside: avoid; }
+    .rj-card { box-shadow: none; }
+    .rj-tablebox, .rj-cbox { max-height: none !important; overflow: visible !important; }
+    .rj-table th { position: static; }
+    .rj-table thead { display: table-header-group; }
+    .rj-table th { padding: 4px 6px; }
+    .rj-table th button { display: contents; }  /* Chrome не рисует кнопки в заголовке, повторённом на следующей странице */
+    .rj-table tr { break-inside: avoid; }
+    .rj-ctable .rj-evmain, .rj-ctable .rj-clamp2 { display: block; -webkit-line-clamp: unset; overflow: visible; }
+    .rj-ctable td.c-cats .rj-chip { white-space: normal; border-radius: 6px; }
+    button, select, input { color: var(--color-fg); }
+    a { color: inherit; }
   }

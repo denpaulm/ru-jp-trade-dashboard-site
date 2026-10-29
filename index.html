@@ -6,7 +6,8 @@
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
 <meta name="googlebot" content="noindex, nofollow">
 <title>Торговля Россия — Япония</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="d3.min.js?v=a029baa9"></script>
+<link rel="stylesheet" href="style.css?v=f2e4b45e">
 <style>
   /* токены, которые на платформе Claude задаёт оболочка дашборда */
   :root {
@@ -35,12 +36,122 @@
   #dash-root { max-width: 1440px; margin: 0 auto; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 32px max(16px, env(safe-area-inset-left, 0px)); }
   .dash-skeleton { min-height: 1em; background: var(--color-panel); border-radius: 6px; color: transparent !important; }
   [hidden] { display: none !important; }
+  /* загрузка данных: полоска вверху окна и подпись, пока идут файлы листа */
+  .dash-load { position: fixed; top: 0; left: 0; right: 0; z-index: 50; pointer-events: none; }
+  .dash-load i { display: block; height: 3px; width: 0; background: #2f6fdf; transition: width .2s; }
+  .dash-load span { position: absolute; top: 6px; right: 12px; padding: 2px 8px; border-radius: 4px; font-size: 12px;
+    background: var(--cds-surface-popover); color: var(--color-fg-muted); box-shadow: var(--cds-shadow-popover); }
+  .dash-fatal { max-width: 640px; margin: 48px auto; padding: 16px 20px; border: 1px solid var(--color-border-line); border-radius: 8px; background: var(--color-panel); }
+  .dash-fatal p { margin: 0 0 8px; line-height: 1.5; }
+  /* печать: светлая тема, без полоски загрузки */
+  @media print {
+    :root { --color-fg: #000; --color-fg-muted: #444; --color-bg: #fff; --color-panel: #f4f4f5; --color-border-line: #ccc;
+      --color-ok: #1a7f43; --color-warn: #8a5000; --color-bad: #b02a1f; --cds-chart-grid: #e4e4e7; --cds-chart-axis: #999; color-scheme: light; }
+    #dash-root { max-width: none; padding: 0; }
+    .dash-load { display: none; }
+  }
+</style>
+<style>
+@supports not (container-type: inline-size) {
+@media (min-width: 1112px) { .rj-main { grid-template-columns: minmax(240px, 280px) minmax(0, 1fr); } }
+@media (min-width: 652px) { .rj-maps-grid { grid-template-columns: 1fr 1fr; } .rj-legend { grid-column: 1 / -1; } }
+@media (min-width: 932px) { .rj-row2-grid { grid-template-columns: minmax(0, 3fr) minmax(280px, 2fr); } }
+@media (min-width: 852px) { .rj-ports-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
+@media (min-width: 632px) { .rj-ckpis { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } }
+@media (min-width: 1132px) { .rj-ckpis { grid-template-columns: repeat(var(--kpi-cols, 7), minmax(0, 1fr)); } }
+@media (max-width: 632px) { #comp-flow { grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); flex: 1 1 100%; border-radius: 18px; } #comp-flow button { line-height: 1.25; } }
+@media (max-width: 1131px) {
+    #comp-table .opt { display: none; }
+    #comp-table .c-lv { width: 5%; } #comp-table .c-name { width: 16%; } #comp-table .c-inn { width: 10%; } #comp-table .c-reg { width: 11%; }
+    #comp-table .c-cats { width: 17%; } #comp-table .c-size { width: 10%; } #comp-table .c-ev { width: 17%; } #comp-table .c-marks { width: 14%; }
+  }
+@media (max-width: 931px) {
+    /* карточка: уровень и название; регион и ИНН; категории; подтверждение; размер; роль и отметки */
+    #comp-table, #comp-table thead, #comp-table tbody { display: block; }
+    #comp-table thead tr { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 0 6px; }
+    #comp-table th { display: block; position: static; background: none; }
+    #comp-table th button, #comp-table th.c-lv button { border: 1px solid var(--color-border-line); border-radius: 999px; padding: 4px 10px; }
+    #comp-table th:is(.c-inn, .c-cats, .c-okved, .c-marks) { display: none; }
+    #comp-table tbody tr { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 6px 8px; padding: 12px 2px;
+      grid-template-areas: "lv name name" ". reg inn" ". cats cats" ". ev ev" ". size size" ". marks marks"; border-top: 1px solid var(--color-border-line); }
+    #comp-table td { display: block; padding: 0; border: 0; text-align: left; }
+    #comp-table :is(th, td)[class] { width: auto; }  /* ширины колонок таблицы карточке не нужны */
+    #comp-table td[colspan] { grid-column: 1 / -1; }
+    #comp-table td.c-lv { grid-area: lv; } #comp-table td.c-name { grid-area: name; font-weight: 600; }
+    #comp-table td.c-name small { font-weight: 400; }
+    #comp-table td.c-reg { grid-area: reg; color: var(--color-fg-muted); } #comp-table td.c-inn { grid-area: inn; text-align: right; }
+    #comp-table td.c-cats { grid-area: cats; display: flex; flex-wrap: wrap; gap: 4px; }
+    #comp-table td.c-cats .rj-chip { display: inline-block; margin: 0; }
+    #comp-table td.c-okved { display: none; }
+    #comp-table td.c-ev { grid-area: ev; } #comp-table td.c-size { grid-area: size; color: var(--color-fg-muted); }
+    #comp-table td.c-marks { grid-area: marks; }
+    #comp-table td:is(.c-size, .c-marks) :is(small, .rj-status) { display: inline; margin: 0; }
+    #comp-table td.c-marks :is(small, .rj-status) + :is(small, .rj-status)::before, #comp-table td.c-size small::before { content: " · "; color: var(--color-fg-muted); font-weight: 400; }
+    #comp-table td.c-size small { color: inherit; }
+  }
+@media (max-width: 1111px) {
+    .rj-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .rj-panel > :is(h2, #seg-level, .rj-crumbs, .rj-sum, .rj-hint) { grid-column: 1 / -1; }
+  }
+@media (min-width: 852px) { .rj-grid2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+@media (min-width: 932px) { .rj-movers { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+@media (max-width: 931px) {
+    /* карточка: компания и российские компании; категории; годы и канал; присутствие в России */
+    #mk-table, #mk-table thead, #mk-table tbody { display: block; }
+    #mk-table thead tr { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 0 6px; }
+    #mk-table th { display: block; position: static; background: none; }
+    #mk-table th button { border: 1px solid var(--color-border-line); border-radius: 999px; padding: 4px 10px; }
+    #mk-table th.m-cats { display: none; }
+    #mk-table tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 12px; padding: 12px 2px;
+      grid-template-areas: "name partners" "cats cats" "years channel" "presence presence"; border-top: 1px solid var(--color-border-line); }
+    #mk-table tbody tr.rj-mrowd { display: block; border-top: 0; padding-top: 0; }
+    #mk-table td { display: block; padding: 0; border: 0; text-align: left; }
+    #mk-table :is(th, td)[class] { width: auto; }
+    #mk-table td.m-name { grid-area: name; } #mk-table td.m-partners { grid-area: partners; }
+    #mk-table td.m-cats { grid-area: cats; display: flex; flex-wrap: wrap; gap: 4px; }
+    #mk-table td.m-cats .rj-chip { display: inline-block; margin: 0; }
+    #mk-table td.m-years { grid-area: years; } #mk-table td.m-channel { grid-area: channel; } #mk-table td.m-presence { grid-area: presence; }
+    #mk-table td.m-presence .rj-status { display: inline; margin-right: 10px; }
+  }
+@media (min-width: 632px) { #au-kpis { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } }
+@media (min-width: 1132px) { #au-kpis { grid-template-columns: repeat(var(--kpi-cols, 10), minmax(0, 1fr)); } }
+@media (min-width: 1012px) { .rj-augrid { grid-template-columns: minmax(0, 1.2fr) minmax(340px, 1fr); } }
+@media (max-width: 1131px) {
+    #au-table .opt { display: none; }
+    #au-table .c-name { width: 22%; } #au-table .c-marks { width: 21%; } #au-table .c-size { width: 14%; }
+  }
+@media (max-width: 931px) {
+    /* карточка: сигналы и название; регион и ИНН; ОКВЭД; год начала; размер; признаки */
+    #au-table, #au-table thead, #au-table tbody { display: block; }
+    #au-table thead tr { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 0 6px; }
+    #au-table th { display: block; position: static; background: none; }
+    #au-table th button, #au-table th.c-lv button { border: 1px solid var(--color-border-line); border-radius: 999px; padding: 4px 10px; }
+    #au-table th:is(.c-inn, .c-marks) { display: none; }
+    #au-table tbody tr { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 6px 8px; padding: 12px 2px;
+      grid-template-areas: "lv name name" ". reg inn" ". okv okv" ". yr yr" ". size size" ". marks marks"; border-top: 1px solid var(--color-border-line); }
+    #au-table td { display: block; padding: 0; border: 0; text-align: left; }
+    #au-table :is(th, td)[class] { width: auto; }
+    #au-table td[colspan] { grid-column: 1 / -1; }
+    #au-table td.c-lv { grid-area: lv; } #au-table td.c-name { grid-area: name; font-weight: 600; }
+    #au-table td.c-name small { font-weight: 400; }
+    #au-table td.c-reg { grid-area: reg; color: var(--color-fg-muted); } #au-table td.c-inn { grid-area: inn; text-align: right; }
+    #au-table td.c-okved { grid-area: okv; display: block; } #au-table td.c-okved .rj-clamp2 { display: inline; margin-left: 6px; }
+    #au-table td.c-yr { grid-area: yr; color: var(--color-fg-muted); } #au-table td.c-yr b { font-weight: 400; color: var(--color-fg); }
+    #au-table td.c-size { grid-area: size; color: var(--color-fg-muted); } #au-table td.c-marks { grid-area: marks; }
+    #au-table td:is(.c-size, .c-marks, .c-yr) :is(small, .rj-status) { display: inline; margin: 0; }
+    #au-table td:is(.c-marks) :is(small, .rj-status) + :is(small, .rj-status)::before, #au-table td:is(.c-size, .c-yr) small::before { content: " · "; color: var(--color-fg-muted); font-weight: 400; }
+    #au-table td.c-size small { color: inherit; }
+  }
+@media (max-width: 632px) {
+    #au-kind { flex: 1 1 100%; }
+    .rj-auper { flex: 1 1 100%; }
+    #au-region, #au-search { flex: 1 1 100%; max-width: none; }
+  }
+}
 </style>
 </head>
 <body>
 <main id="dash-root">
-<link rel="stylesheet" href="style.css?v=22e8fb6a">
-
 <div class="rj" lang="ru">
   <header class="rj-head" id="top">
     <div class="rj-top">
@@ -89,7 +200,7 @@
         <button type="button" data-v="abs" data-i18n="unitAbs">Сумма</button>
         <button type="button" data-v="pct" data-i18n="unitPct">Проценты (%)</button>
       </div>
-      <select class="rj-period" id="period" data-i18n-aria="ariaPeriod" data-source="periods"></select>
+      <select class="rj-period" id="period" data-i18n-aria="ariaPeriod" data-src="periods"></select>
       <nav class="rj-crumbs" id="crumbs" data-i18n-aria="ariaFilter"></nav>
       <p class="rj-sum" id="summary"></p>
       <p class="rj-hint" data-i18n="hint">—</p>
@@ -98,15 +209,15 @@
     <section class="rj-maps" id="maps"><div class="rj-maps-grid">
       <figure class="rj-map" id="map-ru-jp">
         <h3 class="m-title">—</h3>
-        <div class="rj-total"><span class="m-total-label" data-i18n="total">Итого:</span> <b class="m-total dash-skeleton" data-source="views" data-field="value">—</b><span class="m-scope"></span></div>
-        <div class="rj-tm" data-source="views"></div>
+        <div class="rj-total"><span class="m-total-label" data-i18n="total">Итого:</span> <b class="m-total dash-skeleton" data-src="views" data-field="value">—</b><span class="m-scope"></span></div>
+        <div class="rj-tm" data-src="views"></div>
       </figure>
       <figure class="rj-map" id="map-jp-ru">
         <h3 class="m-title">—</h3>
-        <div class="rj-total"><span class="m-total-label" data-i18n="total">Итого:</span> <b class="m-total dash-skeleton" data-source="views" data-field="value">—</b><span class="m-scope"></span></div>
-        <div class="rj-tm" data-source="views"></div>
+        <div class="rj-total"><span class="m-total-label" data-i18n="total">Итого:</span> <b class="m-total dash-skeleton" data-src="views" data-field="value">—</b><span class="m-scope"></span></div>
+        <div class="rj-tm" data-src="views"></div>
       </figure>
-      <div class="rj-legend" id="legend" data-source="views"></div>
+      <div class="rj-legend" id="legend" data-src="views"></div>
     </div></section>
   </div></div>
 
@@ -120,11 +231,11 @@
     <section class="rj-card" id="trend">
       <h2 id="trend-title">—</h2>
       <p class="rj-note" id="trend-note">—</p>
-      <div class="rj-trend" id="trend-chart" data-source="trade products"></div>
+      <div class="rj-trend" id="trend-chart" data-src="trade products"></div>
     </section>
     <section class="rj-card" id="item">
       <h2 data-i18n="cardTitle">Карточка позиции</h2>
-      <div class="rj-item" id="item-body" data-source="trade ports offices products companies"></div>
+      <div class="rj-item" id="item-body" data-src="trade ports offices products"></div>
     </section>
   </div></div>
 
@@ -138,8 +249,8 @@
     </div>
     <p class="rj-note" id="port-note">—</p>
     <div class="rj-ports-grid">
-      <div class="rj-pmap" id="port-map" data-source="ports offices basemap"></div>
-      <div class="rj-plist" id="port-list" data-source="ports offices products"></div>
+      <div class="rj-pmap" id="port-map" data-src="ports offices basemap"></div>
+      <div class="rj-plist" id="port-list" data-src="ports offices products"></div>
     </div>
   </section>
 
@@ -156,7 +267,7 @@
     <nav class="rj-crumbs rj-nav" id="table-crumbs" data-i18n-aria="ariaFilter"></nav>
     <p class="rj-note" id="table-note">—</p>
     <div class="rj-tablebox">
-      <table class="rj-table" id="table" data-source="views" data-row-key="key">
+      <table class="rj-table" id="table" data-src="views" data-row-key="key">
         <thead><tr>
           <th class="l" data-field="code"><button type="button" data-sort="code" data-i18n="thCode">Код</button></th>
           <th class="l" data-field="name_ru" id="th-name"><button type="button" data-sort="name" data-i18n="thName">Товар</button></th>
@@ -199,7 +310,7 @@
         <button type="button" data-v="jpy">JPY</button>
       </div>
     </div>
-    <div class="rj-dper" id="dy-period" data-source="trade">
+    <div class="rj-dper" id="dy-period" data-src="trade">
       <span data-i18n="per">—</span>
       <select id="dy-a0" data-i18n-aria="ariaA0"></select><span>—</span><select id="dy-a1" data-i18n-aria="ariaA1"></select>
       <span data-i18n="vs">—</span>
@@ -229,9 +340,9 @@
       </div>
       <div class="rj-crumbs" id="dy-scope"></div>
     </div>
-    <p class="rj-take" id="dy-summary" data-source="trade">—</p>
+    <p class="rj-take" id="dy-summary" data-src="trade">—</p>
     <div class="rj-cq">
-      <div class="rj-movers" id="dy-lists" data-source="trade products companies">
+      <div class="rj-movers" id="dy-lists" data-src="trade products companies">
         <section class="rj-card rj-mlist" id="dy-up">
           <h2 class="up" data-i18n="up">—</h2>
           <p class="rj-note">—</p>
@@ -254,13 +365,13 @@
       <p class="rj-take" data-i18n="stIntro">—</p>
     </div>
     <div class="rj-tools rj-ctools">
-      <select class="rj-period rj-csel" id="st-year" data-i18n-aria="ariaYear" data-source="settlements"></select>
+      <select class="rj-period rj-csel" id="st-year" data-i18n-aria="ariaYear" data-src="settlements"></select>
       <div class="rj-seg rj-stcur" role="group" data-i18n-aria="ariaCur" id="st-cur">
         <button type="button" data-v="usd">USD</button>
         <button type="button" data-v="jpy">JPY</button>
       </div>
     </div>
-    <div class="rj-kpis" id="st-kpis" data-source="settlements"></div>
+    <div class="rj-kpis" id="st-kpis" data-src="settlements"></div>
     <section class="rj-card" id="st-current">
       <div class="rj-tools">
         <h2 data-i18n="c1Title">—</h2>
@@ -271,41 +382,41 @@
       </div>
       <p class="rj-note" id="st-current-note">—</p>
       <div class="rj-keys" id="st-current-keys"></div>
-      <div class="rj-chart" id="st-current-chart" data-source="settlements"></div>
+      <div class="rj-chart" id="st-current-chart" data-src="settlements"></div>
     </section>
     <section class="rj-card" id="st-items-card">
       <h2 id="st-items-title">—</h2>
       <p class="rj-note" data-i18n="c2Note">—</p>
-      <div class="rj-dlist" id="st-items" data-source="settlements"></div>
+      <div class="rj-dlist" id="st-items" data-src="settlements"></div>
     </section>
     <section class="rj-card rj-cq" id="st-fdi">
       <h2 data-i18n="c3Title">—</h2>
-      <p class="rj-note" id="st-fdi-note" data-source="settlements">—</p>
+      <p class="rj-note" id="st-fdi-note" data-src="settlements">—</p>
       <div class="rj-grid2">
         <figure class="rj-fig">
           <figcaption data-i18n="c3aTitle">—</figcaption>
-          <div class="rj-chart" id="st-fdi-flow" data-source="settlements"></div>
+          <div class="rj-chart" id="st-fdi-flow" data-src="settlements"></div>
           <p class="rj-hint" id="st-fdi-hint"></p>
         </figure>
         <figure class="rj-fig">
           <figcaption data-i18n="c3bTitle">—</figcaption>
           <div class="rj-keys" id="st-pos-keys"></div>
-          <div class="rj-chart" id="st-fdi-pos" data-source="settlements"></div>
+          <div class="rj-chart" id="st-fdi-pos" data-src="settlements"></div>
         </figure>
       </div>
     </section>
     <section class="rj-card rj-cq" id="st-ccy-card">
       <h2 data-i18n="c4Title">—</h2>
-      <p class="rj-note" id="st-ccy-note" data-source="settlements">—</p>
+      <p class="rj-note" id="st-ccy-note" data-src="settlements">—</p>
       <div class="rj-keys" id="st-ccy-keys"></div>
       <div class="rj-grid2">
-        <figure class="rj-fig"><figcaption data-i18n="c4Imp">—</figcaption><div class="rj-chart" id="st-ccy-imp" data-source="settlements"></div></figure>
-        <figure class="rj-fig"><figcaption data-i18n="c4Exp">—</figcaption><div class="rj-chart" id="st-ccy-exp" data-source="settlements"></div></figure>
+        <figure class="rj-fig"><figcaption data-i18n="c4Imp">—</figcaption><div class="rj-chart" id="st-ccy-imp" data-src="settlements"></div></figure>
+        <figure class="rj-fig"><figcaption data-i18n="c4Exp">—</figcaption><div class="rj-chart" id="st-ccy-exp" data-src="settlements"></div></figure>
       </div>
     </section>
     <section class="rj-card rj-insights" id="st-insights-card">
       <h2 data-i18n="c5Title">—</h2>
-      <ul id="st-insights" data-source="settlements"></ul>
+      <ul id="st-insights" data-src="settlements"></ul>
     </section>
     <div class="rj-card rj-sources" id="st-sources">
       <h2 data-i18n="srcTitleS">—</h2>
@@ -318,33 +429,33 @@
       <h2 data-i18n="compTitle">—</h2>
       <p class="rj-take" data-i18n="compIntro">—</p>
     </div>
-    <div class="rj-kpis rj-ckpis" id="comp-kpis" data-source="companies"></div>
+    <div class="rj-kpis rj-ckpis" id="comp-kpis" data-src="companies"></div>
     <div class="rj-tools rj-ctools">
-      <div class="rj-seg" role="group" data-i18n-aria="compDir" id="comp-flow" data-source="companies">
+      <div class="rj-seg" role="group" data-i18n-aria="compDir" id="comp-flow" data-src="companies">
         <button type="button" data-v="all">—</button>
         <button type="button" data-v="ru_jp">—</button>
         <button type="button" data-v="jp_ru">—</button>
         <button type="button" data-v="jp_office">—</button>
       </div>
-      <div class="rj-seg rj-lvseg" role="group" data-i18n-aria="compLevel" id="comp-level" data-source="companies" data-field="level">
+      <div class="rj-seg rj-lvseg" role="group" data-i18n-aria="compLevel" id="comp-level" data-src="companies" data-field="level">
         <button type="button" data-v="">—</button>
         <button type="button" data-v="A">—</button>
         <button type="button" data-v="B">—</button>
         <button type="button" data-v="C">—</button>
       </div>
       <span class="rj-break" aria-hidden="true"></span>
-      <select class="rj-period rj-csel" id="comp-cat" data-i18n-aria="compCat" data-source="companies products"></select>
-      <select class="rj-period rj-csel" id="comp-region" data-i18n-aria="compRegion" data-source="companies"></select>
+      <select class="rj-period rj-csel" id="comp-cat" data-i18n-aria="compCat" data-src="companies products"></select>
+      <select class="rj-period rj-csel" id="comp-region" data-i18n-aria="compRegion" data-src="companies"></select>
       <input class="rj-search" id="comp-search" type="search" data-i18n-ph="compSearch" data-i18n-aria="compSearch">
       <button type="button" class="rj-chip rj-keychip" id="comp-keys" data-i18n-title="mkFilterClear" hidden>—</button>
     </div>
     <div class="rj-cnote">
-      <p class="rj-note" id="comp-cat-note" data-source="views">—</p>
+      <p class="rj-note" id="comp-cat-note" data-src="views">—</p>
       <button type="button" class="rj-linkbtn" id="comp-legend-btn" aria-expanded="false" aria-controls="comp-legend">—</button>
     </div>
     <div class="rj-card rj-clegend" id="comp-legend" hidden></div>
     <div class="rj-tablebox rj-cbox">
-      <table class="rj-table rj-ctable" id="comp-table" data-source="companies" data-row-key="key">
+      <table class="rj-table rj-ctable" id="comp-table" data-src="companies" data-row-key="key">
         <thead><tr>
           <th class="c-lv" data-field="level"><button type="button" data-csort="level" data-i18n-title="cLevelTip">A–C</button></th>
           <th class="l c-name" data-field="name"><button type="button" data-csort="name" data-i18n="cName">Компания</button></th>
@@ -359,7 +470,7 @@
         <tbody></tbody>
       </table>
     </div>
-    <button type="button" class="rj-btn rj-more" id="comp-more" data-source="companies" hidden>—</button>
+    <button type="button" class="rj-btn rj-more" id="comp-more" data-src="companies" hidden>—</button>
     <div class="rj-card rj-sources" id="comp-sources">
       <h2 data-i18n="srcTitle">—</h2>
       <ul id="comp-sources-list"></ul>
@@ -371,18 +482,18 @@
       <h2 data-i18n="mkTitle">—</h2>
       <p class="rj-take" data-i18n="mkIntro">—</p>
     </div>
-    <div class="rj-kpis rj-ckpis" id="mk-kpis" data-source="makers maker_links"></div>
+    <div class="rj-kpis rj-ckpis" id="mk-kpis" data-src="makers maker_links"></div>
     <div class="rj-tools rj-ctools">
-      <span class="rj-mkyears" data-source="maker_links" data-field="year">
+      <span class="rj-mkyears" data-src="maker_links" data-field="year">
         <span data-i18n="mkYears">—</span>
         <select class="rj-period" id="mk-y0" data-i18n-aria="mkY0"></select><span aria-hidden="true">—</span><select class="rj-period" id="mk-y1" data-i18n-aria="mkY1"></select>
       </span>
-      <select class="rj-period rj-csel" id="mk-cat" data-i18n-aria="compCat" data-source="maker_links products"></select>
+      <select class="rj-period rj-csel" id="mk-cat" data-i18n-aria="compCat" data-src="maker_links products"></select>
       <input class="rj-search" id="mk-search" type="search" data-i18n-ph="mkSearch" data-i18n-aria="mkSearch">
     </div>
-    <p class="rj-note" id="mk-note" data-source="maker_links views">—</p>
+    <p class="rj-note" id="mk-note" data-src="maker_links views">—</p>
     <div class="rj-tablebox rj-cbox">
-      <table class="rj-table rj-ctable" id="mk-table" data-source="makers maker_links" data-row-key="group">
+      <table class="rj-table rj-ctable" id="mk-table" data-src="makers maker_links" data-row-key="group">
         <thead><tr>
           <th class="l m-name" data-field="group_name"><button type="button" data-msort="name" data-i18n="mName">—</button></th>
           <th class="l m-cats" data-field="hs4"><button type="button" data-msort="cats" data-i18n="cCats">—</button></th>
@@ -405,16 +516,16 @@
   <section class="rj-page" id="autos" hidden>
     <div class="rj-head2 rj-chead">
       <h2 data-i18n="auTitle">—</h2>
-      <p class="rj-take" id="au-intro" data-source="trade products autos">—</p>
+      <p class="rj-take" id="au-intro" data-src="trade products autos">—</p>
     </div>
-    <div class="rj-kpis rj-ckpis" id="au-kpis" data-source="autos"></div>
+    <div class="rj-kpis rj-ckpis" id="au-kpis" data-src="autos"></div>
     <div class="rj-tools rj-ctools rj-autools">
-      <div class="rj-seg" role="group" data-i18n-aria="auKindAria" id="au-kind" data-source="autos" data-field="kind">
+      <div class="rj-seg" role="group" data-i18n-aria="auKindAria" id="au-kind" data-src="autos" data-field="kind">
         <button type="button" data-v="all">—</button>
         <button type="button" data-v="ip">—</button>
         <button type="button" data-v="ul">—</button>
       </div>
-      <div class="rj-auper" role="group" data-i18n-aria="auPeriodAria" id="au-period" data-source="autos" data-field="reg_year ip_since">
+      <div class="rj-auper" role="group" data-i18n-aria="auPeriodAria" id="au-period" data-src="autos" data-field="reg_year ip_since">
         <span class="rj-aulbl" data-i18n="auSince">—</span>
         <select class="rj-period rj-ysel" id="au-y0" data-i18n-aria="auFrom"></select>
         <span aria-hidden="true">–</span>
@@ -427,25 +538,25 @@
         <label class="rj-aucut"><span data-i18n="auCut">—</span> <select class="rj-period rj-ysel" id="au-cut"></select></label>
       </div>
       <span class="rj-break" aria-hidden="true"></span>
-      <select class="rj-period rj-csel" id="au-region" data-i18n-aria="compRegion" data-source="autos"></select>
+      <select class="rj-period rj-csel" id="au-region" data-i18n-aria="compRegion" data-src="autos"></select>
       <input class="rj-search" id="au-search" type="search" data-i18n-ph="auSearch" data-i18n-aria="auSearch">
     </div>
     <div class="rj-aufilters" id="au-filters" aria-live="polite"></div>
     <div class="rj-augrid">
       <section class="rj-card rj-aumap">
         <h2 data-i18n="auMapTitle">—</h2>
-        <div class="rj-aumapbox" id="au-map" data-source="autos dfomap ports products offices"></div>
+        <div class="rj-aumapbox" id="au-map" data-src="autos dfomap ports products offices"></div>
         <p class="rj-note" id="au-map-note">—</p>
       </section>
       <div class="rj-auside">
       <section class="rj-card rj-auokv">
         <h2 data-i18n="auOkvedTitle">—</h2>
         <nav class="rj-crumbs" id="au-okved-crumbs" data-i18n-aria="auOkvedTitle"></nav>
-        <div class="rj-plist" id="au-okved" data-source="autos" data-field="okved"></div>
+        <div class="rj-plist" id="au-okved" data-src="autos" data-field="okved"></div>
       </section>
       <section class="rj-card rj-auyrs">
         <h2 data-i18n="auYearsTitle">—</h2>
-        <div class="rj-auhist" id="au-years" data-source="autos" data-field="reg_year ip_since"></div>
+        <div class="rj-auhist" id="au-years" data-src="autos" data-field="reg_year ip_since"></div>
         <p class="rj-note" id="au-years-note">—</p>
       </section>
       </div>
@@ -456,7 +567,7 @@
     </div>
     <div class="rj-card rj-clegend" id="au-legend" hidden></div>
     <div class="rj-tablebox rj-cbox">
-      <table class="rj-table rj-ctable" id="au-table" data-source="autos" data-row-key="key">
+      <table class="rj-table rj-ctable" id="au-table" data-src="autos" data-row-key="key">
         <thead><tr>
           <th class="c-lv" data-field="flags country sheet"><button type="button" data-asort="score" data-i18n="auScore" data-i18n-title="auScoreTip">—</button></th>
           <th class="l c-name" data-field="name"><button type="button" data-asort="name" data-i18n="cName">Компания</button></th>
@@ -470,7 +581,7 @@
         <tbody></tbody>
       </table>
     </div>
-    <button type="button" class="rj-btn rj-more" id="au-more" data-source="autos" hidden>—</button>
+    <button type="button" class="rj-btn rj-more" id="au-more" data-src="autos" hidden>—</button>
     <div class="rj-card rj-sources">
       <h2 data-i18n="srcTitle">—</h2>
       <ul id="au-sources"></ul>
@@ -485,17 +596,72 @@
 
 </main>
 <script>
-  // Замена объекта `dash` платформы Claude: те же методы, данные — из файлов site/data/.
+  // Замена объекта `dash` платформы Claude: те же методы, данные — из файлов site/data/. Набор грузится при первом
+  // обращении к нему (dash.data), расчёт (dash.calc) — когда загружены его входы; после каждого файла — перерисовка.
   (function () {
-    const files = {trade: 'trade.csv', products: 'products.csv', ports: 'ports.csv', offices: 'offices.csv', basemap: 'basemap.json', companies: 'companies.csv', settlements: 'settlements.csv', makers: 'makers.csv', maker_links: 'maker_links.csv', autos: 'autos.csv', dfomap: 'dfomap.json'}, ver = {trade: 'e1f1a601', products: '060802da', ports: '3c42e14f', offices: '71b7bc91', basemap: 'c82f4e77', companies: '6e5ec217', settlements: '5fd1d049', makers: '477cffbe', maker_links: '8ca5c765', autos: '3feee6c8', dfomap: '8999ccdf'};  // ver — метки версий файлов данных: новый файл не берётся из кэша браузера
-    const store = {}, status = {}, calcs = {}, order = [], handlers = [];
+    const files = {trade: 'trade.csv', products: 'products.csv', ports: 'ports.csv', offices: 'offices.csv', basemap: 'basemap.json', companies: 'companies.csv', settlements: 'settlements.csv', makers: 'makers.csv', maker_links: 'maker_links.csv', autos: 'autos.csv', dfomap: 'dfomap.json'}, ver = {trade: 'e1f1a601', products: 'ac2af64f', ports: '3c42e14f', offices: '71b7bc91', basemap: 'c82f4e77', companies: '6e5ec217', settlements: '5fd1d049', makers: '6aca7552', maker_links: '6ca82268', autos: '3feee6c8', dfomap: '8999ccdf'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4944705, settlements: 139551, makers: 553160, maker_links: 1330148, autos: 4722767, dfomap: 224211};  // ver — метки версий файлов: новый файл не берётся из кэша браузера; size — байты (для полоски)
+    const store = {}, status = {}, calcs = {}, order = [], handlers = [], loads = {}, got = {};
     const run = () => handlers.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
+    // полоска загрузки: доля полученных байтов у файлов, которые сейчас идут
+    const LOAD_T = { ru: (a, b) => `Загрузка данных: ${a} из ${b} МБ`, en: (a, b) => `Loading data: ${a} of ${b} MB`, ja: (a, b) => `データを読み込み中：${a} / ${b} MB` };
+    let bar = null;
+    const progress = () => {
+      const ids = Object.keys(loads).filter((id) => id in files && !(id in store) && status[id] !== 'error');
+      if (!ids.length) { if (bar) bar.hidden = true; return; }
+      if (!bar) { bar = document.createElement('div'); bar.className = 'dash-load'; bar.setAttribute('role', 'status'); bar.append(document.createElement('i'), document.createElement('span')); document.body.append(bar); }
+      const all = ids.reduce((a, id) => a + size[id], 0), done = ids.reduce((a, id) => a + Math.min(got[id] || 0, size[id]), 0);
+      const lang = document.documentElement.lang in LOAD_T ? document.documentElement.lang : 'ru', mb = (b) => (b / 1e6).toFixed(1);
+      bar.hidden = false;
+      bar.firstChild.style.width = (100 * done / all).toFixed(1) + '%';
+      bar.lastChild.textContent = LOAD_T[lang](lang === 'ru' ? mb(done).replace('.', ',') : mb(done), lang === 'ru' ? mb(all).replace('.', ',') : mb(all));
+    };
+    const ready = (id) => id in store || (id in calcs && calcs[id].inputs.every(ready));
+    const failedIn = (id) => status[id] === 'error' || (id in calcs && calcs[id].inputs.some(failedIn));
+    const compute = (id) => {
+      if (id in store || status[id] === 'error') return;
+      const c = calcs[id];
+      c.inputs.forEach((i) => { if (i in calcs) compute(i); });
+      if (!c.inputs.every((i) => i in store)) return;
+      try { store[id] = c.fn(...c.inputs.map((i) => store[i])); } catch (e) { status[id] = 'error'; console.error('calc', id, e); }
+    };
+    async function load(id) {
+      const f = files[id];
+      try {
+        const r = await fetch('data/' + f + '?v=' + ver[id]);
+        if (!r.ok) throw new Error(r.status);
+        let t;
+        if (r.body && r.body.getReader) {
+          const reader = r.body.getReader(), parts = [];
+          got[id] = 0;
+          for (;;) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            parts.push(value); got[id] += value.length; progress();
+          }
+          const buf = new Uint8Array(got[id]);
+          let o = 0; for (const p of parts) { buf.set(p, o); o += p.length; }
+          t = new TextDecoder().decode(buf);
+        } else t = await r.text();
+        store[id] = f.endsWith('.json') ? JSON.parse(t) : d3.csvParse(t);
+      } catch (e) { status[id] = 'error'; console.error('data', id, e); }
+      progress();
+      for (const c of order) if (c in loads) compute(c);  // расчёты, которые уже спрашивали
+      run();
+    }
+    const want = (id) => {
+      if (id in loads) return;
+      loads[id] = true;
+      if (id in files) { load(id); progress(); } else if (id in calcs) calcs[id].inputs.forEach(want);
+    };
     window.dash = {
       // в тёмной теме оранжевый на шаг темнее: иначе он светлее допустимого для меток на тёмном фоне
       colors: ['#2f6fdf', matchMedia('(prefers-color-scheme: dark)').matches ? '#d9701a' : '#e07a1f', '#2a9d8f', '#9b5de5', '#e63946', '#457b9d', '#f4a261', '#6c757d'],
       data(id) {
+        if (!(id in files) && !(id in calcs)) return { status: 'missing', data: [], meta: [], refreshing: false };
+        want(id);
+        if (id in calcs && ready(id)) compute(id);
         if (id in store) return { status: 'ok', data: store[id], meta: [], refreshing: false };
-        return { status: status[id] || 'loading', data: [], meta: [], refreshing: false };
+        return { status: failedIn(id) ? 'error' : 'loading', data: [], meta: [], refreshing: false };
       },
       calc(id, def) { calcs[id] = def; order.push(id); },
       loader() {},
@@ -503,24 +669,20 @@
       params() { return {}; }, setParams() {}, resetParams() {}, refresh() {},
       setLink(name) { try { history.replaceState(null, '', '#' + name); } catch (e) { /* file:// */ } },
     };
-    window.__loadDashData = async () => {
-      await Promise.all(Object.entries(files).map(async ([id, f]) => {
-        try {
-          const r = await fetch('data/' + f + '?v=' + ver[id]);
-          if (!r.ok) throw new Error(r.status);
-          const t = await r.text();
-          store[id] = f.endsWith('.json') ? JSON.parse(t) : d3.csvParse(t);
-        } catch (e) { status[id] = 'error'; console.error('data', id, e); }
-      }));
-      // расчёты по порядку объявления: каждый получает строки своих входов
-      for (const id of order) {
-        const c = calcs[id];
-        if (c.inputs.every((i) => i in store)) {
-          try { store[id] = c.fn(...c.inputs.map((i) => store[i])); } catch (e) { status[id] = 'error'; console.error('calc', id, e); }
-        } else status[id] = 'error';
-      }
-      run();
+    // ссылка на лист с языком и фильтрами: страница пишет её сама; push — новая запись истории (другой лист)
+    let shown = location.hash;  // ссылка, которую показывает страница: «Назад» и смена #… вручную меняют её
+    window.RJ_LINK = {
+      set(hash, push, title, lang) {
+        if (title) document.title = title;
+        if (lang) document.documentElement.lang = lang;
+        if (hash === location.hash) return;
+        try { history[push ? 'pushState' : 'replaceState'](null, '', hash); } catch (e) { /* file:// или слишком частые вызовы */ }
+        shown = location.hash;
+      },
+      // «Назад», «Вперёд» и смена #… вручную (браузер присылает и popstate, и hashchange — страница перерисовывается один раз)
+      listen(fn) { const on = () => { if (location.hash !== shown) { shown = location.hash; fn(location.hash); } }; addEventListener('popstate', on); addEventListener('hashchange', on); },
     };
+    window.__dashStarted = () => handlers.length > 0;
   })();
 </script>
 <script>
@@ -667,6 +829,8 @@
   const unitName = (u) => (UNITS[u] ? UNITS[u][li()] : u);
   const flowName = (f) => L().flows[f];
   const compose = (container, parts) => container.replaceChildren(...parts.map((x) => (typeof x === 'string' ? document.createTextNode(x) : x)));
+  // перерисовка после паузы: поиск не пересобирает лист на каждую букву
+  const later = (fn, ms = 200) => { let t = null; return () => { clearTimeout(t); t = setTimeout(fn, ms); }; };
 
   const fmtUsd = (v) => {
     const a = Math.abs(v);
@@ -826,7 +990,8 @@
   $('#period').addEventListener('change', (e) => { st.period = e.target.value; st.port = null; draw(); });
   $('#tabs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.tab = b.dataset.v; drawTable(); segs(); } });
   $('#port-tabs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && !st.sel) { st.portFlow = b.dataset.v; st.port = null; drawPorts(); segs(); } });
-  $('#search').addEventListener('input', (e) => { st.q = e.target.value.trim().toLowerCase(); drawTable(); });
+  const drawTableLater = later(() => drawTable());
+  $('#search').addEventListener('input', (e) => { st.q = e.target.value.trim().toLowerCase(); drawTableLater(); });
   $('#table').querySelector('thead').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-sort]'); if (!b) return;
     if (st.sort === b.dataset.sort) st.dir = -st.dir; else { st.sort = b.dataset.sort; st.dir = ['code', 'name'].includes(st.sort) ? 1 : -1; }
@@ -1236,8 +1401,11 @@
     }
     leads.append(el('p', 'rj-note', L().sanctions));
     body.append(leads);
-    const comps = companiesFor(s.code, s.flow);
-    if (comps.length) {
+    // компании категории: companies.csv грузится, только когда выбран товар (до этого — место под кнопку)
+    const cd = dash.data('companies'), comps = companiesFor(s.code, s.flow);
+    body.dataset.source = 'trade ports offices products companies';
+    if (cd.status === 'loading' && !s.code.includes('X') && !s.code.startsWith('00')) body.append(el('span', 'rj-btn pick dash-skeleton', L().compInCat(0)));
+    else if (comps.length) {
       const b = el('button', 'rj-btn pick', L().compInCat(comps.length)); b.type = 'button';
       b.addEventListener('click', () => openCompanies(s.flow, s.code));
       body.append(b);
@@ -1473,9 +1641,11 @@
   }
   // ---- pages ----
   const PAGES = ['about', 'trade', 'dynamics', 'settlements', 'companies', 'makers', 'autos'];
-  st.page = PAGES.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'trade';
+  st.page = PAGES.includes(location.hash.slice(1).split('?')[0]) ? location.hash.slice(1).split('?')[0] : 'trade';
   function setPageVisibility() {
     PAGES.forEach((p) => { $('#' + p).hidden = p !== st.page; $('#tab-' + p).setAttribute('aria-selected', String(p === st.page)); });
+    // метки источников листа включаются, когда он показан: на платформе метка data-source грузит свой набор и на скрытом листе
+    $('#' + st.page).querySelectorAll('[data-src]').forEach((e) => { e.dataset.source = e.dataset.src; e.removeAttribute('data-src'); });
     // на телефоне вкладки — строка с прокруткой вбок: выбранная вкладка всегда в середине строки (прокручивается только строка)
     const nav = $('#pages'), tab = $('#tab-' + st.page);
     if (nav.scrollWidth > nav.clientWidth) nav.scrollLeft += tab.getBoundingClientRect().left - nav.getBoundingClientRect().left - (nav.clientWidth - tab.offsetWidth) / 2;
@@ -1483,7 +1653,7 @@
   function showPage(id) {
     st.page = id;
     setPageVisibility();
-    dash.setLink(id);
+    syncLink(true);  // другой лист — новая запись истории: «Назад» в браузере возвращает на прежний
     draw();
     root.scrollIntoView({ block: 'start' });
   }
@@ -1492,13 +1662,14 @@
     setPageVisibility();
     if (st.page === 'trade') { drawTrade(); return; }
     if (st.page === 'settlements') { drawSettlements(); return; }
+    if (st.page === 'about') { drawAbout(); return; }  // «Описанию» данные не нужны
     const v = dash.data('views'), p = dash.data('periods');
     if (v.status === 'ok' && p.status === 'ok') {
       index(v.data, p.data);
       if (!st.period || !idx.periods.has(st.period)) st.period = p.data[0].period;
     }
     if (dash.data('trade').status === 'ok' && dash.data('products').status === 'ok') tradeIndex(dash.data('trade').data, dash.data('products').data);
-    if (st.page === 'about') drawAbout(); else if (st.page === 'dynamics') drawDynamics(); else if (st.page === 'makers') drawMakers(); else if (st.page === 'autos') drawAutos(); else drawCompanies();
+    if (st.page === 'dynamics') drawDynamics(); else if (st.page === 'makers') drawMakers(); else if (st.page === 'autos') drawAutos(); else drawCompanies();
   }
 
   function drawAbout() {
@@ -1609,7 +1780,8 @@
   $('#comp-legend-btn').addEventListener('click', () => { $('#comp-legend').hidden = !$('#comp-legend').hidden; drawCompLegend(); });
   $('#comp-cat').addEventListener('change', (e) => { cst.cat = e.target.value; cst.limit = COMP_PAGE; drawCompanies(); });
   $('#comp-region').addEventListener('change', (e) => { cst.region = e.target.value; cst.limit = COMP_PAGE; drawCompanies(); });
-  $('#comp-search').addEventListener('input', (e) => { cst.q = e.target.value.trim().toLowerCase(); cst.limit = COMP_PAGE; drawCompanies(); });
+  const drawCompaniesLater = later(() => drawCompanies());
+  $('#comp-search').addEventListener('input', (e) => { cst.q = e.target.value.trim().toLowerCase(); cst.limit = COMP_PAGE; drawCompaniesLater(); });
   $('#comp-more').addEventListener('click', () => { cst.limit += COMP_PAGE; drawCompanies(); });
   // цифра шапки оставляет в таблице только компании с её признаком; повторный клик или цифра «компаний» — снова все
   // цифры рисуются заново, поэтому фокус клавиатуры возвращается на ту же цифру (или на первую, если та стала обычной цифрой)
@@ -1971,7 +2143,8 @@
   $('#mk-y0').addEventListener('change', (e) => { mst.y0 = e.target.value; if (mst.y1 && mst.y0 > mst.y1) mst.y1 = mst.y0; mst.limit = MK_PAGE; drawMakers(); });
   $('#mk-y1').addEventListener('change', (e) => { mst.y1 = e.target.value; if (mst.y0 && mst.y1 < mst.y0) mst.y0 = mst.y1; mst.limit = MK_PAGE; drawMakers(); });
   $('#mk-cat').addEventListener('change', (e) => { mst.cat = e.target.value; mst.limit = MK_PAGE; drawMakers(); });
-  $('#mk-search').addEventListener('input', (e) => { mst.q = e.target.value.trim().toLowerCase(); mst.limit = MK_PAGE; drawMakers(); });
+  const drawMakersLater = later(() => drawMakers());
+  $('#mk-search').addEventListener('input', (e) => { mst.q = e.target.value.trim().toLowerCase(); mst.limit = MK_PAGE; drawMakersLater(); });
   $('#mk-more').addEventListener('click', () => { mst.limit += MK_PAGE; drawMakers(); });
   $('#mk-kpis').addEventListener('click', (e) => {
     const b = e.target.closest('button.rj-kpi'); if (!b || b.disabled) return;
@@ -2319,7 +2492,8 @@
     drawAutos();
   });
   $('#au-region').addEventListener('change', (e) => { ast.region = e.target.value; ast.city = ''; ast.limit = AU_PAGE; drawAutos(); });
-  $('#au-search').addEventListener('input', (e) => { ast.q = e.target.value.trim().toLowerCase(); ast.limit = AU_PAGE; drawAutos(); });
+  const drawAutosLater = later(() => drawAutos());
+  $('#au-search').addEventListener('input', (e) => { ast.q = e.target.value.trim().toLowerCase(); ast.limit = AU_PAGE; drawAutosLater(); });
   $('#au-more').addEventListener('click', () => { ast.limit += AU_PAGE; drawAutos(); });
   $('#au-legend-btn').addEventListener('click', () => { $('#au-legend').hidden = !$('#au-legend').hidden; drawAuLegend(); });
   $('#au-kpis').addEventListener('click', (e) => {
@@ -2603,11 +2777,20 @@
   }
 
   // карта регионов листа: регионы — цветом по числу ИП и компаний, города — кругами, порты Японии — вывоз подержанных машин в Россию
+  // смешение цветов для заливки регионов: color-mix — с весны 2023 г.; в старых браузерах — d3 по вычисленным цветам
+  const canMix = !!(window.CSS && CSS.supports && CSS.supports('color', 'color-mix(in srgb, red, blue)'));
+  let auMapSig = '';
   function drawAuMap(items) {
     const box = $('#au-map'), md = dash.data('dfomap');
-    box.replaceChildren();
-    if (md.status !== 'ok') { if (md.status === 'error') failed(box); else box.classList.add('dash-skeleton'); return; }
+    if (md.status !== 'ok') { auMapSig = ''; box.replaceChildren(); if (md.status === 'error') failed(box); else box.classList.add('dash-skeleton'); return; }
     box.classList.remove('dash-skeleton');
+    // карта пересобирается, только когда меняются её числа, выбор, язык, валюта или ширина (не при сортировке и «показать ещё»)
+    const forReg = auFilter(items, 'region', 'city'), forCity = auFilter(items, 'city'), up = usedPorts();
+    const byReg = d3.rollup(forReg, (v) => v.length, (x) => x.r.region_code), byCity = d3.rollup(forCity, (v) => v.length, (x) => x.ck);
+    const sig = [md.data.length, st.lang, st.cur, box.clientWidth, ast.region, ast.city, up ? up.total : '', [...byReg].join(), [...byCity].join()].join('|');
+    if (sig === auMapSig && box.querySelector('svg')) return;
+    auMapSig = sig;
+    box.replaceChildren();
     const rows = md.data, proj = rows.find((r) => r.kind === 'proj'), W = +proj.w, H = +proj.h;
     const svg = d3.select(box).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('width', '100%').attr('role', 'img').attr('aria-label', L().auMapAria);
     svg.append('rect').attr('width', W).attr('height', H).style('fill', 'var(--rj-sea)');
@@ -2626,9 +2809,9 @@
       .on('click', (event, d) => fn(d)).on('keydown', (event, d) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); fn(d); } })
       .on('mouseleave blur', () => { tip.hidden = true; });
     // регионы
-    const byReg = d3.rollup(auFilter(items, 'region', 'city'), (v) => v.length, (x) => x.r.region_code);
-    const maxR = d3.max(byReg.values()) || 1;
-    const shade = (v) => (v ? `color-mix(in srgb, ${dash.colors[0]} ${Math.round(10 + 55 * Math.sqrt(v / maxR))}%, var(--rj-land))` : 'var(--rj-land)');
+    const maxR = d3.max(byReg.values()) || 1, land = canMix ? '' : getComputedStyle(box).getPropertyValue('--rj-land').trim() || '#fff';
+    const pct = (v) => Math.round(10 + 55 * Math.sqrt(v / maxR));
+    const shade = (v) => (!v ? 'var(--rj-land)' : canMix ? `color-mix(in srgb, ${dash.colors[0]} ${pct(v)}%, var(--rj-land))` : d3.interpolateRgb(land, dash.colors[0])(pct(v) / 100));
     const regs = rows.filter((r) => r.kind === 'region').map((r) => ({ ...r, n: byReg.get(r.id) || 0 }));
     const rg = svg.append('g').selectAll('path').data(regs).join('path').attr('d', (r) => r.d)
       .attr('class', (r) => 'rj-aureg' + (ast.region === r.id ? ' sel' : '')).style('fill', (r) => shade(r.n))
@@ -2636,7 +2819,7 @@
     press(rg, (r) => { ast.region = ast.region === r.id ? '' : r.id; ast.city = ''; ast.limit = AU_PAGE; drawAutos(); })
       .on('mousemove focus', (event, r) => showTip(event, [regionName(r.id), L().auMapN(fmtInt(r.n)), L().auMapRegionHint], [+r.x, +r.y]));
     // порты Японии: вывоз подержанных машин в Россию за 12 месяцев
-    const up = usedPorts(), ports = up ? rows.filter((r) => r.kind === 'jpport').map((r) => ({ ...r, v: up.by.get(r.id) || 0, off: up.off.get(r.id) })).filter((p) => p.v > 0) : [];
+    const ports = up ? rows.filter((r) => r.kind === 'jpport').map((r) => ({ ...r, v: up.by.get(r.id) || 0, off: up.off.get(r.id) })).filter((p) => p.v > 0) : [];
     const maxP = d3.max(ports, (p) => p.v) || 1, radP = (v) => 3 + Math.sqrt(v / maxP) * 26;
     const pg = svg.append('g').selectAll('g').data(ports.sort((a, b) => b.v - a.v)).join('g').attr('class', 'rj-bubble rj-auport')
       .attr('aria-label', (p) => `${offName(p.off)}: ${fmtMoney(p.v)}`);
@@ -2645,7 +2828,6 @@
       .on('mouseleave blur', () => { tip.hidden = true; });
     // города: круги по числу строк (по всем фильтрам, кроме города)
     const pts = new Map(rows.filter((r) => r.kind === 'city').map((r) => [r.id, [+r.x, +r.y]]));
-    const byCity = d3.rollup(auFilter(items, 'city'), (v) => v.length, (x) => x.ck);
     const cities = [...byCity.entries()].filter(([k]) => pts.has(k)).map(([k, v]) => ({ k, v, xy: pts.get(k) })).sort((a, b) => b.v - a.v);
     const maxC = d3.max(cities, (c) => c.v) || 1, radC = (v) => 2.5 + Math.sqrt(v / maxC) * 24;
     const cg = svg.append('g').selectAll('g').data(cities).join('g').attr('class', (c) => 'rj-bubble rj-aucity' + (ast.city === c.k ? ' sel' : ''))
@@ -2665,7 +2847,7 @@
     cities.slice(0, 10).forEach((c) => { const r0 = radC(c.v); label(auCity(c.k.split('|')[1]), c.xy[0] + r0 + 4, c.xy[1], 'rj-aulcity', 'start'); });
     ports.slice(0, 3).forEach((p) => label(offName(p.off), +p.x + radP(p.v) + 4, +p.y, 'rj-aulport', 'start'));
     regs.forEach((r) => label(auReg(r.id), +r.x, +r.y, 'rj-aulreg'));
-    const onMap = d3.sum(cities, (c) => c.v), all = auFilter(items, 'city').length;
+    const onMap = d3.sum(cities, (c) => c.v), all = forCity.length;
     $('#au-map-note').textContent = L().auMapNote(up ? fmtMoney(up.total) : '—', up ? L().range(up.first, up.last) : '', all > onMap ? fmtInt(all - onMap) : '');
   }
 
@@ -2745,7 +2927,7 @@
     }
     boxes.forEach((s) => $(s).classList.remove('dash-skeleton'));
     const months = tIdx.months, first = months[0], last = months[months.length - 1];
-    if (!dst.a0) dynFromTrade();
+    if (!dst.a0 || !dst.a1 || (dst.base === 'custom' && (!dst.b0 || !dst.b1))) dynFromTrade();
     // periods stay inside the data and in order
     const clamp = (m) => (m < first ? first : m > last ? last : m);
     const order = (a, b) => { dst[a] = clamp(dst[a]); dst[b] = clamp(dst[b]); if (dst[a] > dst[b]) [dst[a], dst[b]] = [dst[b], dst[a]]; };
@@ -3181,12 +3363,108 @@
     if (last) item(I.ccy[0], I.ccy[1](sFig(sRow('cur_imp_region_JPY', last), fmtShare), sFig(sRow('cur_imp_region_USD', last), fmtShare), L().half(last)));
   }
 
+  // ---- ссылка: лист, язык и фильтры (#companies?lang=ja&flow=jp_ru&cat=8703) ----
+  // На сайте её пишет window.RJ_LINK (адрес и история браузера, заголовок вкладки); на платформе Claude — только лист (dash.setLink).
+  // В ссылке — поля состояния листа, которые отличаются от исходных; выбор на «Торговле» и рамка «Динамики» — «s5» (раздел) или код.
+  const LINK = window.RJ_LINK || null;
+  const ST0 = { ...st }, DST0 = { ...dst }, SST0 = { ...sst };
+  const LINK_KEYS = {
+    trade: [st, ST0, ['period', 'level', 'mode', 'unit', 'tab', 'filter', 'sel', 'q']],
+    dynamics: [dst, DST0, ['flow', 'level', 'a0', 'a1', 'base', 'b0', 'b1', 'n', 'sort', 'scope']],
+    settlements: [sst, SST0, ['year', 'gran']],
+    companies: [cst, CST0, ['flow', 'level', 'cat', 'region', 'q', 'sort', 'dir', 'only']],
+    makers: [mst, MST0, ['y0', 'y1', 'cat', 'q', 'sort', 'dir', 'only']],
+    autos: [ast, AST0, ['kind', 'okved', 'region', 'city', 'y0', 'y1', 'cut', 'q', 'only', 'sort', 'dir']],
+  };
+  const MONTH = /^\d{4}-\d{2}$/, YEAR = /^\d{4}$/;
+  const LINK_RE = { 'trade.period': /^\w{1,20}$/, 'dynamics.a0': MONTH, 'dynamics.a1': MONTH, 'dynamics.b0': MONTH, 'dynamics.b1': MONTH,
+    'settlements.year': YEAR, 'makers.y0': YEAR, 'makers.y1': YEAR, 'autos.y0': YEAR, 'autos.y1': YEAR, 'autos.cut': YEAR, 'companies.cat': /^\d{2,4}$/, 'makers.cat': /^\d{2,4}$/ };
+  const LINK_NUM = new Set(['trade.level', 'dynamics.level', 'dynamics.n', 'companies.dir', 'makers.dir', 'autos.y0', 'autos.y1', 'autos.cut', 'autos.dir']);
+  // допустимые значения — кнопки и заголовки самой страницы
+  const vals = (sel, attr = 'v') => [...root.querySelectorAll(sel)].map((e) => e.dataset[attr]);
+  const LINK_ALLOW = {
+    'trade.level': () => vals('#seg-level button'), 'trade.mode': () => vals('#seg-mode button'), 'trade.unit': () => vals('#seg-unit button'),
+    'trade.tab': () => vals('#tabs button'), 'dynamics.flow': () => vals('#dy-flow button'), 'dynamics.level': () => vals('#dy-level button'),
+    'dynamics.n': () => vals('#dy-n button'), 'dynamics.sort': () => vals('#dy-sort button'), 'dynamics.base': () => [...$('#dy-base').options].map((o) => o.value),
+    'settlements.gran': () => vals('#st-gran button'), 'companies.flow': () => vals('#comp-flow button'), 'companies.level': () => vals('#comp-level button'),
+    'companies.sort': () => vals('#comp-table [data-csort]', 'csort'), 'makers.sort': () => vals('#mk-table [data-msort]', 'msort'),
+    'autos.kind': () => vals('#au-kind button'), 'autos.sort': () => vals('#au-table [data-asort]', 'asort'),
+  };
+  // поле по умолчанию, которое страница выбирает по данным: последний период торговли, последний год «Расчётов»
+  const linkDefault = (page, k, d) => {
+    if (page === 'trade' && k === 'period') { const p = dash.data('periods'); return p.status === 'ok' && p.data.length ? p.data[0].period : d; }
+    if (page === 'settlements' && k === 'year' && sIdx) return sIdx.years[sIdx.years.length - 1];
+    return d;
+  };
+  const pickOut = (f) => (!f ? '' : f.type === 'section' ? 's' + f.id : f.code);
+  const pickIn = (v) => (/^s\d{1,2}$/.test(v) ? { type: 'section', id: v.slice(1) } : /^[\dX]{2,9}[A-Z]?$/.test(v) ? { type: 'code', code: v } : null);
+  function linkHash() {
+    const q = [];
+    if (st.lang !== 'ru') q.push('lang=' + st.lang);
+    if (st.cur !== 'usd') q.push('cur=' + st.cur);
+    const [obj, def, keys] = LINK_KEYS[st.page] || [null, null, []];
+    for (const k of keys) {
+      let v = obj[k];
+      if (k === 'filter' || k === 'scope') v = pickOut(v);
+      else if (k === 'sel') v = v ? `${v.flow}:${v.code}` : '';
+      else if (v === linkDefault(st.page, k, def[k]) || v === null || v === undefined) v = '';
+      if (v !== '' && String(v) !== String(def[k] ?? '')) q.push(`${k}=${encodeURIComponent(v).replace(/%3A/g, ':')}`);
+    }
+    return '#' + st.page + (q.length ? '?' + q.join('&') : '');
+  }
+  function syncLink(push) {
+    if (!LINK) { if (push) dash.setLink(st.page); return; }
+    const tab = L()['tab' + st.page[0].toUpperCase() + st.page.slice(1)];
+    LINK.set(linkHash(), push, st.page === 'trade' ? L().title : `${tab} — ${L().title}`, st.lang);
+  }
+  // ссылка -> состояние: поля листа из ссылки, остальные — исходные; неверные значения отбрасываются
+  function applyLink(hash) {
+    const [p, qs] = String(hash || '').replace(/^#/, '').split('?');
+    const q = new URLSearchParams(qs || '');
+    st.page = PAGES.includes(p) ? p : 'trade';
+    st.lang = LANGS.includes(q.get('lang')) ? q.get('lang') : 'ru';
+    st.cur = q.get('cur') === 'jpy' ? 'jpy' : 'usd';
+    const [obj, def, keys] = LINK_KEYS[st.page] || [null, null, []];
+    for (const k of keys) {
+      const raw = q.get(k), id = st.page + '.' + k;
+      obj[k] = def[k];
+      if (raw === null) continue;
+      if (k === 'filter' || k === 'scope') { obj[k] = pickIn(raw); continue; }
+      if (k === 'sel') { const m = raw.match(/^(ru_jp|jp_ru):([\dX]{2,9}[A-Z]?)$/); obj[k] = m ? { flow: m[1], level: m[2].length, code: m[2] } : null; continue; }
+      if ((LINK_ALLOW[id] && !LINK_ALLOW[id]().includes(raw)) || (LINK_RE[id] && !LINK_RE[id].test(raw))) continue;
+      const v = LINK_NUM.has(id) ? Number(raw) : raw.slice(0, 200);
+      if (typeof v !== 'number' || Number.isFinite(v)) obj[k] = v;
+    }
+    if (st.sel) { st.portFlow = st.sel.flow; st.port = null; }
+    if (st.page === 'trade') steps.length = 0;
+    cst.limit = COMP_PAGE; mst.limit = MK_PAGE; ast.limit = AU_PAGE;
+    // поиск в полях — как в ссылке
+    [['#search', st.q], ['#comp-search', cst.q], ['#mk-search', mst.q], ['#au-search', ast.q]].forEach(([id, v]) => { $(id).value = v; });
+  }
+  applyLink(location.hash);
+  if (LINK) {
+    LINK.listen((hash) => { applyLink(hash); applyLang(); draw(); syncLink(false); root.scrollIntoView({ block: 'start' }); });
+    // ссылка следует за каждым действием читателя (фильтры, язык, сортировка) — в той же записи истории
+    const syncLater = later(() => syncLink(false), 250);
+    ['click', 'change', 'input', 'keyup'].forEach((t) => root.addEventListener(t, syncLater));
+  }
+
   applyLang();
   setPageVisibility();
   dash.onData(draw);
+  syncLink(false);
   // labels are fitted by measuring text, so measure again once the page fonts have loaded
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (idx) draw(); });
 </script>
-<script>window.__loadDashData();</script>
+<script>
+  if (!window.d3 || !window.__dashStarted || !window.__dashStarted()) {
+    const box = document.createElement('div'); box.className = 'dash-fatal'; box.setAttribute('role', 'alert');
+    ['Страница не открылась: браузер не загрузил её файлы. Обновите страницу (Ctrl+F5 или ⌘⇧R); если не поможет — откройте её в другом браузере или сети.',
+     'The page did not open: the browser could not load its files. Reload the page (Ctrl+F5 or ⌘⇧R); if that does not help, try another browser or network.',
+     'ページを開けませんでした：ファイルを読み込めませんでした。再読み込み（Ctrl+F5 または ⌘⇧R）してください。改善しない場合は別のブラウザかネットワークでお試しください。']
+      .forEach((t) => { const p = document.createElement('p'); p.textContent = t; box.append(p); });
+    const root = document.getElementById('dash-root'); root.replaceChildren(box);
+  }
+</script>
 </body>
 </html>

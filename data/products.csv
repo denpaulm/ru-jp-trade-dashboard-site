@@ -101,6 +101,12 @@ code,level,flow,section,name_ru,name_en,name_ja
 0106,4,,1,Прочие животные,Other Animals,その他の生きた動物
 0201,4,,1,Говядина,Bovine Meat,牛肉（生鮮・冷蔵）
 0202,4,,1,Мороженая говядина,Frozen Bovine Meat,牛肉（冷凍）
+0203,4,,1,Свинина,Pig Meat,豚肉
+0204,4,,1,Баранина и козлятина,Sheep and Goat Meat,羊肉・山羊肉
+0205,4,,1,Конина,Horse Meat,馬肉
+0206,4,,1,Субпродукты,Edible Offal,食用くず肉
+0207,4,,1,Мясо птицы,Poultry Meat,家禽肉
+0208,4,,1,Прочее мясо,Other Meat,その他の肉
 0210,4,,1,Солёное и копчёное мясо,Preserved Meat,塩蔵・乾燥・燻製肉
 0301,4,,1,Живая рыба,Live Fish,活魚
 0302,4,,1,Свежая рыба (не филе),Non-fillet Fresh Fish,魚（生鮮・冷蔵、フィレ除く）
@@ -110,13 +116,20 @@ code,level,flow,section,name_ru,name_en,name_ja
 0306,4,,1,Ракообразные,Crustaceans,甲殻類
 0307,4,,1,Моллюски,Molluscs,軟体動物
 0308,4,,1,Водные беспозвоночные,Other aquatic invertebrates,水生無脊椎動物
+0401,4,,1,Молоко,Milk,牛乳・クリーム（無濃縮）
 0402,4,,1,Сгущённое и сухое молоко,Concentrated Milk,濃縮乳・粉乳
 0403,4,,1,Кисломолочные продукты,Fermented Milk Products,発酵乳（ヨーグルト等）
+0404,4,,1,Молочная сыворотка,Whey and other milk products,ホエイ・その他の乳製品
+0405,4,,1,Сливочное масло,Butter,バター
 0406,4,,1,Сыр,Cheese,チーズ
+0407,4,,1,Яйца,Eggs,鳥卵（殻付き）
+0408,4,,1,Яичные продукты,Processed Egg Products,卵加工品
 0409,4,,1,Мёд,Honey,はちみつ
+0504,4,,1,Кишки и желудки животных,Animal Organs,動物の腸・胃
 0505,4,,1,Птичьи перья и шкурки,Bird Feathers and Skins,羽毛・羽毛皮
 0506,4,,1,Кости необработанные,Processed Bones,骨・角しん（未加工）
 0507,4,,1,"Слоновая кость, рога, копыта",Raw Bones,象牙・角・ひづめ（未加工）
+0508,4,,1,Кораллы и раковины,Coral and Shells,さんご・貝殻
 0510,4,,1,Животное сырьё для фармацевтики,Pharmaceutical Animal Products,動物性医薬原料
 0511,4,,1,Прочие непищевые продукты животного происхождения,Other Inedible Animal Products,その他の動物性生産品
 0602,4,,2,Живые растения и черенки,Live plants and cuttings,生きた植物・挿し木
@@ -133,13 +146,17 @@ code,level,flow,section,name_ru,name_en,name_ja
 0805,4,,2,Цитрусовые,Citrus,かんきつ類
 0807,4,,2,Дыни и арбузы,Melons,メロン・すいか類
 0808,4,,2,Яблоки и груши,Apples and Pears,りんご・なし
+0811,4,,2,Мороженые фрукты и орехи,Frozen Fruits and Nuts,冷凍果実・ナッツ
 0813,4,,2,Сушёные фрукты,Dried Fruits,乾燥果実
 0814,4,,2,Корки цитрусовых и дынь,Citrus and Melon Peels,かんきつ類・メロンの皮
 0901,4,,2,Кофе,Coffee,コーヒー
 0902,4,,2,Чай,Tea,茶
+0904,4,,2,Перец,Pepper,こしょう・とうがらし
+0906,4,,2,Корица,Cinnamon,シナモン
 0909,4,,2,Семена пряностей,Spice Seeds,香辛料の種子
 0910,4,,2,Прочие пряности,Spices,その他の香辛料
 1001,4,,2,Пшеница,Wheat,小麦
+1002,4,,2,Рожь,Rye,ライ麦
 1003,4,,2,Ячмень,Barley,大麦
 1004,4,,2,Овёс,Oats,えん麦
 1005,4,,2,Кукуруза,Corn,とうもろこし
@@ -149,8 +166,10 @@ code,level,flow,section,name_ru,name_en,name_ja
 10XX,4,,2,Зерновые: засекречено,Cereals: confidential,穀物：非公表
 1101,4,,2,Пшеничная мука,Wheat Flours,小麦粉
 1102,4,,2,Мука из прочих злаков,Cereal Flours,穀粉（小麦粉以外）
+1103,4,,2,Крупа и гранулы,Cereal Meal and Pellets,ひき割り穀物・ペレット
 1104,4,,2,Обработанное зерно,Processed Cereals,加工穀物
 1106,4,,2,Мука из бобовых,Legume Flours,豆類の粉
+1108,4,,2,Крахмал,Starches,でん粉
 1201,4,,2,Соевые бобы,Soybeans,大豆
 1204,4,,2,Семена льна,Linseed,亜麻の種子
 1205,4,,2,Рапс,Rapeseed,なたね
@@ -163,19 +182,24 @@ code,level,flow,section,name_ru,name_en,name_ja
 1302,4,,2,Растительные соки и экстракты,Vegetable Saps,植物性の液汁・エキス
 1401,4,,2,Материалы для плетения,Vegetable Plaiting Materials,編組用植物材料
 1404,4,,2,Прочие растительные продукты,Other Vegetable Products,その他の植物性生産品
+1501,4,,3,Свиной и птичий жир,Pig and Poultry Fat,豚脂・家禽脂
 1504,4,,3,Рыбий жир,Fish Oil,魚油
+1506,4,,3,Прочие животные жиры,Other Animal Fats,その他の動物性油脂
 1507,4,,3,Соевое масло,Soybean Oil,大豆油
 1509,4,,3,Нерафинированное оливковое масло,Pure Olive Oil,バージンオリーブ油
 1511,4,,3,Пальмовое масло,Palm Oil,パーム油
 1512,4,,3,Подсолнечное и хлопковое масло,Seed Oils,ひまわり油・綿実油
+1514,4,,3,Рапсовое масло,Rapeseed Oil,菜種油
 1515,4,,3,Прочие растительные масла,Other Pure Vegetable Oils,その他の植物性油脂
 1516,4,,3,Гидрогенизированные жиры,Other Vegetable Oils,硬化油脂
 1517,4,,3,Маргарин,Margarine,マーガリン
 1521,4,,3,Растительные воски и пчелиный воск,Vegetable waxes and beeswax,植物性ろう・みつろう
 1601,4,,4,Колбасы,Sausages,ソーセージ
 1602,4,,4,Прочие мясные изделия,Other Prepared Meat,その他の調製肉
+1603,4,,4,Мясные экстракты,Animal Extracts,肉エキス
 1604,4,,4,Рыбные консервы,Processed Fish,魚の調製品
 1605,4,,4,Консервы из ракообразных и моллюсков,Processed Crustaceans,甲殻類・軟体動物の調製品
+1701,4,,4,Тростниковый и свекловичный сахар,Raw Sugar,甘しゃ糖・てん菜糖
 1702,4,,4,Прочие сахара,Other Sugars,その他の糖類
 1703,4,,4,Меласса,Molasses,糖蜜
 1704,4,,4,Сахаристые кондитерские изделия,Confectionery Sugar,砂糖菓子
@@ -186,9 +210,11 @@ code,level,flow,section,name_ru,name_en,name_ja
 1904,4,,4,Зерновые завтраки,Prepared Cereals,調製穀物（シリアル）
 1905,4,,4,Хлебобулочные изделия,Baked Goods,ベーカリー製品
 2001,4,,4,Маринады и соленья,Pickled Foods,酢漬け野菜
+2002,4,,4,Консервированные томаты,Processed Tomatoes,トマト調製品
 2003,4,,4,Консервированные грибы,Processed Mushrooms,調製きのこ
 2004,4,,4,Прочие мороженые овощи,Other Frozen Vegetables,冷凍調製野菜
 2005,4,,4,Прочие консервированные овощи,Other Processed Vegetables,その他の調製野菜
+2006,4,,4,Засахаренные фрукты,Sugar Preserved Foods,砂糖漬けの果実
 2007,4,,4,Джемы,Jams,ジャム
 2008,4,,4,Прочие консервированные фрукты и орехи,Other Processed Fruits and Nuts,その他の調製果実・ナッツ
 2009,4,,4,Фруктовые соки,Fruit Juice,果実ジュース
@@ -216,11 +242,13 @@ code,level,flow,section,name_ru,name_en,name_ja
 2401,4,,4,Необработанный табак,Raw Tobacco,未加工たばこ
 2402,4,,4,Сигареты и сигары,Rolled Tobacco,葉巻・紙巻たばこ
 2403,4,,4,Переработанный табак,Processed Tobacco,その他の製造たばこ
+2404,4,,4,Никотиновые продукты,Inhalable tobacco/nicotine products,加熱式たばこ・ニコチン製品
 24XX,4,,4,Табак: засекречено,Tobacco: confidential,たばこ：非公表
 2501,4,,5,Соль,Salt,塩
 2504,4,,5,Графит,Graphite,黒鉛
 2506,4,,5,Кварц,Quartz,石英
 2508,4,,5,Глины,Clays,粘土
+2512,4,,5,Диатомит,Siliceous Fossil Meals,けいそう土
 2514,4,,5,Сланец,Slate,スレート
 2516,4,,5,Гранит,Granite,花こう岩・砂岩等
 2517,4,,5,Гравий и щебень,Gravel and Crushed Stone,砂利・砕石
@@ -271,6 +299,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 2826,4,,6,Фториды,Fluorides,フッ化物
 2827,4,,6,Хлориды,Chlorides,塩化物
 2828,4,,6,Гипохлориты,Hypochlorites,次亜塩素酸塩・さらし粉
+2832,4,,6,Сульфиты,Sulfites,亜硫酸塩
 2833,4,,6,Сульфаты,Sulfates,硫酸塩
 2834,4,,6,Нитриты и нитраты,Nitrites and Nitrates,亜硝酸塩・硝酸塩
 2835,4,,6,"Фосфаты, фосфонаты, фосфинаты",Phosphates,りん酸塩・ホスホン酸塩
@@ -333,6 +362,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 3103,4,,6,Фосфорные удобрения,Phosphatic Fertilizers,りん酸肥料
 3104,4,,6,Калийные удобрения,Potassic Fertilizers,カリ肥料
 3105,4,,6,Смешанные минеральные удобрения,Mixed Mineral or Chemical Fertilizers,複合肥料
+3201,4,,6,Растительные дубильные экстракты,Vegetable Tanning Extracts,植物性なめしエキス
 3203,4,,6,Природные красители,Vegetable or Animal Dyes,天然染料・色素
 3204,4,,6,Синтетические красители,Synthetic Coloring Matter,合成染料
 3206,4,,6,Прочие красящие вещества,Other Coloring Matter,その他の着色料
@@ -357,6 +387,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 3404,4,,6,Воски,Waxes,人造ろう
 3405,4,,6,Полироли и кремы,Polishes and Creams,磨き剤・つや出し剤
 3407,4,,6,"Пасты для лепки, воски",Pastes and Waxes,造形用ペースト・ろう
+3502,4,,6,Альбумины,Water Soluble Proteins,アルブミン
 3503,4,,6,Желатин,Gelatin,ゼラチン
 3504,4,,6,Пептоны,Peptones,ペプトン類
 3505,4,,6,Декстрины,Dextrins,デキストリン・変性でん粉
@@ -435,6 +466,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 4205,4,,8,Прочие кожаные изделия,Other Leather Articles,その他の革製品
 4301,4,,8,Необработанная пушнина,Raw Furskins,原毛皮
 4303,4,,8,Меховая одежда,Furskin Apparel,毛皮製衣類
+4304,4,,8,Искусственный мех,Artificial Fur,人造毛皮
 4401,4,,9,Дрова,Fuel Wood,薪・木材チップ
 4403,4,,9,Круглый лес,Rough Wood,丸太
 4407,4,,9,Пиломатериалы,Sawn Wood,製材
@@ -487,8 +519,11 @@ code,level,flow,section,name_ru,name_en,name_ja
 5004,4,,11,Шёлковая пряжа (не розничная),Non-Retail Silk Yarn,絹糸（小売用以外）
 5005,4,,11,Пряжа из шёлковых отходов,Silk Waste Yarn,絹紡糸
 5006,4,,11,Шёлковая пряжа (розничная),Retail Silk Yarn,絹糸（小売用）
+5007,4,,11,Шёлковые ткани,Silk Fabrics,絹織物
+5101,4,,11,Шерсть,Wool,羊毛
 5108,4,,11,Пряжа из волоса (не розничная),Non-Retail Animal Hair Yarn,獣毛糸（小売用以外）
 5109,4,,11,Шерстяная пряжа (розничная),Retail Wool or Animal Hair Yarn,羊毛・獣毛糸（小売用）
+5111,4,,11,Ткани из кардной шерсти,Carded Wool or Animal Hair Fabric,紡毛織物
 5112,4,,11,Ткани из гребенной шерсти,Combed Wool or Animal Hair Fabric,梳毛織物
 5204,4,,11,Хлопковые швейные нитки,Cotton Sewing Thread,綿製ミシン糸
 5205,4,,11,Хлопковая пряжа (не розничная),Non-Retail Pure Cotton Yarn,綿糸（小売用以外）
@@ -499,6 +534,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 5211,4,,11,Тяжёлые смесовые хлопковые ткани,Heavy Mixed Woven Cotton,混紡綿織物（重量）
 5212,4,,11,Прочие хлопковые ткани,Other Cotton Fabrics,その他の綿織物
 5309,4,,11,Льняные ткани,Flax Woven Fabric,亜麻織物
+5311,4,,11,Ткани из прочих растительных волокон,Other Vegetable Fibers Fabric,その他の植物性繊維の織物
 5401,4,,11,Швейные нитки из химических нитей,Artificial Filament Sewing Thread,化繊フィラメントのミシン糸
 5402,4,,11,Синтетические нити (не розничные),Non-Retail Synthetic Filament Yarn,合成繊維フィラメント糸
 5403,4,,11,Искусственные нити (не розничные),Non-Retail Artificial Filament Yarn,人造繊維フィラメント糸
@@ -516,6 +552,8 @@ code,level,flow,section,name_ru,name_en,name_ja
 5509,4,,11,Синтетическая штапельная пряжа,Synthetic staple yarn,合成短繊維糸（小売用以外）
 5511,4,,11,Штапельная пряжа (розничная),Retail Artificial Staple Fibers Yarn,化繊短繊維糸（小売用）
 5512,4,,11,Ткани из синтетических штапельных волокон,Synthetic Fabrics,合成短繊維織物（85%以上）
+5513,4,,11,Лёгкие синтетические ткани с хлопком,Light Synthetic Cotton Fabrics,合成短繊維・綿混紡織物（軽量）
+5514,4,,11,Тяжёлые синтетические ткани с хлопком,Heavy Synthetic Cotton Fabrics,合成短繊維・綿混紡織物（重量）
 5515,4,,11,Прочие синтетические ткани,Other Synthetic Fabrics,その他の合成短繊維織物
 5516,4,,11,Ткани из искусственных штапельных волокон,Artificial staple fabrics,人造短繊維織物
 55XX,4,,11,Химические волокна: засекречено,Man-made staple fibres: confidential,人造繊維の短繊維：非公表
@@ -535,6 +573,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 5806,4,,11,Узкие ткани,Narrow Woven Fabric,細幅織物
 5808,4,,11,Тесьма и отделка,Ornamental Trimmings,組ひも・装飾用トリミング
 5809,4,,11,Металлизированные ткани,Metallic Fabric,金属糸織物
+5810,4,,11,Вышивка,Embroidery,刺しゅう布
 5903,4,,11,Ткани с пластиковым покрытием,Plastic Coated Textile Fabric,プラスチック被覆織物
 5906,4,,11,Прорезиненные ткани,Rubber Textile Fabric,ゴム引き織物
 5907,4,,11,Прочие ткани с покрытием,Coated Textile Fabric,その他の被覆織物
@@ -568,10 +607,14 @@ code,level,flow,section,name_ru,name_en,name_ja
 6205,4,,11,Мужские рубашки (тканые),Non-Knit Men's Shirts,男子用シャツ（織物）
 6206,4,,11,Женские блузки (тканые),Non-Knit Women's Shirts,女子用ブラウス（織物）
 6207,4,,11,Мужское бельё (тканое),Non-Knit Men's Undergarments,男子用下着（織物）
+6208,4,,11,Женское бельё (тканое),Non-Knit Women's Undergarments,女子用下着（織物）
+6209,4,,11,Одежда для малышей (тканая),Non-Knit Babies' Garments,乳児用衣類（織物）
 6210,4,,11,Одежда из ткани с покрытием,Felt or Coated Fabric Garments,フェルト・被覆織物製衣類
 6211,4,,11,Спортивная одежда (тканая),Non-Knit Active Wear,スポーツ用衣類（織物）
 6212,4,,11,Бюстгальтеры и корсеты,Other Women's Undergarments,ブラジャー・コルセット類
+6213,4,,11,Носовые платки,Handkerchiefs,ハンカチ
 6214,4,,11,Шарфы и шали,Scarves,ショール・スカーフ類
+6215,4,,11,Галстуки,Neck Ties,ネクタイ
 6216,4,,11,Перчатки (тканые),Non-Knit Gloves,手袋（織物）
 6217,4,,11,Прочие аксессуары (тканые),Other Non-Knit Clothing Accessories,その他の衣類附属品（織物）
 6301,4,,11,Одеяла и пледы,Blankets,毛布・ブランケット
@@ -583,11 +626,13 @@ code,level,flow,section,name_ru,name_en,name_ja
 6307,4,,11,Прочие текстильные изделия,Other Cloth Articles,その他の繊維製品
 6308,4,,11,Наборы для шитья,Packaged Sewing Sets,手芸・縫製用セット
 6309,4,,11,Одежда б/у,Used Clothing,中古衣類
+6401,4,,12,Водонепроницаемая обувь,Waterproof Footwear,防水履物
 6402,4,,12,Резиновая и пластиковая обувь,Rubber Footwear,ゴム・プラスチック製履物
 6403,4,,12,Кожаная обувь,Leather Footwear,革製履物
 6404,4,,12,Текстильная обувь,Textile Footwear,繊維製履物
 6405,4,,12,Прочая обувь,Other Footwear,その他の履物
 6406,4,,12,Детали обуви,Footwear Parts,履物の部分品
+6502,4,,12,Плетёные заготовки шляп,Hat Shapes,帽体（組みひも製）
 6504,4,,12,Шляпы (плетёные),Hats,組物製の帽子
 6505,4,,12,"Шапки (трикотаж, фетр)",Knitted Hats,帽子（編物・フェルト製等）
 6506,4,,12,Прочие головные уборы,Other Headwear,その他の帽子類
@@ -700,6 +745,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 7401,4,,15,Медный штейн,Precipitated Copper,銅マット・沈殿銅
 7403,4,,15,Рафинированная медь,Refined Copper,精製銅・銅合金塊
 7404,4,,15,Медный лом,Scrap Copper,銅くず
+7405,4,,15,Медные лигатуры,Copper Alloys,銅の母合金
 7406,4,,15,Медный порошок,Copper Powder,銅粉
 7407,4,,15,Медные прутки,Copper Bars,銅の棒・形材
 7408,4,,15,Медная проволока,Copper Wire,銅線
@@ -774,6 +820,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 8310,4,,15,Металлические таблички,Metal Signs,金属製標識板
 8311,4,,15,Сварочные электроды и припои,Coated Metal Soldering Products,溶接棒・ろう材
 8402,4,,16,Паровые котлы,Steam Boilers,蒸気ボイラー
+8403,4,,16,Котлы центрального отопления,Central Heating Boilers,セントラルヒーティング用ボイラー
 8404,4,,16,Вспомогательное оборудование котлов,Boiler Plants,ボイラー補助装置
 8405,4,,16,Газогенераторы,Water and Gas Generators,ガス発生装置
 8406,4,,16,Паровые турбины,Steam Turbines,蒸気タービン
@@ -822,6 +869,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 8450,4,,16,Бытовые стиральные машины,Household Washing Machines,家庭用洗濯機
 8451,4,,16,Машины для обработки текстиля,Textile Processing Machines,繊維処理・洗濯機械
 8452,4,,16,Швейные машины,Sewing Machines,ミシン
+8453,4,,16,Машины для кожевенного производства,Leather Machinery,皮革加工機械
 8454,4,,16,Литейные машины и конвертеры,Casting Machines,転炉・鋳造機械
 8455,4,,16,Прокатные станы,Metal-Rolling Mills,金属圧延機
 8456,4,,16,Лазерные и электроэрозионные станки,Non-Mechanical Removal Machinery,レーザー・放電加工機
@@ -837,11 +885,13 @@ code,level,flow,section,name_ru,name_en,name_ja
 8466,4,,16,Части и принадлежности станков,Metalworking Machine Parts,工作機械の部品・付属品
 8467,4,,16,Ручные механизированные инструменты,Motor-working Tools,手持ち式動力工具
 8468,4,,16,Паяльное и сварочное оборудование,Soldering and Welding Machinery,はんだ付け・溶接機械
+8470,4,,16,Калькуляторы и кассовые аппараты,Calculators,計算機・レジスター
 8471,4,,16,Компьютеры,Computers,コンピューター
 8472,4,,16,Прочие офисные машины,Other Office Machines,その他の事務用機械
 8473,4,,16,Части офисных машин и компьютеров,Office Machine Parts,事務機器・コンピューター部品
 8474,4,,16,Оборудование для обработки минералов,Stone Processing Machines,鉱物・石材処理機械
 8475,4,,16,Машины для стекольной промышленности,Glass Working Machines,電球・ガラス製造機械
+8476,4,,16,Торговые автоматы,Vending Machines,自動販売機
 8477,4,,16,Оборудование для резины и пластмасс,Rubberworking Machinery,ゴム・プラスチック加工機械
 8478,4,,16,Оборудование для обработки табака,Tobacco Processing Machines,たばこ加工機械
 8479,4,,16,Прочие машины и механизмы,Machinery Having Individual Functions,独立機能を有する機械
@@ -967,6 +1017,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 9033,4,,18,Части и принадлежности приборов,Opto-Electric Instrument Parts,光学・精密機器の部品
 9101,4,,18,Часы из драгметаллов,Precious Metal Watches,腕時計（貴金属ケース）
 9102,4,,18,Часы из недрагоценных металлов,Base Metal Watches,腕時計（貴金属以外）
+9103,4,,18,Часы с механизмом наручных часов,Clocks with Watch Movements,ムーブメント付き時計（腕時計用）
 9104,4,,18,Часы приборных панелей,Dashboard Clocks,計器盤用時計
 9105,4,,18,Прочие часы,Other Clocks,置時計・掛時計
 9106,4,,18,Приборы учёта времени,Time Recording Instruments,時間記録機器
@@ -982,6 +1033,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 9207,4,,18,Электромузыкальные инструменты,Electric Musical Instruments,電子楽器
 9208,4,,18,Прочие музыкальные инструменты,Other Musical Instruments,その他の楽器
 9209,4,,18,Части музыкальных инструментов,Musical Instrument Parts,楽器の部品・付属品
+9303,4,,19,Прочее огнестрельное оружие,Other Firearms,その他の銃器
 9304,4,,19,Пневматическое и пружинное оружие,"Spring, Air, and Gas Guns",空気銃・ばね銃
 9307,4,,19,Холодное оружие,Bladed Weapons and Accessories,刀剣類
 9401,4,,20,Сиденья,Seats,いす・座席類

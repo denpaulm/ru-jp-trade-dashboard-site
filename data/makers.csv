@@ -1,9 +1,7 @@
 key,group,group_name,group_ja,name,name_ru,name_ja,corp_no,pref,country,n_docs,first,last,spellings
-1111,1111,1111,,1111,,,,,Япония,1,2024-03-22,2024-03-22,1
 34,34,34,,"34 Co., LTD",,,,,Япония,1,2026-01-07,2026-01-07,1
 3M,3M,3M,スリーエム ジャパン,3M Japan Limited,,スリーエムジャパン株式会社,8390001009399,13,Япония,4,2022-08-24,2026-01-19,2
 4CSHD,4CSHD,4CsHD,,"4CsHD Co., Ltd",,,,,Япония,7,2024-11-02,2024-11-03,1
-5300012 KITA HANKYU BLDG 148 SHIBATA KITAKU OSAKA,5300012 KITA HANKYU BLDG 148 SHIBATA KITAKU OSAKA,"〒530-0012 Kita Hankyu Bldg., 1-4-8 Shibata, Kita-ku, Osaka",,"Япония, 〒530-0012 Kita Hankyu Bldg., 1-4-8 Shibata, Kita-ku, Osaka, Japan",,,,,Япония,1,2025-05-19,2025-05-19,1
 74,74,74,,"74 Co., LTD",,,,,Япония,3,2026-02-05,2026-02-09,1
 A,A,A,Aホールディングス,A Company LTD,,Ａホールディングス株式会社,7010701019678,13,Япония,2,2026-04-21,2026-04-21,1
 A GLOBAL,A GLOBAL,A. Global,,"A. GLOBAL Co., Ltd",,,,,Япония,3,2024-10-30,2026-08-19,1
@@ -88,9 +86,10 @@ AKARI,AKARI,Akari,,"AKARI Co., Ltd",,,,,Япония,1,2026-03-26,2026-03-26,1
 AKASHI SAKE BREWERY,AKASHI SAKE BREWERY,Akashi SAKE Brewery,明石酒類醸造,Akashi SAKE Brewery CO LTD,АКАШИ САКЭ БРЮЭРИ КО ЛТД,明石酒類醸造株式会社,4140001034442,28,Япония,3,2025-05-16,2026-06-01,2
 AKEBONO BRAKE INDUSTRY,AKEBONO BRAKE INDUSTRY,Akebono Brake Industry,曙ブレーキ工業株式会社,"Akebono Brake Industry Co., LTD",,曙ブレーキ工業株式会社,8010001034724,13,Япония,1,2024-04-04,2024-04-04,1
 AKEBONO INDUSTRY,AKEBONO INDUSTRY,Akebono Industry,,"Akebono Industry Co., LTD",,,,,Япония,1,2024-05-28,2024-05-28,1
-AKITA DISTILLERI,AKITA DISTILLERI,Akita Distilleri,,Akita Distilleri,Акита Дистиллери,,,,Япония,2,2024-10-01,2025-04-30,1
+AKITA DISTILLERY,AKITA DISTILLERY,Akita Distillery,,Akita Distillery,Акита Дистиллери,,,,Япония,2,2024-10-01,2025-04-30,1
 AKITA KAIHATSU,AKITA KAIHATSU,Akita Kaihatsu,,Akita Kaihatsu G.K,,,,,Япония,32,2022-11-15,2026-08-11,1
 AKITA KONNO,AKITA KONNO,Akita Konno,,"Akita Konno Co., LTD",ООО Акита Конно,,,,Япония,1,2026-02-11,2026-02-11,1
+AKITA SEISHU,AKITA SEISHU,Akita Seishu,,"Akita Seishu Co., LTD","АКИТА СЭЙСЮ КО., ЛТД",,,,Япония,1,2024-04-08,2024-04-08,1
 AKITAKENHAKKO KOGYO,AKITAKENHAKKO KOGYO,Akitakenhakko Kogyo,,"Akitakenhakko Kogyo Co., Ltd",Акитакенхакко Когё Ко. Лтд,,,,Япония,2,2022-08-22,2024-05-17,2
 AKIYAMA,AKIYAMA,Akiyama,,"Akiyama Co.,Ltd",,,,,Япония,1,2024-07-15,2024-07-15,1
 AKTS TRADING,AKTS TRADING,Akts Trading,,Akts Trading Corporation,АКТС ТРЕЙДИНГ КОРПОРЕЙШН,,,,Япония,0,,,1
@@ -145,15 +144,7 @@ ANRITSU,ANRITSU,Anritsu,アンリツ,Anritsu Corporation,,アンリツ株式会�
 ANRITSU ELECTRIC,ANRITSU ELECTRIC,Anritsu Electric,,"Anritsu Electric Co., Ltd",,,,,Япония,1,2026-07-20,2026-07-20,1
 ANRITSU INDUSTRIAL SOLUTIONS,ANRITSU INDUSTRIAL SOLUTIONS,Anritsu Industrial Solutions,,Anritsu Industrial Solutions Co. Ltd,,,,,Япония,1,2023-01-26,2023-01-26,1
 ANZAI MEDICAL,ANZAI MEDICAL,Anzai Medical,安西メディカル株式会社,"Anzai Medical Co., Ltd",,安西メディカル株式会社,4010701000434,13,Япония,2,2013-02-28,2018-02-22,1
-AO BOURBON,AO BOURBON,AO Bourbon,,AO Bourbon Corporation,,,,,Япония,1,2024-10-08,2024-10-08,1
-AO EBARA,AO EBARA,AO Ebara,,AO Ebara,,,,,Япония,1,2025-10-23,2025-10-23,1
-AO KAMI SHODJI,AO KAMI SHODJI,AO Kami Shodji,,AO Kami Shodji,АО Ками Сёдзи,,,,Япония,1,2024-08-08,2024-08-08,1
-AO KAO,AO KAO,Ao Kao,,Ao Kao,АО КАО,,,,Япония,6,2024-09-16,2025-11-14,1
-AO KEWPIE,AO KEWPIE,AO Kewpie,,AO Kewpie,,,,,Япония,1,2025-10-23,2025-10-23,1
-AO KUNITARO,AO KUNITARO,AO Kunitaro,,AO Kunitaro Co. LTD,,,,,Япония,1,2024-10-08,2024-10-08,1
 AO MEIJI,AO MEIJI,AO Meiji,,AO Meiji,,,,,Япония,1,2024-10-08,2024-10-08,1
-AO MOMOYA,AO MOMOYA,AO Momoya,,AO Momoya,,,,,Япония,1,2025-10-23,2025-10-23,1
-AO SEKUREN KHOKKAYDO,AO SEKUREN KHOKKAYDO,Ao Sekuren Khokkaydo,,Ao Sekuren Khokkaydo,АО СЁКУРЕН ХОККАЙДО,,,,Япония,1,2024-12-03,2024-12-03,1
 AOHATA,AOHATA,Aohata,アヲハタ,AOHATA Corporation,,アヲハタ株式会社,3240001037171,34,Япония,4,2025-06-27,2026-02-25,2
 AOI SEICHA,AOI SEICHA,Aoi seicha,,"Aoi seicha Co.,Ltd",,,,,Япония,2,2023-08-07,2024-10-31,2
 AOI SHOTEN,AOI SHOTEN,Aoi Shoten,,"Aoi Shoten Co., Ltd",,,,,Япония,1,2022-12-06,2022-12-06,1
@@ -206,10 +197,9 @@ ASAHI SOFT DRINKS,ASAHI SOFT DRINKS,Asahi SOFT Drinks,アサヒ飲料,ASAHI SOFT
 ASAHI SOGYO,ASAHI SOGYO,Asahi Sogyo,,"ASAHI SOGYO co.,Ltd",,,,,Япония,2,2023-12-11,2023-12-11,1
 ASAHI SPECTRA,ASAHI SPECTRA,Asahi Spectra,,"Asahi Spectra Co., LTD",,,,,Япония,1,2024-07-04,2024-07-04,1
 ASAHI YUKIZAI,ASAHI YUKIZAI,Asahi Yukizai,旭有機材工業,Asahi Yukizai Corporation,,旭有機材株式会社,7350001006608,45,Япония,1,2022-11-25,2022-11-25,1
-ASAHIKAWA DISTILLERY,ASAHIKAWA DISTILLERY,Asahikawa Distillery,,Asahikawa Distillery,Асахикава Дистиллери,,,,Япония,2,2024-01-18,2025-06-24,1
+ASAHIKAWA DISTILLERY,ASAHIKAWA DISTILLERY,Asahikawa Distillery,,Asahikawa Distillery,АСАХИКАВА ДИСТИЛЛЕРИ,,,,Япония,4,2024-01-18,2025-06-24,2
 ASAHISHUZO,ASAHISHUZO,Asahishuzo,,"Asahishuzo Co., LTD","Асахисюдзо Ко., ЛТД",,,,Япония,2,2022-09-02,2023-11-16,1
 ASAHIYA SHOKUHIN KOGYO,ASAHIYA SHOKUHIN KOGYO,Asahiya Shokuhin Kogyo,,"Asahiya Shokuhin Kogyo Co., LTD",,,,,Япония,2,2025-07-02,2025-12-10,1
-ASAKHIKAVA DISTILLERI,ASAKHIKAVA DISTILLERI,Asakhikava Distilleri,,Asakhikava Distilleri,АСАХИКАВА ДИСТИЛЛЕРИ,,,,Япония,2,2024-10-01,2025-04-30,1
 ASAMURASAKI,ASAMURASAKI,Asamurasaki,,"Asamurasaki Co.,Ltd",,,,,Япония,1,2025-02-27,2025-02-27,1
 ASANO NENSHI,ASANO NENSHI,Asano Nenshi,,"Asano Nenshi Co., Ltd",,,,,Япония,1,2023-03-07,2023-03-07,1
 ASCO,ASCO,ASCO,,"ASCO Japan Co.,Ltd",,,,,Япония,2,2023-10-03,2023-12-07,1
@@ -274,7 +264,7 @@ BEAUTY CONEXION,BEAUTY CONEXION,Beauty Conexion,,Beauty Conexion K.K,,,,,Япо�
 BEAUTY DOOR,BEAUTY DOOR,Beauty Door,,"Beauty Door Co., Ltd",,,,,Япония,1,2025-03-16,2025-03-16,1
 BEAUTYTECH,BEAUTYTECH,Beauty-Tech,,"Beauty-Tech Japan Co.,Ltd",,,,,Япония,1,2024-10-28,2024-10-28,1
 BECKMAN COULTER,BECKMAN COULTER,Beckman Coulter,,Beckman Coulter K.K,,,,,Япония,1,2026-06-05,2026-06-05,1
-BEGIM HYOGO PERFECTURE,BEGIM HYOGO PERFECTURE,Begim Hyogo Perfecture,,Begim LLC совместно Hyogo Perfecture Co Ltd,,,,,Япония,2,2026-02-02,2026-02-02,1
+BEGIM,BEGIM,Begim,,Begim LLC,,,,,Япония,2,2026-02-02,2026-02-02,1
 BEIJING SANO LASER SANDT DEVELOPMENT,BEIJING SANO LASER SANDT DEVELOPMENT,Beijing Sano Laser S&T Development,,"Beijing Sano Laser S&T Development Co., Ltd",,,,,Япония,1,2025-04-01,2025-04-01,1
 BELL SHOKUHIN,BELL SHOKUHIN,Bell Shokuhin,ベル食品,"Bell Shokuhin Co., Ltd",,ベル食品株式会社,7430001014420,01,Япония,1,2025-06-26,2025-06-26,1
 BELLE COEUR LABORATORY,BELLE COEUR LABORATORY,Belle Coeur Laboratory,,Belle Coeur Laboratory Co. Ltd,,,,,Япония,4,2022-12-14,2022-12-14,1
@@ -283,7 +273,7 @@ BEMAKE,BEMAKE,Be-Make,ビ・メーク,"Be-Make Co., Ltd",,株式会社ビ・メ�
 BENEBIO,BENEBIO,Benebio,,"Benebio Co., Ltd",,,,,Япония,1,2026-04-02,2026-04-02,1
 BENISHO,BENISHO,Benisho,,Benisho LTD,,,,,Япония,1,2025-05-22,2025-05-22,1
 BENRINER,BENRINER,Benriner,,"BENRINER Co., LTD",,,,,Япония,1,2024-10-30,2024-10-30,1
-BENTEN,BENTEN,Benten,,Benten LLC. Co,,,,,Япония,1,2024-08-30,2024-08-30,1
+BENTEN,BENTEN,Benten,,Benten LLC,,,,,Япония,1,2024-08-30,2024-08-30,1
 BEST NAVI,BEST NAVI,Best Navi,,Best Navi,БЭСТ НАВИ,,,,Япония,0,,,1
 BH,BH,BH,,BH co. Ltd,,,,,Япония,2,2026-05-05,2026-09-25,1
 BIBUN,BIBUN,Bibun,,Bibun Corporation,,,,,Япония,1,2024-05-27,2024-05-27,1
@@ -313,7 +303,7 @@ BOSCH,BOSCH,Bosch,ボッシュ（株）,Bosch Corporation,,ボッシュ株式会
 BOSCH REXROTH,BOSCH REXROTH,Bosch REXROTH,,Bosch REXROTH LTD,,,,,Япония,2,2026-05-26,2026-08-25,2
 BOSE,BOSE,Bose,ボーズ合同会社,Bose Japan,,ボーズ合同会社,1011001021479,13,Япония,1,2024-06-26,2024-06-26,1
 BOSS,BOSS,BOSS,ボス,BOSS,,ボス株式会社,5080401004876,22,Япония,2,2022-11-01,2022-11-03,1
-BOURBON,BOURBON,Bourbon,ブルボン,Bourbon Corporation,,株式会社ブルボン,6110001017563,15,Япония,40,2021-12-17,2026-07-28,6
+BOURBON,BOURBON,Bourbon,ブルボン,Bourbon Corporation,,株式会社ブルボン,6110001017563,15,Япония,41,2021-12-17,2026-07-28,6
 BP CASTROL,BP CASTROL,BP Castrol,,"BP Castrol Co.,ltd",,,,,Япония,8,2023-11-03,2026-06-05,4
 BRAIN COSMOS,BRAIN COSMOS,Brain Cosmos,,"Brain Cosmos Co., LTD",,,,,Япония,2,2025-11-18,2025-11-18,1
 BRAIN VERSE,BRAIN VERSE,Brain Verse,,"Brain Verse Co., LTD",,,,,Япония,8,2023-12-13,2024-11-25,1
@@ -323,19 +313,14 @@ BRIDGESTONE,BRIDGESTONE,Bridgestone,ブリヂストン,Bridgestone Corporation,,
 BRIDGESTONE GOLF,BRIDGESTONE,Bridgestone,ブリヂストン,Bridgestone GOLF,,,,,США,3,2022-08-04,2024-06-26,1
 BRIGHT SANGYO,BRIGHT SANGYO,Bright Sangyo,,"Bright Sangyo Co., Ltd",,,,,Япония,1,2024-05-28,2024-05-28,1
 BROSH,BROSH,Brosh,,"Brosh, CO, LTD",,,,,Япония,2,2025-01-27,2026-08-23,2
-BROTHER L DUSTRIES,BROTHER,Brother,,"Brother lпdustries, Ltd",,,,,Япония,2,2022-09-28,2024-02-20,1
-BROTHER LNDUSTRIES,BROTHER,Brother,,"Brother lndustries, Ltd",,,,,Япония,2,2022-12-27,2024-08-29,1
 BROTHER INTERNATIONAL EUROPE,BROTHER,Brother,,Brother International Europe Limited,БРАЗЕР ИНТЕРНЕШНЛ ЮРОП ЛИМИТЕД,,,,Великобритания,0,,,1
 BROTHER UK,BROTHER,Brother,,Brother U.K. Limited,БРАЗЕР Ю.К. ЛИМИТЕД,,,,Великобритания,0,,,1
-BROTHER INDUSTRIES,BROTHER INDUSTRIES,Brother Industries,ブラザー工業,"Brother Industries, Ltd","Бразер Индастриз, Лтд",ブラザー工業株式会社,8180001010997,23,Япония,116,2014-03-28,2026-09-21,7
+BROTHER INDUSTRIES,BROTHER INDUSTRIES,Brother Industries,ブラザー工業,"Brother Industries, Ltd","Бразер Индастриз, Лтд",ブラザー工業株式会社,8180001010997,23,Япония,120,2014-03-28,2026-09-21,7
 BRUNO,BRUNO,Bruno,ＢＲＵＮＯ株式会社,BRUNO Inc,,ＢＲＵＮＯ株式会社,7010401037344,13,Япония,22,2022-05-31,2026-05-18,3
 BSCOSME,BSCOSME,Bs-cosme,,"BS-COSME Co., Ltd",,,,,Япония,2,2026-04-03,2026-04-03,1
-BUILDING 6 GUINAN ROAD NO 1100 SONGJIANG DISTRICT 201617 SHANGHAI PR CHINA,BUILDING 6 GUINAN ROAD NO 1100 SONGJIANG DISTRICT 201617 SHANGHAI PR CHINA,"Building 6, Guinan Road No. 1100, Songjiang District 201617 Shanghai, PR. China",,"Building 6, Guinan Road No. 1100, Songjiang District 201617 Shanghai, PR. China",,,,,Япония,1,2023-05-04,2023-05-04,1
 BULLDOG SAUCE,BULLDOG SAUCE,Bull-dog Sauce,ブルドックソース,"Bull-dog Sauce Co.,ltd",,ブルドックソース株式会社,6010001034924,13,Япония,12,2021-12-16,2026-10-21,7
 BUSHU PHARMACEUTICALS,BUSHU PHARMACEUTICALS,Bushu Pharmaceuticals,,Bushu Pharmaceuticals,,,,,Япония,4,2011-09-15,2025-07-04,1
-CAH,CAH,CAH,,"CAH ФУДЗ Ко,.ЛТД","САН ФУДЗ Ко,.ЛТД",,,,Япония,5,2023-01-30,2026-03-23,1
 CAINZ,CAINZ,Cainz,カインズ,Cainz Corporation,,株式会社カインズ,3070001006474,11,Япония,1,2024-05-31,2024-05-31,1
-CAKE KO,CAKE KO,CAKE KO,,"Чиёмусуби cake брювери Ko., ЛТД","Чиёмусуби саке брювери Ко., ЛТД",,,,Япония,6,2023-02-03,2025-02-11,1
 CALBEE,CALBEE,Calbee,カルビー,CALBEE Inc,,カルビー株式会社,8010001133757,13,Япония,8,2021-12-29,2026-10-21,5
 CALDARO AB,CALDARO AB,Caldaro AB,,Caldaro AB,,,,,Япония,1,2026-07-03,2026-07-03,1
 CALPIS,CALPIS,Calpis,カルピス,"CALPIS Co., Ltd",,カルピス株式会社,5011001005908,13,Япония,2,2023-08-30,2026-09-18,1
@@ -343,7 +328,7 @@ CAMBRIDGE FILTER,CAMBRIDGE FILTER,Cambridge Filter,,Cambridge Filter Corporation
 CANARE ELECTRIC,CANARE ELECTRIC,Canare Electric,カナレ電気,"Canare Electric Co., Ltd",,カナレ電気株式会社,8180001067823,23,Япония,16,2013-02-14,2026-06-25,5
 CANDF DESIGN,CANDF DESIGN,C&F design,,C&F design,,,,,Япония,2,2023-03-24,2023-07-12,2
 CANON,CANON,Canon,キヤノン,Canon Inc,,キヤノン株式会社,6010801003186,13,Япония,631,2013-05-20,2026-10-27,6
-CANON MEDICAL SYSTEMS,CANON,Canon,キヤノン,Canon Medical Systems Corporation,Канон Медикал Системз Корпорейшн,キヤノンメディカルシステムズ株式会社,8060001013525,09,Япония,36,2021-02-15,2026-09-08,3
+CANON MEDICAL SYSTEMS,CANON,Canon,キヤノン,Canon Medical Systems Corporation,Канон Медикал Системз Корпорейшн,キヤノンメディカルシステムズ株式会社,8060001013525,09,Япония,36,2021-02-15,2026-09-08,2
 CANON EUROPA,CANON,Canon,キヤノン,Canon Europa N.v,КАНОН ЕВРОПА НВ,,,,Вьетнам,6,2025-06-16,2026-10-27,4
 CANON PRODUCTION PRINTING NETHERLANDS,CANON,Canon,キヤノン,Canon Production Printing Netherlands B.V,,,,,Нидерланды,6,2021-11-10,2026-05-29,1
 CANON ELECTRONIC,CANON,Canon,キヤノン,Canon Electronic Inc,,,,,Япония,5,2026-09-25,2026-09-30,1
@@ -415,10 +400,11 @@ CHIRIN CONFECTIONARY,CHIRIN CONFECTIONARY,Chirin Confectionary,,"Chirin Confecti
 CHIRIN CONFECTIONERY,CHIRIN CONFECTIONERY,Chirin Confectionery,,"Chirin Confectionery Co., Ltd",,,,,Япония,1,2023-05-15,2023-05-15,1
 CHIYODA INDUSTRY,CHIYODA,Chiyoda,,"Chiyoda Industry Co., LTD",,,,,Япония,2,2022-11-25,2025-05-22,1
 CHIYODA SHOKO,CHIYODA,Chiyoda,,"Chiyoda Shoko Co., Ltd",,,,,Япония,2,2025-12-23,2025-12-23,1
+CHIYOMUSUBI SAKE BREWERY,CHIYOMUSUBI SAKE BREWERY,Chiyomusubi Sake Brewery,,"Chiyomusubi Sake Brewery Co., LTD","Чиёмусуби саке брювери Ко., ЛТД",,,,Япония,6,2023-02-03,2025-02-11,1
 CHLORELLA INDUSTRY,CHLORELLA INDUSTRY,Chlorella Industry,クロレラ工業,"Chlorella Industry Co., Ltd",,クロレラ工業株式会社,5010401008925,40,Япония,1,2025-11-11,2025-11-11,1
 CHOJUNOSATO,CHOJUNOSATO,Chojunosato,,"Chojunosato Co., Ltd",,,,,Япония,2,2025-06-06,2026-04-30,1
 CHOTOYA,CHOTOYA,Chotoya,,"Chotoya Co., Ltd",,,,,Япония,1,2025-12-07,2025-12-07,1
-CHOYA UMESHU,CHOYA UMESHU,Choya Umeshu,チョーヤ梅酒,Choya Umeshu Co.ltd,,チョーヤ梅酒株式会社,1120101032268,27,Япония,2,2025-11-14,2025-11-14,1
+CHOYA UMESHU,CHOYA UMESHU,Choya Umeshu,チョーヤ梅酒,"Choya Umeshu Co., LTD","Чоя Умэсю Ко., ЛТД",チョーヤ梅酒株式会社,1120101032268,27,Япония,6,2024-03-18,2025-11-14,2
 CHUANGYUN,CHUANGYUN,ChuangYun,,"ChuangYun, Ltd",,,,,Япония,1,2023-11-23,2023-11-23,1
 CHUBU ECOTEC,CHUBU ECOTEC,Chubu Ecotec,中部エコテック株式会社,"Chubu Ecotec Co., LTD",,中部エコテック株式会社,1180001014906,23,Япония,1,2024-11-05,2024-11-05,1
 CHUGAI YUKAGAKU KOGYO,CHUGAI,Chugai,,"CHUGAI YUKAGAKU KOGYO Co., Ltd",,中外油化学工業株式会社,5011801009802,13,Япония,27,2022-01-10,2026-10-05,5
@@ -441,15 +427,15 @@ CLOVER,CLOVER,Clover,,Clover Corporation,,,,,Япония,5,2021-11-22,2026-09-3
 CLUB COSMETICS,CLUB COSMETICS,CLUB Cosmetics,クラブコスメチックス,"CLUB Cosmetics Co., LTD",,株式会社クラブコスメチックス,4120001042884,27,Япония,2,2024-12-28,2024-12-28,1
 CM CRUSHER,CM CRUSHER,CM Crusher,,CM Crusher,,,,,Япония,1,2025-10-20,2025-10-20,1
 CNH,CNH,CNH,,CNH,,,,,Япония,2,2026-08-17,2026-09-18,1
+CNH INDUSTRIAL FRANCE,CNH INDUSTRIAL FRANCE,CNH- Industrial France,,CNH- Industrial France S.A.S,,,,,Япония,1,2023-04-27,2023-04-27,1
 CNH INDUSTRIAL FRANCE CONSTRUCTION MASHINERY,CNH INDUSTRIAL FRANCE CONSTRUCTION MASHINERY,CNH Industrial France Construction Mashinery,,CNH Industrial France Construction Mashinery LTD,,,,,Япония,1,2023-08-04,2023-08-04,1
-CNH LNDUSTRIAL FRANCE,CNH LNDUSTRIAL FRANCE,CNH- lndustrial France,,CNH- lndustrial France S.A.S,,,,,Япония,1,2023-04-27,2023-04-27,1
 COCACOLA,COCACOLA,Coca-Cola,日本コカ・コーラ,"Coca-Cola Japan CO., Ltd","Кока-Кола Джапан Ко., Лтд",日本コカ・コーラ株式会社,6011001017563,13,Япония,6,2022-12-14,2026-05-26,6
 COCACOLA BOTTLERS,COCACOLA BOTTLERS,Coca-Cola Bottlers,,Coca-Cola Bottlers Japan Inc,Томинага Боеки Кайша Ко. ЛТД,,,,Япония,11,2023-03-28,2026-07-02,2
 COCACOLA CUSTOMER MARKET,COCACOLA CUSTOMER MARKET,Coca-Cola Customer Market,,"Coca-Cola Customer Market Co., Ltd",,,,,Япония,1,2024-12-09,2024-12-09,1
 COCACOLA CUSTOMER MARKETING,COCACOLA CUSTOMER MARKETING,Coca-cola Customer Marketing,コカ・コーラ カスタマーマーケティング,Coca-cola Customer Marketing Company Limited,,コカ・コーラカスタマーマーケティング株式会社,8010401058926,13,Япония,17,2025-02-14,2026-09-23,3
 COCOCHI COSME,COCOCHI COSME,Cocochi Cosme,,"Cocochi Cosme Co., Ltd",,,,,Япония,8,2026-05-21,2026-08-07,1
 COGIT,COGIT,Cogit,株式会社コジット,"Cogit Co., Ltd",,株式会社コジット,2120001001834,27,Япония,13,2025-05-05,2026-04-30,3
-COLD STEEL IDO EDGES,COLD STEEL IDO EDGES,COLD Steel IDO Edges,,"Cold Steel, Inc на заводе-изготовителе Ido Edges",,,,,Япония,1,2025-03-06,2025-03-06,1
+COLD STEEL,COLD STEEL,Cold Steel,,"Cold Steel, Inc",,,,,Япония,1,2025-03-06,2025-03-06,1
 COMPUTAR,COMPUTAR,Computar,,Computar,,,,,Япония,1,2025-04-02,2025-04-02,1
 CONSEC,CONSEC,Consec,コンセック,Consec Corporation,,株式会社コンセック,8240001003540,34,Япония,1,2022-08-10,2022-08-10,1
 CONTEC,CONTEC,Contec,株式会社コンテック,"Contec Co., Ltd",,株式会社コンテック,9340001001698,46,Япония,2,2025-12-16,2026-03-31,2
@@ -549,7 +535,7 @@ DAIWA SEIKO,DAIWA SEIKO,Daiwa Seiko,グローブライド,"Daiwa Seiko Co., LTD"
 DANDM,DANDM,D&M,ディーアンドエムホールディングス,D&M Holdings Inc,,株式会社ディーアンドエムホールディングス,5020001082080,14,Япония,2,2022-12-16,2023-02-20,1
 DANFOSS,DANFOSS,Danfoss,,Danfoss,,,,,Япония,2,2022-11-08,2025-11-26,2
 DANFOSS POWER SOLUTIONS,DANFOSS POWER SOLUTIONS,Danfoss Power Solutions,,Danfoss Power Solutions Ltd,,,,,Япония,1,2025-03-12,2025-03-12,1
-DASSAY,DASSAY,Dassay,,Dassay Inc,ДАССАЙ Инк,,,,Япония,3,2026-06-01,2026-08-04,1
+DASSAI,DASSAI,Dassai,,DASSAI Inc,ДАССАЙ Инк,,,,Япония,3,2026-06-01,2026-08-04,1
 DAYTONA INTERNATIONAL,DAYTONA INTERNATIONAL,Daytona International,,Daytona International,,,,,Япония,2,2025-02-18,2025-07-08,1
 DDKTOA,DDKTOA,Ddk-toa,,DDK-TOA Corporation,,,,,Япония,1,2023-02-06,2023-02-06,1
 DDS,DDS,DDS,ディー・ディー・エス,"DDS Co., Ltd",,株式会社ディー・ディー・エス,7180001046613,13,Япония,2,2026-05-18,2026-05-19,1
@@ -586,7 +572,6 @@ DHYGEN,DHYGEN,D.hygen,,D.hygen,,,,,Япония,2,2026-10-18,2026-10-18,1
 DIAMOND,DIAMOND,Diamond,ダイヤモンド社,Diamond,,株式会社ダイヤモンド社,2011001032632,13,Япония,1,2026-04-30,2026-04-30,1
 DIAMOND ANTENNA,DIAMOND ANTENNA,Diamond Antenna,,Diamond Antenna Corporation,,,,,Япония,10,2024-04-19,2026-08-12,3
 DIC,DIC,DIC,ＤＩＣ株式会社,DIC Corporation,,ＤＩＣ株式会社,7011401003807,13,Япония,1,2022-12-09,2022-12-09,1
-DICAL,DICAL,Меdical,,Маке Меdical,,,,,Япония,1,2022-06-17,2022-06-17,1
 DIGITAL ELECTRONICS,DIGITAL ELECTRONICS,Digital Electronics,,Digital Electronics Corporation,,,,,Япония,4,2024-07-24,2026-10-09,2
 DIGITAL STREAM,DIGITAL STREAM,Digital Stream,,Digital Stream corporation,,,,,Япония,4,2024-08-23,2025-07-07,1
 DIJET INDUSTRIAL,DIJET INDUSTRIAL,DIJET Industrial,ダイジェット工業,"DIJET Industrial co., LTD",,ダイジヱツト工業株式会社,6120001020814,27,Япония,8,2022-12-08,2024-07-30,2
@@ -602,7 +587,7 @@ DN LIGHTING,DN LIGHTING,DN Lighting,,DN LIGHTING Co. Ltd,,,,,Япония,4,2024
 DOCTOR SELECT,DOCTOR SELECT,Doctor Select,,"Doctor Select Co., Ltd",,,,,Япония,1,2026-10-16,2026-10-16,1
 DOCTOR SOIE,DOCTOR SOIE,Doctor Soie,,"Doctor Soie, Inc",,,,,Япония,1,2022-07-29,2022-07-29,1
 DOHEI PAPER MFG,DOHEI PAPER MFG,Doh-ei Paper MFG,,Doh-ei Paper MFG CO LTD,,,,,Япония,1,2024-06-28,2024-06-28,1
-DOI SYUDZODZE,DOI SYUDZODZE,Doi Syudzodze,,"Doi Syudzodze Co., Ltd","Дои Сюдзодзё Ко., Лтд",,,,Япония,1,2024-02-08,2024-02-08,1
+DOI SHUZOJO,DOI SHUZOJO,Doi Shuzojo,,"Doi Shuzojo Co., Ltd","Дои Сюдзодзё Ко., Лтд",,,,Япония,1,2024-02-08,2024-02-08,1
 DOJIN IYAKUKAKO,DOJIN IYAKUKAKO,Dojin Iyaku-Kako,,Dojin Iyaku-Kako,,,,,Япония,2,2023-03-30,2023-04-03,1
 DOLE,DOLE,Dole,,"Dole Japan, Inc",,,,,Япония,4,2023-07-24,2026-02-24,2
 DONAN CONFECTIONERY,DONAN CONFECTIONERY,Donan Confectionery,,Donan Confectionery,,,,,Япония,1,2025-08-18,2025-08-18,1
@@ -615,7 +600,7 @@ DR LULULUN,DR LULULUN,Dr. LuLuLun,,Dr. LuLuLun Inc,,,,,Япония,7,2023-04-18
 DR SELECT,DR SELECT,DR. Select,,"DR. Select Co., LTD","Доктор Селект Ко., Лимитед",,,,Япония,17,2024-01-25,2026-10-19,2
 DR SERUM,DR SERUM,Dr. Serum,,"Dr. Serum Co., Ltd",,,,,Япония,2,2022-07-01,2023-12-28,1
 DR SOIE,DR SOIE,Dr. Soie,,"Dr. Soie Co., Ltd",,,,,Япония,16,2023-01-27,2026-07-23,1
-DRESS,DRESS,Dress,,"Dress INC Co., LTD",,,,,Япония,4,2024-10-01,2025-01-28,2
+DRESS,DRESS,Dress,,Dress INC,,,,,Япония,4,2024-10-01,2025-01-28,2
 DRESSER,DRESSER,Dresser,,Dresser Japan LTD,,,,,Япония,2,2024-07-16,2025-02-04,2
 DRIBLE,DRIBLE,Drible,,"Drible Japan Co., Ltd",,,,,Япония,1,2024-12-09,2024-12-09,1
 DRNAGAI,DRNAGAI,Dr.Nagai,,GK Dr.Nagai,,,,,Япония,1,2023-07-14,2023-07-14,1
@@ -633,7 +618,6 @@ DZHEYEMES,DZHEYEMES,Dzheyemes,,"Dzheyemes Co., Ltd","ДжейЭмЭс Ко., Л�
 DZHEYVISIKENVUD,DZHEYVISIKENVUD,Dzheyvisikenvud,,Dzheyvisikenvud Corporation,ДЖЕЙВИСИКЕНВУД КОРПОРЕЙШН,,,,Япония,0,,,1
 DZHI SI YAPONIYA,DZHI SI YAPONIYA,DZHI SI Yaponiya,,"Dzhi Si Corporation , Yaponiya",Джи Си Корпорэйшн,,,,Япония,1,2023-03-22,2023-03-22,1
 DZHII KHELSKEA,DZHII KHELSKEA,Dzhii Khelskea,,Dzhii Khelskea Japan Corporation,ДжиИ Хэлскеа Джапан Корпорейшн,,,,Япония,1,2022-11-08,2022-11-08,1
-DZHSISI ADZHENT KOLTD,DZHSISI ADZHENT KOLTD,Dzhsisi Adzhent Ko.ltd,,Dzhsisi Adzhent Ko.ltd,ДжСиСи Аджент Ко.Лтд,,,,Япония,1,2025-07-01,2025-07-01,1
 EARTH,EARTH,Earth,,Earth Corporation,,,,,Япония,6,2022-09-13,2026-06-05,1
 EARTH FLYERS AGRICULTURAL ASSOCIATION,EARTH FLYERS AGRICULTURAL ASSOCIATION,Earth Flyers Agricultural Association,,Earth Flyers Agricultural Association,,,,,Япония,1,2026-02-17,2026-02-17,1
 EARTH PET,EARTH PET,Earth Pet,アース・ペット,"Earth Pet Co., Ltd",,アース・ペット株式会社,5010001009844,13,Япония,1,2026-10-02,2026-10-02,1
@@ -641,7 +625,7 @@ EARTH PHARMACEUTICAL,EARTH PHARMACEUTICAL,Earth Pharmaceutical,,"Earth Pharmaceu
 EAS AUTOMOTIVE,EAS AUTOMOTIVE,EAS Automotive,株式会社ＥＡＳ　ＡＵＴＯＭＯＴＩＶＥ,EAS Automotive LTD,,株式会社ＥＡＳ　ＡＵＴＯＭＯＴＩＶＥ,1120001111766,27,Япония,4,2023-07-11,2025-04-02,1
 EATON INDUSTRIES,EATON INDUSTRIES,Eaton Industries,,Eaton Industries Ltd,,,,,Япония,1,2026-04-03,2026-04-03,1
 EBARA PUMPS EUROPE SPA,EBARA,Ebara,荏原製作所,EBARA Pumps Europe S.p.A,,,,,Италия,44,2022-04-14,2026-10-16,9
-EBARA,EBARA,Ebara,荏原製作所,Ebara Corporation,,株式会社荏原製作所,1010801001748,13,Япония,16,2014-10-07,2026-09-02,5
+EBARA,EBARA,Ebara,荏原製作所,Ebara Corporation,,株式会社荏原製作所,1010801001748,13,Япония,17,2014-10-07,2026-09-02,6
 EBARA FOODS INDUSTRY,EBARA,Ebara,荏原製作所,"Ebara Foods Industry, INC",,エバラ食品工業株式会社,5020001022870,14,Япония,10,2021-12-24,2026-09-18,4
 EBARA MACHINERY,EBARA,Ebara,荏原製作所,"EBARA Machinery Co., Ltd",,,,,Китай,4,2023-07-20,2026-04-29,2
 EBARA GREAT PUMPS,EBARA,Ebara,荏原製作所,"Ebara Great Pumps Co.,ltd",,,,,Китай,3,2024-11-20,2026-07-27,1
@@ -665,6 +649,7 @@ EDWARDS,EDWARDS,Edwards,エドワーズ,Edwards Japan Limited,,株式会社エ�
 EGLOBALEDGE,EGLOBALEDGE,e-Globaledge,イーグローバレッジ株式会社,e-Globaledge Corporation,И-ГЛОБАЛЭДЖ КОРПОРЕЙШН,イーグローバレッジ株式会社,2013201007793,13,Япония,0,,,1
 EHIME TECHNO FACTORY,EHIME TECHNO FACTORY,Ehime Techno Factory,,Ehime Techno Factory,,,,,Япония,1,2025-03-07,2025-03-07,1
 EICOM,EICOM,Eicom,,"Eicom Co., Ltd",,,,,Япония,2,2025-11-17,2026-01-14,2
+EIGASHIMA DISTILLERY,EIGASHIMA DISTILLERY,Eigashima Distillery,,Eigashima Distillery,Эйгашима Дистиллери,,,,Япония,1,2024-11-12,2024-11-12,1
 EIGASHIMA SHUZO,EIGASHIMA SHUZO,Eigashima Shuzo,江井ヶ嶋酒造,"Eigashima Shuzo Co., LTD","Аогасима Шузо Ко.,ЛТД",江井ケ嶋酒造株式会社,5140001034581,28,Япония,3,2023-05-10,2026-07-01,3
 EIGHT TOOL,EIGHT TOOL,Eight TOOL,エイト,"Eight TOOL Co.,ltd",,株式会社エイト,1120001016965,27,Япония,1,2026-01-23,2026-01-23,1
 EIKEN CHEMICAL,EIKEN CHEMICAL,Eiken Chemical,栄研化学,"Eiken Chemical Co., LTD",,栄研化学株式会社,2010501028231,13,Япония,5,2025-10-18,2025-12-27,1
@@ -711,22 +696,23 @@ EORIA,EORIA,Eoria,,"Eoria Co., LTD",,,,,Япония,2,2023-07-25,2024-10-08,2
 EPCOS A TDK GROUP,EPCOS A TDK GROUP,Epcos A TDK Group,,EPCOS AG A TDK Group Company,,,,,Япония,2,2023-06-16,2023-08-08,1
 EPCOS TDK,EPCOS TDK,Epcos TDK,,Epcos TDK,,,,,Япония,1,2024-12-16,2024-12-16,1
 EPEIOS,EPEIOS,Epeios,,"EPEIOS Japan Co., Ltd",,,,,Япония,11,2024-07-26,2025-02-05,1
-EPIROC,EPIROC,Epiroc,,"Epiroc Japan, Япония",,,,,Япония,1,2026-04-27,2026-04-27,1
+EPIROC,EPIROC,Epiroc,,Epiroc Japan,,,,,Япония,1,2026-04-27,2026-04-27,1
 EPOCH,EPOCH,Epoch,エポック社,"Epoch Company, LTD",,株式会社エポック社,8010501001471,13,Япония,9,2024-02-28,2025-01-09,1
 EPPENDORF HIMAC TECHNOLOGIES,EPPENDORF HIMAC TECHNOLOGIES,Eppendorf Himac Technologies,,"Eppendorf Himac Technologies Co.,ltd",,,,,Япония,2,2024-09-27,2025-03-14,1
-SEIKO EPSON,EPSON,Epson,セイコーエプソン,Seiko Epson Corporation,,セイコーエプソン株式会社,4011101010841,13,Япония,279,2013-01-23,2026-10-23,6
+SEIKO EPSON,EPSON,Epson,セイコーエプソン,Seiko Epson Corporation,,セイコーエプソン株式会社,4011101010841,13,Япония,282,2013-01-23,2026-10-23,6
 EPSON,EPSON,Epson,セイコーエプソン,Epson,,,,,Китай,10,2023-09-28,2026-07-08,6
 EPSON TECHNOLOGY,EPSON,Epson,セイコーエプソン,"Epson Technology Co., Ltd",,,,,Китай,6,2023-05-26,2026-09-01,2
 EPSON ENGINEERING,EPSON,Epson,セイコーエプソン,Epson Engineering Ltd,,,,,Китай,3,2023-01-30,2025-10-30,2
 EPSON PRECISION,EPSON,Epson,セイコーエプソン,"Epson Precision , Inc",,,,,Филиппины,3,2023-04-04,2026-09-30,2
 EPSON CHINA,EPSON,Epson,セイコーエプソン,"Epson China Co., LTD",,,,,Китай,1,2023-02-21,2023-02-21,1
 EPSON DEUTSCHLAND,EPSON,Epson,セイコーエプソン,Epson Deutschland GmbH,,,,,Германия,1,2026-10-27,2026-10-27,1
+SEICO EPSON,EPSON,Epson,セイコーエプソン,Seico Epson CORP,,,,,Япония,1,2026-08-10,2026-08-10,1
 EPSON EUROPA B V,EPSON,Epson,セイコーエプソン,Epson Europa B. V,ЭПСОН ЕВРОПА Б. В.,,,,Нидерланды,0,,,1
 ERMA,ERMA,ERMA,,ERMA Inc,,,,,Япония,1,2026-06-05,2026-06-05,1
 ES,ES,E.s,,"E.S. Co., Ltd",,,,,Япония,1,2023-07-07,2023-07-07,1
 ESIBI SEKUHIN,ESIBI SEKUHIN,Esibi Sekuhin,,"Esibi Sekuhin co., ltd",,,,,Япония,1,2025-06-26,2025-06-26,1
 ESPEC,ESPEC,Espec,,ESPEC Corporation,,,,,Япония,51,2016-04-08,2026-09-25,3
-ESTASREADY SRL ADDRESS VIA ASCANIO SFORZA 53 20136 MILANO ITALIA,ESTASREADY SRL ADDRESS VIA ASCANIO SFORZA 53 20136 MILANO ITALIA,Estasready SRL Address VIA Ascanio Sforza 53 20136 Milano Italia,,"ESTASREADY SRL Address: Via Ascanio Sforza 53, 20136 Milano - Italia",,,,,Япония,1,2025-10-17,2025-10-17,1
+ESTASREADY SRL,ESTASREADY SRL,Estasready SRL,,Estasready SRL,,,,,Япония,1,2025-10-17,2025-10-17,1
 ESTEE LAUDER,ESTEE LAUDER,Estee Lauder,,Estee Lauder BV,,,,,Япония,3,2024-12-24,2025-08-10,2
 ESTHENOVA,ESTHENOVA,Esthenova,,Esthenova INC,,,,,Япония,1,2026-05-25,2026-05-25,1
 ETCH KS,ETCH KS,ETCH K.s,,"ETCH K.S. Co., Ltd",,,,,Япония,1,2025-04-07,2025-04-07,1
@@ -744,7 +730,6 @@ EXIA,EXIA,EXIA,,"EXIA Co., Ltd",,,,,Япония,1,2025-04-16,2025-04-16,1
 EXXON MOBIL,EXXON MOBIL,Exxon Mobil,,"Exxon Mobil Co., LTD",,,,,Япония,14,2022-08-10,2025-11-07,4
 EXXONMOBIL,EXXONMOBIL,ExxonMobil,,"ExxonMobil Yugen Kaisha Co., LTD",,,,,Япония,19,2022-12-08,2026-08-31,8
 EXXONMOBIL LUBRICANTS AND SPECIALTIES,EXXONMOBIL LUBRICANTS AND SPECIALTIES,Exxonmobil Lubricants AND Specialties,,"ExxonMobil Yugen Kaisha, Lubricants & Specialties",,,,,Япония,1,2023-12-04,2023-12-04,1
-EYGASHIMA DISTILLERI,EYGASHIMA DISTILLERI,Eygashima Distilleri,,Eygashima Distilleri,Эйгашима Дистиллери,,,,Япония,1,2024-11-12,2024-11-12,1
 EZAKI GLICO,EZAKI GLICO,Ezaki Glico,江崎グリコ,"Ezaki Glico Co., Ltd",,江崎グリコ株式会社,5120001049268,27,Япония,27,2022-01-24,2026-09-10,7
 F RYUKYU,F RYUKYU,F Ryukyu,,"F Ryukyu Co., Ltd",,,,,Япония,1,2024-10-31,2024-10-31,1
 FACELABO,FACELABO,Facelabo,,"Facelabo Co., Ltd",,,,,Япония,7,2024-07-17,2025-08-21,2
@@ -977,6 +962,7 @@ HAKKO ELECTRONICS,HAKKO ELECTRONICS,Hakko Electronics,,"Hakko Electronics Co., L
 HAKODATE BEIKOKU,HAKODATE BEIKOKU,Hakodate Beikoku,,"Hakodate Beikoku Co., LTD",,,,,Япония,1,2022-06-01,2022-06-01,1
 HAKUBAKU,HAKUBAKU,Hakubaku,はくばく,"Hakubaku Co., Ltd",,株式会社はくばく,5090001012072,19,Япония,3,2025-08-19,2026-04-29,2
 HAKUGEN EARTH,HAKUGEN EARTH,Hakugen Earth,白元アース,"Hakugen Earth Co., Ltd",,白元アース株式会社,6010501036949,13,Япония,1,2024-06-17,2024-06-17,1
+HAKURO SAKE BREWERY,HAKURO SAKE BREWERY,Hakuro Sake Brewery,,"Hakuro Sake Brewery Co., Ltd","Хакуро Сакэ Брюэри Ко., Лтд",,,,Япония,2,2023-12-15,2025-07-21,1
 HAMADA CONFECT,HAMADA CONFECT,Hamada Confect,ハマダコンフェクト,"Hamada Confect Co., Ltd",,ハマダコンフェクト株式会社,7140001060774,28,Япония,3,2022-02-15,2026-09-15,2
 HAMADA SHOKAI,HAMADA SHOKAI,Hamada Shokai,,"Hamada Shokai Co.,ltd",,,,,Япония,1,2022-07-27,2022-07-27,1
 HAMADA SYUZOU,HAMADA SYUZOU,Hamada Syuzou,,"Hamada Syuzou Co., LTD","Хамада Сюдзо Ко., ЛТД",,,,Япония,3,2022-09-02,2026-04-16,1
@@ -1031,6 +1017,7 @@ HEIDENHAIN,HEIDENHAIN,Heidenhain,,Heidenhain K.k,,,,,Япония,1,2025-09-09,2
 HEINZ,HEINZ,Heinz,,Heinz Japan LTD,,,,,Япония,3,2023-10-03,2024-10-02,2
 HEIWA,HEIWA,Heiwa,平和コーポレーション,"Heiwa Co., Ltd",,平和コーポレーション株式会社,8200001021892,21,Япония,3,2023-12-22,2024-10-02,1
 HEIWA FOOD INDUSTRY,HEIWA FOOD INDUSTRY,Heiwa Food Industry,,"Heiwa Food Industry Co.,Ltd",,,,,Япония,1,2025-11-24,2025-11-24,1
+HELIOS DISTILLERY,HELIOS DISTILLERY,Helios distillery,,Helios distillery,Хелиос Дистиллери,,,,Япония,1,2025-05-26,2025-05-26,1
 HENTA SEICHA,HENTA SEICHA,Henta Seicha,,"Henta Seicha Co., Ltd",,,,,Япония,1,2022-06-01,2022-06-01,1
 HEWLETT PACKARD ENTERPRISE,HEWLETT PACKARD ENTERPRISE,Hewlett Packard Enterprise,,Hewlett Packard Enterprise,,,,,Япония,2,2022-08-29,2025-02-19,1
 HEXAGON WRENCH,HEXAGON WRENCH,Hexagon Wrench,,Hexagon Wrench Co. Ltd,,,,,Япония,1,2026-07-27,2026-07-27,1
@@ -1144,6 +1131,7 @@ HOKUETSU INDUSTRIES,HOKUETSU INDUSTRIES,Hokuetsu Industries,,"Hokuetsu Industrie
 HOKURIKU CONFECTIONERY,HOKURIKU CONFECTIONERY,Hokuriku Confectionery,,"Hokuriku Confectionery, Ltd",,,,,Япония,2,2025-02-25,2025-11-28,2
 HOKUSAN,HOKUSAN,Hokusan,ホクサン,"Hokusan & Co., LTD",,ホクサン株式会社,4430001021502,01,Япония,6,2022-01-18,2025-04-15,2
 HOKUYO AUTOMATIC,HOKUYO AUTOMATIC,Hokuyo Automatic,北陽電機,"Hokuyo Automatic Co., LTD",,北陽電機株式会社,6120001070330,27,Япония,3,2024-05-28,2026-04-29,2
+HOMARE SAKE BREWERY,HOMARE SAKE BREWERY,Homare Sake Brewery,,"Homare Sake Brewery Co., Ltd","Хомарэ Сакэ Брюэри Ко., Лтд",,,,Япония,1,2024-08-13,2024-08-13,1
 HOMBO SHUZO,HOMBO SHUZO,Hombo Shuzo,本坊酒造,"Hombo Shuzo Co., LTD",Хонбо Шузо Ко. ЛТД,本坊酒造株式会社,6340001003887,46,Япония,1,2024-05-21,2024-05-21,1
 HOME PRODUCTS KRACIE,HOME PRODUCTS KRACIE,HOME Products Kracie,,"Home Products Company Kracie , Ltd",,,,,Япония,3,2025-02-17,2025-02-17,2
 HOMME ASAKICHI SHOTEN,HOMME ASAKICHI SHOTEN,Homme Asakichi Shoten,,"Homme Asakichi Shoten Co., Ltd",,,,,Япония,1,2026-10-09,2026-10-09,1
@@ -1191,7 +1179,7 @@ HOUSE GABAN,HOUSE GABAN,House Gaban,ハウスギャバン,House Gaban Corporatio
 HOUSE WELLNESS FOODS,HOUSE WELLNESS FOODS,House Wellness Foods,ハウスウェルネスフーズ,House Wellness Foods Corporation,,ハウスウェルネスフーズ株式会社,5140001080460,28,Япония,1,2023-07-14,2023-07-14,1
 HOWKU VALVE,HOWKU VALVE,Howku Valve,,"Howku Valve Co., Ltd",,,,,Япония,7,2025-11-25,2026-10-02,1
 HOYA,HOYA,HOYA,ＨＯＹＡ株式会社,HOYA Corporation,ХОЯ Корпорейшн,ＨＯＹＡ株式会社,7011101019599,13,Япония,59,2012-03-11,2026-09-03,4
-HRS DAIEI GINZA BUILDING 6F 1167 GINZA CHUOKU TOKYO 1040061,HRS DAIEI GINZA BUILDING 6F 1167 GINZA CHUOKU TOKYO 1040061,HRS Daiei Ginza Building 6F 1167 Ginza Chuoku Tokyo 1040061,,"HRS Токио Daiei Ginza Building, 6F, 1-16-7 Ginza, Chuo-ku Tokyo, 104-0061 Japan",,,,,Япония,1,2025-05-15,2025-05-15,1
+HRS,HRS,HRS,,HRS,,,,,Япония,1,2025-05-15,2025-05-15,1
 HSC COLLAGEN,HSC COLLAGEN,HSC Collagen,,"HSC COLLAGEN Co., Ltd",,,,,Япония,3,2023-03-22,2025-06-04,2
 HUIT LABORATORIES,HUIT LABORATORIES,Huit laboratories,,"Huit laboratories Co., Ltd",,,,,Япония,4,2025-06-30,2025-06-30,1
 HUMAN ACADEMY,HUMAN ACADEMY,Human Academy,ヒューマンアカデミー,"Human Academy Co., LTD",,ヒューマンアカデミー株式会社,4011101055952,13,Япония,1,2024-03-28,2024-03-28,1
@@ -1206,7 +1194,7 @@ ICHIGO,ICHIGO,Ichigo,いちごグループホールディングス,"Ichigo Co., 
 ICHIKAWAEN,ICHIKAWAEN,Ichikawaen,市川園,"Ichikawaen Co.,Ltd",,株式会社市川園,5080001000433,22,Япония,1,2024-12-12,2024-12-12,1
 ICHIOKA SEIKA,ICHIOKA SEIKA,Ichioka Seika,,"Ichioka Seika Co.,Ltd",,,,,Япония,1,2025-06-20,2025-06-20,1
 ICHIRO,ICHIRO,Ichiro,,Ichiro Corporation,,,,,Япония,10,2025-10-27,2026-08-03,1
-ICOM,ICOM,Icom,アイコム,ICOM Incorporated,,アイコム株式会社,1120001019349,27,Япония,56,2015-12-24,2026-10-15,5
+ICOM,ICOM,Icom,アイコム,ICOM Incorporated,,アイコム株式会社,1120001019349,27,Япония,56,2015-12-24,2026-10-15,4
 ICST,ICST,ICST,,ICST Corporation,АЙ-СИ-ЭС-ТИ Корпорэйшн,,,,Япония,3,2023-09-11,2026-08-05,2
 IDA LABORATORIES,IDA LABORATORIES,Ida Laboratories,,Ida Laboratories Inc,,,,,Япония,1,2024-10-30,2024-10-30,1
 IDEA INTERNATIONAL,IDEA INTERNATIONAL,IDEA International,,"IDEA International Co., LTD",,,,,Япония,3,2022-07-15,2022-12-14,1
@@ -1240,6 +1228,7 @@ IKI,IKI,IKI,,"IKI Co., LTD",,,,,Япония,16,2025-09-17,2026-04-09,1
 IKURA SEIKI,IKURA SEIKI,Ikura Seiki,育良精機,"Ikura Seiki Co., LTD",,育良精機株式会社,1050001017426,08,Япония,3,2023-02-21,2025-09-10,2
 IKURA SEIKI SEISAKUSHO,IKURA SEIKI SEISAKUSHO,Ikura Seiki Seisakusho,,Ikura Seiki Seisakusho Co Ltd,,,,,Япония,2,2024-04-05,2025-03-11,2
 IMADA,IMADA,Imada,,"Imada Co., LTD",,,,,Япония,1,2025-01-16,2025-01-16,1
+IMAYO TSUKASA SAKE BREWERY,IMAYO TSUKASA SAKE BREWERY,Imayo Tsukasa Sake Brewery,,"Imayo Tsukasa Sake Brewery Co., Ltd","Имаё Тсукаса Сакэ Брюэри Ко., Лтд",,,,Япония,2,2023-12-15,2025-07-11,1
 IMOTO SANGYO,IMOTO SANGYO,Imoto Sangyo,,Imoto Sangyo LTD,,,,,Япония,2,2026-03-26,2026-05-06,2
 IMPACT EYE,IMPACT EYE,Impact EYE,,IMPACT EYE Co. Ltd,,,,,Япония,1,2026-07-29,2026-07-29,1
 IMURAYA GROUP,IMURAYA GROUP,Imuraya Group,,"Imuraya Group Co.,ltd",,,,,Япония,2,2026-07-03,2026-07-03,1
@@ -1363,7 +1352,7 @@ JAPAN ORGANIZATION FOR METALS AND ENERGY SECURITY,JAPAN ORGANIZATION FOR METALS 
 JAPAN ORIENTAL MEDICAL,JAPAN ORIENTAL MEDICAL,Japan Oriental Medical,,"Japan Oriental Medical Co., Ltd",,,,,Япония,1,2026-07-17,2026-07-17,1
 JAPAN PREMIUM,JAPAN PREMIUM,Japan Premium,,Japan Premium inc,,,,,Япония,2,2026-08-19,2026-08-19,1
 JAPAN PULP AND PAPER,JAPAN PULP AND PAPER,Japan pulp & paper,日本紙パルプ商事,Japan pulp & paper Co.ltd,,日本紙パルプ商事株式会社,1010001034978,13,Япония,1,2018-05-07,2018-05-07,1
-JAPAN SANGARIA BEVERAGE,JAPAN SANGARIA BEVERAGE,Japan Sangaria Beverage,,Japan Sangaria Beverage Company Ltd,Джапан Сангария Беверидж Ко. ЛТД,,,,Япония,42,2021-04-08,2026-09-26,10
+JAPAN SANGARIA BEVERAGE,JAPAN SANGARIA BEVERAGE,Japan Sangaria Beverage,,"Japan Sangaria Beverage Co., Ltd",Джапан Сангария Беверидж Ко. ЛТД,,,,Япония,42,2021-04-08,2026-09-26,9
 JAPAN SANIPAK,JAPAN SANIPAK,Japan Sanipak,,"Japan Sanipak Co., Ltd",,,,,Япония,1,2024-08-26,2024-08-26,1
 JAPAN SERVO,JAPAN SERVO,Japan Servo,,"Japan Servo Co., Ltd",,,,,Япония,2,2025-08-13,2026-05-25,1
 JAPAN SOLDERLESS TERMINAL,JAPAN SOLDERLESS TERMINAL,Japan Solderless Terminal,,Japan Solderless Terminal,,,,,Япония,7,2025-07-25,2026-02-21,2
@@ -1377,6 +1366,7 @@ JAPAN TOBAKKO,JAPAN TOBAKKO,Japan Tobakko,,Japan Tobakko Inc,Джапан Тоб
 JAPAN TOOL SERVICE,JAPAN TOOL SERVICE,Japan Tool Service,,Japan Tool Service,ДЖАПАН ТУЛ СЕРВИС,,,,Япония,0,,,1
 JAPAN WORLD TRADING,JAPAN WORLD TRADING,Japan World Trading,,"Japan World Trading Co., Ltd",,,,,Япония,2,2023-12-05,2025-06-05,1
 JAPANGALSSC,JAPANGALSSC,JAPANGALSsc,,"JAPANGALSsc co.,ltd",,,,,Япония,1,2025-03-14,2025-03-14,1
+JCC AGENT,JCC AGENT,JCC Agent,,JCC Agent Co.Ltd,ДжСиСи Аджент Ко.Лтд,,,,Япония,1,2025-07-01,2025-07-01,1
 JDA,JDA,JDA,,"JDA Co., Ltd",,,,,Япония,5,2024-01-12,2026-05-05,2
 JEL,JEL,JEL,ジェーイーエル,JEL Corporation,,株式会社ジェーイーエル,1240001030871,34,Япония,1,2025-10-10,2025-10-10,1
 JELLICE,JELLICE,Jellice,,"Jellice Co., LTD",,,,,Япония,1,2024-08-13,2024-08-13,1
@@ -1461,8 +1451,8 @@ KAMEDA SEIKA,KAMEDA SEIKA,Kameda Seika,亀田製菓,"Kameda Seika Co., Ltd","К�
 KAMESE FISHERIES,KAMESE FISHERIES,Kamese Fisheries,,"Kamese Fisheries Co., Ltd",,,,,Япония,1,2024-06-24,2024-06-24,1
 KAMESHIMA TEKKOUSYO,KAMESHIMA TEKKOUSYO,Kameshima Tekkousyo,,"KAMESHIMA TEKKOUSYO Co.,Ltd",,,,,Япония,1,2024-04-26,2024-04-26,1
 KAMEYA FOODS,KAMEYA FOODS,Kameya Foods,,Kameya Foods Corporation,,,,,Япония,1,2022-09-08,2022-09-08,1
-KAMI SHODJI,KAMI SHODJI,Kami Shodji,,"Kami Shodji Co., Ltd",Ками Сёдзи,,,,Япония,1,2025-01-30,2025-01-30,1
-KAMI SHOJI,KAMI SHOJI,Kami Shoji,,АО Kami Shoji,Ками Шоджи,,,,Япония,4,2024-05-03,2026-03-05,3
+KAMI SHODJI,KAMI SHODJI,Kami Shodji,,Kami Shodji,АО Ками Сёдзи,,,,Япония,2,2024-08-08,2025-01-30,2
+KAMI SHOJI,KAMI SHOJI,Kami Shoji,,Kami Shoji,Ками Шоджи,,,,Япония,4,2024-05-03,2026-03-05,3
 KAMIMURA SHOKUHIN,KAMIMURA SHOKUHIN,Kamimura Shokuhin,,Kamimura Shokuhin LTD,,,,,Япония,1,2025-12-30,2025-12-30,1
 KAMINOKUNI WINERY,KAMINOKUNI WINERY,Kaminokuni Winery,,Kaminokuni Winery,,,,,Япония,2,2026-09-02,2026-09-02,1
 KAMINOMOTO,KAMINOMOTO,Kaminomoto,,"Kaminomoto Co., Ltd",,,,,Япония,3,2025-08-28,2026-02-05,1
@@ -1483,7 +1473,7 @@ KANERYO KAISO,KANERYO KAISO,Kaneryo Kaiso,,"Kaneryo Kaiso Co., Ltd",,,,,Япон
 KANERYO SEA VEGETABLE,KANERYO SEA VEGETABLE,KANERYO Sea Vegetable,,KANERYO Sea Vegetable CORP,"Канэрио Си Вэджитэбл., ЛТД",,,,Япония,1,2025-06-23,2025-06-23,1
 KANESU SEIMEN,KANESU SEIMEN,Kanesu Seimen,,"Kanesu Seimen CO., LTD",,,,,Япония,1,2023-08-11,2023-08-11,1
 KANEYO,KANEYO,Kaneyo,カネヨウ,"Kaneyo Co., Ltd",,カネヨウ株式会社,2120001077387,27,Япония,2,2018-05-21,2024-11-25,1
-KANEYO SEKKEN,KANEYO SEKKEN,Kaneyo Sekken,,Акционерная компания Kaneyo Sekken,Канэё Сэккэн,,,,Япония,1,2026-09-09,2026-09-09,1
+KANEYO SEKKEN,KANEYO SEKKEN,Kaneyo Sekken,,Kaneyo Sekken,Канэё Сэккэн,,,,Япония,1,2026-09-09,2026-09-09,1
 KANEYO SOAP,KANEYO SOAP,Kaneyo Soap,,"Kaneyo Soap Co., Ltd","КАНЭЁ СОАП КО., ЛТД",,,,Япония,19,2014-10-20,2026-10-07,5
 KANKO SHOKAI,KANKO SHOKAI,Kankō Shōkai,,Kankō Shōkai,,,,,Япония,2,2026-07-14,2026-07-14,1
 KANRO,KANRO,Kanro,カンロ,"KANRO Co., Ltd",,カンロ株式会社,9011201001240,13,Япония,6,2024-01-31,2025-08-29,5
@@ -1491,7 +1481,7 @@ KANSAI AUTOMATION,KANSAI AUTOMATION,Kansai Automation,,Kansai Automation Co. Ltd
 KANTO KASEI,KANTO KASEI,Kanto Kasei,関東化成工業,Kanto Kasei Ltd,,関東化成工業株式会社,1021001040123,14,Япония,3,2024-02-20,2026-03-26,2
 KANTO SEIKI,KANTO SEIKI,Kanto Seiki,,KANTO SEIKI Co.LTD,,,,,Япония,2,2023-09-07,2025-08-07,2
 KANZAWA SEIKO,KANZAWA SEIKO,Kanzawa Seiko,,"Kanzawa Seiko Co., LTD",,,,,Япония,1,2025-03-13,2025-03-13,1
-KAO,KAO,KAO,花王,Kao Corporation,АО КАО,花王株式会社,4010001034760,13,Япония,210,2013-08-28,2026-10-22,11
+KAO,KAO,KAO,花王,Kao Corporation,АО КАО,花王株式会社,4010001034760,13,Япония,216,2013-08-28,2026-10-22,11
 KAO GERMANY,KAO,KAO,花王,KAO Germany GmbH,,,,,Германия,107,2021-11-19,2026-10-27,3
 KAO INDUSTRIAL,KAO,KAO,花王,"KAO Industrial Co., Ltd",,,,,Таиланд,3,2026-05-18,2026-10-11,1
 KAO PROFESSIONAL SALON SERVICE,KAO,KAO,花王,KAO Professional Salon Service GmbH,,,,,Германия,2,2015-02-16,2015-03-02,1
@@ -1554,7 +1544,7 @@ KENTATSU DENKI,KENTATSU DENKI,Kentatsu Denki,,Kentatsu Denki LTD,,,,,Япони�
 KESENNUMA HOTEI,KESENNUMA HOTEI,Kesennuma Hotei,,"KESENNUMA HOTEI Co., Ltd",,,,,Япония,1,2024-06-11,2024-06-11,1
 KETT ELECTRIC LABORATORY,KETT ELECTRIC LABORATORY,Kett Electric Laboratory,,Kett Electric Laboratory,,,,,Япония,4,2022-08-26,2022-11-15,1
 KETTAMA NIIGATA MECHANICAL AND ELECTRICAL,KETTAMA NIIGATA MECHANICAL AND ELECTRICAL,Kettama Niigata Mechanical & Electrical,,"Kettama Niigata Mechanical & Electrical Co.,LtD",,,,,Япония,4,2025-03-21,2025-10-10,3
-KEWPIE,KEWPIE,Kewpie,キユーピー,Kewpie Corporation,Кьюпи Корпорейшн,キユーピー株式会社,6011001006277,13,Япония,28,2021-12-24,2026-09-18,3
+KEWPIE,KEWPIE,Kewpie,キユーピー,Kewpie Corporation,Кьюпи Корпорейшн,キユーピー株式会社,6011001006277,13,Япония,29,2021-12-24,2026-09-18,4
 KEWPIE COEPORATION,KEWPIE COEPORATION,Kewpie Coeporation,,Kewpie Coeporation,Кьюпи Корпорейшн,,,,Япония,1,2024-06-17,2024-06-17,1
 KEWPIE EGG,KEWPIE EGG,Kewpie Egg,,Kewpie Egg Corporation,,,,,Япония,1,2023-08-11,2023-08-11,1
 KEY COFFEE,KEY COFFEE,Key Coffee,キーコーヒー,"Key Coffee Co., Ltd",,キーコーヒー株式会社,4010401007523,13,Япония,3,2024-02-16,2026-02-24,2
@@ -1564,7 +1554,6 @@ KEYENCE SINGAPORE,KEYENCE,Keyence,キーエンス,Keyence Singapore PTE LTD,,,,,
 KFE,KFE,KFE,ＫＦＥ　ＪＡＰＡＮ株式会社,KFE LTD,,ＫＦＥ　ＪＡＰＡＮ株式会社,7020001036340,13,Япония,0,,,1
 KHAMAMATSU FOTONIKS,KHAMAMATSU FOTONIKS,Khamamatsu Fotoniks,,Khamamatsu Fotoniks K.k,Хамаматсу Фотоникс К.К,,,,Япония,3,2018-09-05,2020-11-27,1
 KHAPPO FUDS,KHAPPO FUDS,Khappo Fuds,,"Khappo Fuds Co., Ltd","Хаппо Фудс Ко., Лтд",,,,Япония,1,2024-02-13,2024-02-13,1
-KHELIOS DISTILLERI,KHELIOS DISTILLERI,Khelios Distilleri,,Khelios Distilleri,Хелиос Дистиллери,,,,Япония,1,2025-05-26,2025-05-26,1
 KHOKUREN NOGIO KUMIAI,KHOKUREN NOGIO KUMIAI,Khokuren Nogio Kumiai,,Khokuren Nogio Kumiai,ХОКУРЭН НОГИО КУМИАИ,,,,Япония,1,2023-05-30,2023-05-30,1
 KIAN ANN,KIAN ANN,Kian Ann,,Kian Ann,,,,,Япония,1,2026-07-03,2026-07-03,1
 KIDILL,KIDILL,Kidill,,Kidill LLC,,,,,Япония,10,2024-01-22,2024-07-02,1
@@ -1601,7 +1590,6 @@ KINOKUNI SHOKUHIN,KINOKUNI SHOKUHIN,Kinokuni Shokuhin,,"Kinokuni Shokuhin co., L
 KINS,KINS,KINS,,"KINS Co., Ltd",,,,,Япония,8,2025-06-30,2025-07-01,1
 KINTO,KINTO,Kinto,キントー,"Kinto Co., LTD",,株式会社キントー,1160001008232,25,Япония,2,2023-10-09,2025-11-28,1
 KIOSERA DOKUMENT SOLYUSHENZ,KIOSERA DOKUMENT SOLYUSHENZ,Kiosera Dokument Solyushenz,,Kiosera Dokument Solyushenz Inc,КИОСЕРА ДОКУМЕНТ СОЛЮШЕНЗ ИНК,,,,Япония,0,,,1
-KIOTO DISTILLERI,KIOTO DISTILLERI,Kioto Distilleri,,Kioto Distilleri,Киото Дистиллери,,,,Япония,1,2026-10-01,2026-10-01,1
 KIOXIA,KIOXIA,Kioxia,キオクシア,KIOXIA Corporation,,キオクシア株式会社,5010001184349,13,Япония,31,2022-01-28,2026-10-09,3
 KIOXIA EUROPE,KIOXIA,Kioxia,キオクシア,KIOXIA Europe GmbH,,,,,Германия,8,2024-12-11,2026-06-17,2
 KIRIN BREWERY,KIRIN,Kirin,,"Kirin Brewery Co., Ltd","Кирин Бревери Ко., Лтд",麒麟麦酒株式会社,1010001098858,13,Япония,19,2021-11-03,2026-09-30,5
@@ -1623,7 +1611,7 @@ KITAMURA KIDEN,KITAMURA KIDEN,Kitamura Kiden,,"Kitamura Kiden Co., LTD",,,,,Яп
 KITAMURA MACHINERY,KITAMURA MACHINERY,Kitamura Machinery,キタムラ機械,"Kitamura Machinery Co., LTD",,キタムラ機械株式会社,5230001009905,16,Япония,6,2022-02-03,2026-10-22,4
 KITANOKIKAKU,KITANOKIKAKU,KitanoKikaku,,"KitanoKikaku Co.,Ltd",,,,,Япония,1,2023-11-09,2023-11-09,1
 KITAO COSMETICS,KITAO COSMETICS,Kitao Cosmetics,,"Kitao Cosmetics Co., LTD",,,,,Япония,11,2025-03-28,2026-03-03,3
-KITAOKA KHONTEN,KITAOKA KHONTEN,Kitaoka Khonten,,"Kitaoka Khonten Co., Ltd","Китаока Хонтен Ко., Лтд",,,,Япония,7,2023-02-15,2024-10-21,1
+KITAOKA HONTEN,KITAOKA HONTEN,Kitaoka Honten,,"Kitaoka Honten Co., Ltd","Китаока Хонтен Ко., Лтд",,,,Япония,7,2023-02-15,2024-10-21,1
 KITASHO,KITASHO,Kitasho,,"KITASHO Co.,Ltd",,,,,Япония,3,2024-04-15,2026-09-14,2
 KITAZATO,KITAZATO,Kitazato,,Kitazato Corporation,,,,,Япония,7,2026-04-02,2026-04-27,1
 KITAZATO CIRPORATION,KITAZATO CIRPORATION,Kitazato Cirporation,,Kitazato Cirporation,,,,,Япония,1,2026-04-22,2026-04-22,1
@@ -1642,7 +1630,6 @@ KLEENTEK,KLEENTEK,Kleentek,,Kleentek Corporation,,,,,Япония,1,2024-11-22,2
 KLS KAHOKU LIGHTING SOLUTIONS,KLS KAHOKU LIGHTING SOLUTIONS,KLS Kahoku Lighting Solutions,,KLS Kahoku Lighting Solutions,,,,,Япония,2,2024-08-19,2024-10-01,2
 KLV,KLV,KLV,,KLV Co. Ltd,,,,,Япония,1,2023-08-11,2023-08-11,1
 KMEW,KMEW,KMEW,ケイミュー,"KMEW Co., LTD",,ケイミュー株式会社,9120001110109,27,Япония,1,2025-06-20,2025-06-20,1
-KO,KO,Ko,ケーオーカンパニー,"САКУРАО Брюэри энд Дистиллери Ko., Лтд","САКУРАО Брюэри энд Дистиллери Ко., Лтд",株式会社ケーオーカンパニー,9011101052994,13,Япония,22,2023-05-22,2026-06-22,8
 KOBAYASHI PHARMACEUTICAL,KOBAYASHI PHARMACEUTICAL,Kobayashi Pharmaceutical,小林製薬,"Kobayashi Pharmaceutical Co., LTD",,小林製薬株式会社,4120001077402,27,Япония,15,2024-02-09,2026-07-31,3
 KOBAYASHI SHOJI,KOBAYASHI SHOJI,Kobayashi Shoji,小林商事株式会社,"Kobayashi Shoji Co., LTD",,小林商事株式会社,7010001015881,14,Япония,1,2025-08-27,2025-08-27,1
 KOBAYASHINORITEN,KOBAYASHINORITEN,Kobayashinoriten,,Kobayashinoriten Co.Ltd,,,,,Япония,1,2025-01-20,2025-01-20,1
@@ -1675,7 +1662,7 @@ KOKUBO KOGYOSHO,KOKUBO KOGYOSHO,Kokubo Kogyosho,,"Kokubo Kogyosho Co., Ltd",,,,,
 KOKURYUDO,KOKURYUDO,Kokuryudo,,"Kokuryudo Co., Ltd",,,,,Япония,1,2024-12-18,2024-12-18,1
 KOKUSAI DENGYO,KOKUSAI DENGYO,Kokusai Dengyo,,Kokusai Dengyo Co Ltd,,,,,Япония,2,2022-10-13,2026-07-15,2
 KOKUYO,KOKUYO,Kokuyo,コクヨ,"Kokuyo Co.,ltd",,コクヨ株式会社,6120001012282,27,Япония,2,2026-09-22,2026-09-27,1
-KOMATSU,KOMATSU,Komatsu,小松製作所,Komatsu Ltd,Комацу Лтд,株式会社小松製作所,1010401010455,13,Япония,429,2013-01-09,2026-10-23,14
+KOMATSU,KOMATSU,Komatsu,小松製作所,Komatsu Ltd,Комацу Лтд,株式会社小松製作所,1010401010455,13,Япония,429,2013-01-09,2026-10-23,12
 KOMATSU CONSTRUCTION MACHINERY,KOMATSU,Komatsu,小松製作所,"Komatsu Construction Machinery Co., Ltd",,,,,Китай,44,2022-08-02,2026-09-29,6
 KOMATSU MACHINERY MFG,KOMATSU,Komatsu,小松製作所,Komatsu Machinery Manufacturing Co,,,,,Китай,37,2022-06-08,2026-10-28,2
 KOMATSU GENUINE PARTS,KOMATSU,Komatsu,小松製作所,Komatsu Genuine Parts,,,,,Япония,25,2024-06-06,2026-08-26,1
@@ -1740,7 +1727,8 @@ KOYO,KOYO,KOYO,幸燿,KOYO Corporation,,株式会社幸燿,3470001001724,37,Яп
 KOYO ELECTRONICS INDUSTRIES,KOYO ELECTRONICS INDUSTRIES,KOYO Electronics Industries,,"KOYO Electronics Industries Co., LTD",,,,,Япония,5,2022-06-28,2026-04-14,1
 KOYO ELECTRONICS INDUSTRY,KOYO ELECTRONICS INDUSTRY,Koyo Electronics Industry,,"Koyo Electronics Industry Co., Ltd",,,,,Япония,1,2025-03-06,2025-03-06,1
 KOYO MERCANTILE,KOYO MERCANTILE,Koyo Mercantile,,"Koyo Mercantile Co., LTD",,,,,Япония,1,2026-09-29,2026-09-29,1
-KRACIE,KRACIE,Kracie,クラシエ,"Kracie, Ltd",,クラシエ株式会社,2010401061852,13,Япония,30,2013-08-28,2026-09-16,7
+KOZHIYA SANZAEMON,KOZHIYA SANZAEMON,Kozhiya Sanzaemon,,Kozhiya Sanzaemon,ООО КОЖИЯ САНЗАЕМОН,,,,Япония,1,2025-05-24,2025-05-24,1
+KRACIE,KRACIE,Kracie,クラシエ,"Kracie, Ltd",,クラシエ株式会社,2010401061852,13,Япония,30,2013-08-28,2026-09-16,6
 KRACIE FOODS,KRACIE FOODS,Kracie Foods,クラシエフーズ,"Kracie Foods, Ltd",,クラシエフーズ株式会社,1010401038257,13,Япония,1,2023-01-27,2023-01-27,1
 KRACIE HOME PRODUCTS,KRACIE HOME PRODUCTS,Kracie Home Products,クラシエホームプロダクツ,"Kracie Home Products, Ltd",,クラシエホームプロダクツ株式会社,6010401061849,13,Япония,29,2014-06-05,2026-10-01,6
 KRACIE HOME PRODUCTS SALES,KRACIE HOME PRODUCTS SALES,Kracie Home Products Sales,,"Kracie Home Products Sales, Ltd",,,,,Япония,6,2024-04-15,2026-06-19,1
@@ -1750,11 +1738,10 @@ KUB,KUB,Kub,,Kub Corporation,КУБ КОРПОРЕЙШН,,,,Япония,0,,,1
 KUBOTA,KUBOTA,Kubota,クボタ,Kubota Corporation,,株式会社クボタ,1120001037978,27,Япония,135,2014-01-23,2026-10-16,9
 KUBOTA CONSTRUCTION MACHINERY,KUBOTA,Kubota,クボタ,"Kubota Construction Machinery Co., Ltd",,,,,Китай,5,2026-04-21,2026-10-22,2
 KUBOTA SEIKA,KUBOTA,Kubota,クボタ,"Kubota Seika Co.,Ltd","Кубота Сэйка Ко., Лтд",,,,Япония,5,2023-07-07,2026-06-26,3
+KUBOTA AGRICULTURAL MACHINERY INDIA,KUBOTA,Kubota,クボタ,Kubota Agricultural Machinery India Pvt. OOO,,,,,Индия,4,2022-07-08,2025-04-09,3
 KUBOTA GIANNI FERRARI SRL,KUBOTA,Kubota,クボタ,Kubota Gianni Ferrari S.r.l,,,,,Италия,4,2023-02-17,2024-06-21,2
 KUBOTA AGRICULTURAL MACHINERY,KUBOTA,Kubota,クボタ,"Kubota Agricultural Machinery Co.,Ltd",,,,,Индия,3,2022-12-28,2025-07-30,3
 KUBOTA BRABENDER TECHNOLOGIE,KUBOTA,Kubota,クボタ,Kubota Brabender Technologie GmbH,,,,,Германия,3,2024-04-17,2025-07-24,1
-KUBOTA AGRICULTURAL MACHINERY INDIA,KUBOTA,Kubota,クボタ,Kubota Agricultural Machinery India Pvt. Ltd,,,,,Индия,2,2022-07-08,2025-04-09,2
-KUBOTA AGRICULTURAL MACHINERY INDIA OOO,KUBOTA,Kubota,クボタ,Kubota Agricultural Machinery India Pvt. OOO,,,,,Индия,2,2024-02-02,2025-02-11,1
 KUBOTA ENGINE,KUBOTA,Kubota,クボタ,"Kubota Engine Co., Ltd",,,,,Китай,2,2026-04-28,2026-06-17,2
 KUBOTA MFG OF AMERICA,KUBOTA,Kubota,クボタ,Kubota Manufacturing of America,,,,,США,2,2025-10-03,2025-10-03,1
 KUBOTA BAUMASCHINEN,KUBOTA,Kubota,クボタ,Kubota Baumaschinen GMBH,,,,,Германия,1,2022-08-30,2022-08-30,1
@@ -1771,7 +1758,7 @@ KUMANOYUSHI,KUMANOYUSHI,Kumanoyushi,,"Kumanoyushi Co., Ltd",,,,,Япония,3,2
 KUMASAN,KUMASAN,Kumasan,,Kumasan Co. Ltd,,,,,Япония,1,2024-04-16,2024-04-16,1
 KUMIAI CHEMICAL INDUSTRY,KUMIAI CHEMICAL INDUSTRY,Kumiai Chemical Industry,クミアイ化学工業,"Kumiai Chemical Industry Co., Ltd",,クミアイ化学工業株式会社,1010501016022,13,Япония,1,2026-04-30,2026-04-30,1
 KUNISHIMA,KUNISHIMA,Kunishima,,"Kunishima Co., LTD",,,,,Япония,1,2025-08-21,2025-08-21,1
-KUNITARO,KUNITARO,Kunitaro,,"Kunitaro Co., Ltd",,,,,Япония,16,2021-11-30,2026-03-03,5
+KUNITARO,KUNITARO,Kunitaro,,"Kunitaro Co., Ltd",,,,,Япония,17,2021-11-30,2026-03-03,5
 KUNITAROU,KUNITAROU,Kunitarou,,"Kunitarou Co., Ltd",,,,,Япония,1,2024-07-04,2024-07-04,1
 KURABO INDUSTRIES,KURABO INDUSTRIES,Kurabo Industries,倉敷紡績,Kurabo Industries LTD,,倉敷紡績株式会社,4260001013120,33,Япония,1,2026-07-09,2026-07-09,1
 KURAKON,KURAKON,Kurakon,,"Kurakon Co., LTD",,,,,Япония,4,2024-12-25,2025-12-24,2
@@ -1829,6 +1816,7 @@ KYOSAN DENKI,KYOSAN DENKI,Kyosan Denki,,"Kyosan Denki CO., LTD",,,,,Япония
 KYOSAN ELECTRIC MFG,KYOSAN ELECTRIC MFG,Kyosan Electric Mfg,京三製作所,"Kyosan Electric Mfg. Co., Ltd",,株式会社京三製作所,6020001017093,14,Япония,3,2016-09-02,2016-09-02,1
 KYOSHIN SEIKA,KYOSHIN SEIKA,Kyoshin Seika,,KYOSHIN SEIKA CO. Ltd,,,,,Япония,1,2025-02-25,2025-02-25,1
 KYOSHOKU,KYOSHOKU,Kyoshoku,,"Kyoshoku Co., LTD",,,,,Япония,1,2025-07-02,2025-07-02,1
+KYOTO DISTILLERY,KYOTO DISTILLERY,Kyoto Distillery,,The Kyoto Distillery,Киото Дистиллери,,,,Япония,1,2026-10-01,2026-10-01,1
 KYOTO ELECTRONICS MFG,KYOTO ELECTRONICS MFG,Kyoto Electronics Manufacturing,,"Kyoto Electronics Manufacturing Co., Ltd",,,,,Япония,6,2023-07-25,2026-04-20,3
 KYOTO ELECTRONICS TRADE,KYOTO ELECTRONICS TRADE,Kyoto Electronics Trade,,"Kyoto Electronics Trade Co.,Ltd",,,,,Япония,1,2024-06-27,2024-06-27,1
 KYOTO FU,KYOTO FU,Kyoto FU,,Kyoto FU,,,,,Япония,2,2024-10-22,2024-10-22,1
@@ -1893,6 +1881,7 @@ MAEDA SEISAKUSHO,MAEDA SEISAKUSHO,Maeda Seisakusho,前田製作所,"Maeda Seisak
 MAEHARASEIFUN,MAEHARASEIFUN,Maeharaseifun,,Maeharaseifun Limited,,,,,Япония,1,2023-07-21,2023-07-21,1
 MAGNESCALE,MAGNESCALE,Magnescale,,"Magnescale Co., Ltd",,,,,Япония,13,2014-03-14,2026-08-10,1
 MAGYAR SUZUKI,MAGYAR SUZUKI,Magyar Suzuki,,Magyar Suzuki Corporation,,,,,Япония,1,2024-08-15,2024-08-15,1
+MAKE MEDICAL,MAKE MEDICAL,Make Medical,,Make Medical,,,,,Япония,1,2022-06-17,2022-06-17,1
 MAKINO MILLING MACHINE,MAKINO MILLING MACHINE,Makino Milling Machine,,"Makino Milling Machine Co., Ltd",,,,,Япония,2,2026-04-29,2026-06-08,1
 MAKITA EUROPE,MAKITA,Makita,マキタ,Makita Europe SA,,,,,Бельгия,168,2019-12-25,2026-10-22,2
 MAKITA,MAKITA,Makita,マキタ,Makita Corporation,МАКИТА,株式会社マキタ,2180301013342,23,Япония,18,2020-08-20,2026-10-01,8
@@ -1976,7 +1965,7 @@ MATSUSHITA ELECTRIC INDUSTRIAL,MATSUSHITA ELECTRIC INDUSTRIAL,Matsushita Electri
 MATSUYA CONFECTIONERY,MATSUYA CONFECTIONERY,Matsuya Confectionery,,"Matsuya Confectionery Co., Ltd",,,,,Япония,2,2026-05-05,2026-09-10,1
 MATSUYAMA CONFECTIONERY,MATSUYAMA CONFECTIONERY,Matsuyama Confectionery,松山製菓,"MATSUYAMA CONFECTIONERY CO., Ltd",,松山製菓株式会社,4180001032814,21,Япония,1,2025-02-25,2025-02-25,1
 MATSUYASEIKA,MATSUYASEIKA,MatsuyaSeika,,MatsuyaSeika Co.Ltd,,,,,Япония,1,2025-11-07,2025-11-07,1
-MAX,MAX,MAX,,"MAX Co.,Ltd",,,,,Япония,12,2023-09-01,2026-06-05,3
+MAX,MAX,MAX,,"MAX Co.,Ltd",,,,,Япония,13,2023-09-01,2026-10-19,4
 MAXELL,MAXELL,Maxell,マクセル,"Maxell, Ltd",,マクセル株式会社,9120901001761,26,Япония,4,2023-06-29,2026-05-07,2
 MAXELL IZUMI,MAXELL,Maxell,マクセル,"MAXELL IZUMI Co., Ltd",,マクセルイズミ株式会社,2010401139888,20,Япония,4,2021-11-17,2024-12-03,2
 MAXELL ASIA,MAXELL,Maxell,マクセル,"Maxell Asia, Ltd",,,,,Китай,1,2026-05-14,2026-05-14,1
@@ -2185,7 +2174,7 @@ MOMENTIVE PERFORMANCE MATERIALS,MOMENTIVE PERFORMANCE MATERIALS,Momentive Perfor
 MOMIJI KAEDE KENKYUJO,MOMIJI KAEDE KENKYUJO,Momiji Kaede Kenkyujo,,"Momiji Kaede Kenkyujo Co., LTD",,,,,Япония,1,2026-04-23,2026-04-23,1
 MOMOTANI JUNTENKAN,MOMOTANI JUNTENKAN,Momotani Juntenkan,桃谷順天館,Momotani Juntenkan LTD,,株式会社桃谷順天館,3120001029965,27,Япония,70,2022-03-11,2026-10-21,1
 MOMOTARO SHOKUHIN,MOMOTARO SHOKUHIN,Momotaro Shokuhin,,"Momotaro Shokuhin Co.,ltd",,,,,Япония,1,2025-08-19,2025-08-19,1
-MOMOYA,MOMOYA,Momoya,桃屋,"Momoya Co, Ltd",,株式会社桃屋,4010001059114,13,Япония,6,2021-12-27,2026-10-23,4
+MOMOYA,MOMOYA,Momoya,桃屋,"Momoya Co, Ltd",,株式会社桃屋,4010001059114,13,Япония,7,2021-12-27,2026-10-23,5
 MONDELEZ,MONDELEZ,Mondelez,日本クラフトフーズ,Mondelēz Japan Limited,,モンデリーズ・ジャパン株式会社,7010701014638,13,Япония,6,2024-08-15,2026-02-25,4
 MONNALI,MONNALI,Monnali,,"Monnali Co.,ltd",,,,,Япония,24,2022-02-18,2026-03-17,2
 MONSTER ENERGY,MONSTER ENERGY,Monster Energy,,Monster Energy Japan Company,,,,,Япония,3,2025-02-14,2026-07-09,1
@@ -2198,8 +2187,7 @@ MORIHAN SOUHONPO,MORIHAN SOUHONPO,Morihan Souhonpo,,"Morihan Souhonpo Co., LTD",
 MORIKAWA SHOJI,MORIKAWA SHOJI,Morikawa Shoji,,"Morikawa Shoji Kaisha, Ltd","МОРИКАВА ШОДЗИ КАЙША, ЛТД",,,,Япония,0,,,1
 MORIMOTO MFG,MORIMOTO MFG,Morimoto MFG,森本製作所,"Morimoto Mfg. Co., LTD",,株式会社森本製作所,4122001016397,27,Япония,8,2013-11-25,2026-01-30,4
 MORINAGA,MORINAGA,Morinaga,森永製菓,"Morinaga Co., Ltd",,森永製菓株式会社,1010401029660,13,Япония,44,2021-12-13,2026-08-25,10
-MORINAGA MILK INDUSTRY,MORINAGA,Morinaga,森永製菓,"Morinaga Milk Industry Co., Ltd",,森永乳業株式会社,8010401029662,13,Япония,6,2022-11-23,2026-06-18,3
-MORINAGA MILK LNDUSTRY,MORINAGA,Morinaga,森永製菓,"Morinaga Milk lndustry Co., Ltd",,,,,Япония,1,2023-07-07,2023-07-07,1
+MORINAGA MILK INDUSTRY,MORINAGA,Morinaga,森永製菓,"Morinaga Milk Industry Co., Ltd",,森永乳業株式会社,8010401029662,13,Япония,7,2022-11-23,2026-06-18,3
 MORINAGA SHOJI,MORINAGA,Morinaga,森永製菓,"Morinaga Shoji Co., Ltd",,,,,Япония,1,2026-06-25,2026-06-25,1
 MORITA,MORITA,Morita,,"Morita Co., Ltd",Морита Ко. Лтд,,,,Япония,6,2023-02-27,2025-11-26,1
 MORITEX,MORITEX,Moritex,,MORITEX Corporation,,,,,Япония,1,2024-01-19,2024-01-19,1
@@ -2415,7 +2403,7 @@ NIHON GYOMU SHOKUHIN,NIHON GYOMU SHOKUHIN,Nihon Gyomu Shokuhin,,"Nihon Gyomu Sho
 NIHON GYOUMU SYOKUHIN,NIHON GYOUMU SYOKUHIN,Nihon Gyoumu Syokuhin,,"Nihon Gyoumu Syokuhin Co.,Ltd",,,,,Япония,1,2022-09-12,2022-09-12,1
 NIHON KEFIA,NIHON KEFIA,Nihon Kefia,日本ケフィア株式会社,"NIHON KEFIA Co.,Ltd",,日本ケフィア株式会社,5021001001625,14,Япония,1,2024-04-03,2024-04-03,1
 NIHON KENSHI,NIHON KENSHI,Nihon Kenshi,,"Nihon Kenshi Co., Ltd",,,,,Япония,1,2026-07-01,2026-07-01,1
-NIHON KOHDEN,NIHON KOHDEN,Nihon Kohden,日本光電工業,Nihon Kohden Corporation,,日本光電工業株式会社,2011101016254,13,Япония,42,2008-05-23,2026-10-04,5
+NIHON KOHDEN,NIHON KOHDEN,Nihon Kohden,日本光電工業,Nihon Kohden Corporation,,日本光電工業株式会社,2011101016254,13,Япония,42,2008-05-23,2026-10-04,3
 NIHON KOLMAR,NIHON KOLMAR,Nihon Kolmar,,"Nihon Kolmar Co., LTD",,,,,Япония,4,2021-11-08,2026-08-21,3
 NIHON KOSO,NIHON KOSO,Nihon KOSO,,"Nihon KOSO Co., Ltd",НИХОН КОСО,,,,Япония,10,2022-02-21,2025-02-24,6
 NIHON MEDIX,NIHON MEDIX,Nihon Medix,,"Nihon Medix Co., LTD",,,,,Япония,2,2025-12-23,2026-04-09,1
@@ -2437,7 +2425,7 @@ NIIGATA NOSHO,NIIGATA NOSHO,Niigata Nosho,,"Niigata Nosho Co.,Ltd",,,,,Япон�
 NIIGATA SEIKI,NIIGATA SEIKI,Niigata Seiki,新潟精機,"Niigata Seiki Co., Ltd",,新潟精機株式会社,9010401021362,13,Япония,1,2026-08-03,2026-08-03,1
 NIIGATA SHOUYU,NIIGATA SHOUYU,Niigata shouyu,,"Niigata shouyu Co., Ltd",,,,,Япония,1,2022-01-17,2022-01-17,1
 NIKKA VISKI DISTILLING,NIKKA VISKI DISTILLING,Nikka Viski Distilling,,"Nikka Viski Distilling Co., Ltd","Никка Виски Дистиллинг Ко., ЛТД",,,,Япония,1,2026-08-10,2026-08-10,1
-NIKKA WHISKY DISTILLING,NIKKA WHISKY DISTILLING,Nikka Whisky Distilling,ニッカウヰスキー,"The Nikka Whisky Distilling Co., LTD","Зе Никка Виски Дистиллинг Ко., ЛТД",ニッカウヰスキー株式会社,2010401021550,01,Япония,23,2023-05-10,2026-10-22,4
+NIKKA WHISKY DISTILLING,NIKKA WHISKY DISTILLING,Nikka Whisky Distilling,ニッカウヰスキー,"The Nikka Whisky Distilling Co., LTD","Зе Никка Виски Дистиллинг Ко., ЛТД",ニッカウヰスキー株式会社,2010401021550,01,Япония,24,2023-05-10,2026-10-22,4
 NIKKAN,NIKKAN,Nikkan,,Nikkan Ltd,,,,,Япония,1,2022-11-03,2022-11-03,1
 NIKKEN CUTLERY,NIKKEN CUTLERY,Nikken Cutlery,,"Nikken Cutlery Co., Ltd",,,,,Япония,1,2026-01-15,2026-01-15,1
 NIKKEN KOSAKUSHO WORKS,NIKKEN KOSAKUSHO WORKS,Nikken Kosakusho Works,,"Nikken Kosakusho Works, LTD",,,,,Япония,1,2025-11-21,2025-11-21,1
@@ -2480,10 +2468,9 @@ NIPPON GEROTOR,NIPPON GEROTOR,Nippon Gerotor,,Nippon Gerotor Co. Ltd,,,,,Япо�
 NIPPON INSTRUMENTS,NIPPON INSTRUMENTS,Nippon Instruments,日本インスツルメンツ株式会社,Nippon Instruments Corporation,,日本インスツルメンツ株式会社,1011001017485,26,Япония,5,2022-05-18,2026-09-10,1
 NIPPON MECHA CHEMICAL,NIPPON MECHA CHEMICAL,Nippon Mecha Chemical,,"Nippon Mecha Chemical Co., LTD",,,,,Япония,1,2024-06-03,2024-06-03,1
 NIPPON MUKI,NIPPON MUKI,Nippon Muki,,"Nippon Muki Co., Ltd",,,,,Япония,1,2026-04-23,2026-04-23,1
-NIPPON OIL,NIPPON OIL,Nippon OIL,,Nippon OIL Corporation,,,,,Япония,9,2023-07-10,2026-08-19,2
+NIPPON OIL,NIPPON OIL,Nippon OIL,,Nippon OIL Corporation,Ниппон Ойл Корпорейшн,,,,Япония,10,2023-07-10,2026-08-19,3
 NIPPON OIL PUMP,NIPPON OIL PUMP,Nippon Oil Pump,,"Nippon Oil Pump Co., Ltd",,,,,Япония,15,2021-11-02,2026-08-06,4
 NIPPON OTIS ELEVATOR,NIPPON OTIS ELEVATOR,Nippon Otis Elevator,日本オーチス・エレベータ,"Nippon Otis Elevator Co., Ltd",,日本オーチス・エレベータ株式会社,9010001075825,13,Япония,1,2023-02-17,2023-02-17,1
-NIPPON OYL,NIPPON OYL,Nippon Oyl,,Nippon Oyl Corporation,Ниппон Ойл Корпорейшн,,,,Япония,1,2023-11-13,2023-11-13,1
 NIPPON PAINT,NIPPON PAINT,Nippon Paint,日本ペイント,"Nippon Paint Co., LTD",,日本ペイント株式会社,3010701007835,13,Япония,1,2023-06-15,2023-06-15,1
 NIPPON PAINT CHEMICAL,NIPPON PAINT,Nippon Paint,日本ペイント,"Nippon Paint Chemical Co., LTD",,,,,Китай,1,2025-09-04,2025-09-04,1
 NIPPON PAINT MARINE,NIPPON PAINT,Nippon Paint,日本ペイント,"Nippon Paint Marine Co., LTD",,,,,Китай,1,2026-03-17,2026-03-17,1
@@ -2527,7 +2514,6 @@ NISSAN MOTOR MFG,NISSAN MOTOR,Nissan Motor,日産自動車,Nissan Motor Manufact
 NISSAN MOTOTR,NISSAN MOTOTR,Nissan Mototr,,"Nissan Mototr Co., LTD",,,,,Япония,1,2026-06-03,2026-06-03,1
 NISSEI,NISSEI,Nissei,,Nissei Corporation,,,,,Япония,9,2013-01-18,2026-09-23,4
 NISSEI ASB MACHINE,NISSEI ASB MACHINE,Nissei ASB Machine,日精エー・エス・ビー機械,"Nissei ASB Machine Co., LTD",,日精エー・エス・ビー機械株式会社,7100001008315,20,Япония,5,2015-09-04,2025-08-28,1
-NISSEI FUSHIMIMACHI MAIN BLDG,NISSEI FUSHIMIMACHI MAIN BLDG,Nissei Fushimimachi Main Bldg,,Nissei Fushimimachi Main Bldg,,,,,Япония,2,2023-10-16,2024-05-22,1
 NISSEI INDUSTRIES,NISSEI INDUSTRIES,Nissei Industries,日星工業,"Nissei Industries Co.,ltd",,日星工業株式会社,9080001008893,22,Япония,1,2023-02-28,2023-02-28,1
 NISSHA FIS,NISSHA FIS,Nissha FIS,,"Nissha FIS, Inc",,,,,Япония,1,2026-06-03,2026-06-03,1
 NISSHIN FOODS,NISSHIN FOODS,Nisshin Foods,,"Nisshin Foods Co., Ltd",,,,,Япония,1,2026-05-18,2026-05-18,1
@@ -2563,7 +2549,7 @@ NITTO KOHKI HI CUPLA,NITTO KOHKI HI CUPLA,Nitto Kohki Hi Cupla,,Nitto Kohki Hi C
 NITTO PHARMACEUTICAL INDUSTRY,NITTO PHARMACEUTICAL INDUSTRY,Nitto Pharmaceutical Industry,,"Nitto Pharmaceutical Industry Co.,Ltd",,,,,Япония,1,2023-06-23,2023-06-23,1
 NITTOSEIKO ANALYTECH,NITTOSEIKO ANALYTECH,Nittoseiko Analytech,日東精工アナリテック株式会社,"Nittoseiko Analytech Co., LTD",,日東精工アナリテック株式会社,4190001014175,14,Япония,2,2026-05-18,2026-08-04,2
 NIXON PARKARAZING,NIXON PARKARAZING,Nixon Parkarazing,,"Nixon Parkarazing Co., LTD",,,,,Япония,1,2025-02-19,2025-02-19,1
-NJR,NJR,NJR,,"NJR , Япония",,,,,Япония,2,2024-09-11,2024-09-11,1
+NJR,NJR,NJR,,NJR,,,,,Япония,2,2024-09-11,2024-09-11,1
 NK ENGINEERING,NK ENGINEERING,NK Engineering,,NK Engineering Ltd,,,,,Япония,1,2023-02-22,2023-02-22,1
 NKG,NKG,NKG,,NKG Corporation,,,,,Япония,1,2025-07-07,2025-07-07,1
 NKK SWITCHES,NKK SWITCHES,NKK Switches,日本開閉器工業,"NKK Switches Co., LTD",,ＮＫＫスイッチズ株式会社,1020001066839,14,Япония,4,2024-10-02,2026-09-02,3
@@ -2646,10 +2632,10 @@ OKUMURA,OKUMURA,Okumura,奥村組,"Okumura Co., Ltd",,株式会社奥村組,7120
 OKUMURA ENGINEERING,OKUMURA ENGINEERING,Okumura Engineering,奥村組土木興業,OKUMURA ENGINEERING corp,,奥村組土木興業株式会社,2120001028670,27,Япония,2,2023-10-24,2023-10-31,1
 OKURA CONFECTIONERY,OKURA CONFECTIONERY,Okura Confectionery,,"Okura Confectionery Co.,Ltd",,,,,Япония,1,2024-11-07,2024-11-07,1
 OLYMPIA INDUSTRIAL,OLYMPIA INDUSTRIAL,Olympia Industrial,,"Olympia Industrial Co., Ltd",,,,,Япония,1,2026-10-16,2026-10-16,1
-OLYMPUS MEDICAL SYSTEMS,OLYMPUS,Olympus,オリンパス,Olympus Medical Systems Corp,Олимпас Медикал Системс Корп,,,,Япония,96,2008-02-18,2026-09-28,6
+OLYMPUS MEDICAL SYSTEMS,OLYMPUS,Olympus,オリンパス,Olympus Medical Systems Corp,Олимпас Медикал Системс Корп,,,,Япония,96,2008-02-18,2026-09-28,4
 OLYMPUS,OLYMPUS,Olympus,オリンパス,Olympus Corporation,,オリンパス株式会社,5011001005222,13,Япония,41,2013-02-11,2026-10-16,6
 OLYMPUS SCIENTIFIC SOLUTIONS AMERICAS,OLYMPUS,Olympus,オリンパス,Olympus Scientific Solutions Americas Corp,,,,,США,7,2022-08-24,2026-05-12,3
-OLYMPUS WINTER AND IBE,OLYMPUS,Olympus,オリンパス,"Олимпас Винтер энд Ибе ГмбХ , Olympus Winter & Ibe GmbH",Олимпас Винтер энд Ибе ГмбХ,,,,Германия,3,2022-02-22,2022-11-21,3
+OLYMPUS WINTER AND IBE,OLYMPUS,Olympus,オリンパス,Olympus Winter & Ibe GmbH,Олимпас Винтер энд Ибе ГмбХ,,,,Германия,3,2022-02-22,2022-11-21,1
 OLYMPUS DEUTSCHLAND,OLYMPUS,Olympus,オリンパス,Olympus Deutschland GmbH,,,,,Германия,2,2015-01-28,2015-01-30,1
 OLYMPUS EUROPA SE AND KG,OLYMPUS,Olympus,オリンパス,Olympus Europa SE & Co. KG,ОЛИМПАС ЕВРОПА СЕ И КО. КГ,,,,Германия,2,2023-04-11,2023-08-04,1
 OLYMPUS NDT,OLYMPUS,Olympus,オリンパス,"Olympus NDT,Inc",,,,,США,2,2013-09-06,2024-03-05,2
@@ -2705,7 +2691,6 @@ OMRON UNITED KINGDOM,OMRON,Omron,オムロン,"Omron, United Kingdom",,,,,Вел
 ONCE,ONCE,ONCE,,ONCE INC,,,,,Япония,10,2026-02-28,2026-10-18,1
 ONOMICHI KUMIKA INDUSTRY,ONOMICHI KUMIKA INDUSTRY,Onomichi Kumika Industry,,"Onomichi Kumika Industry Co., Ltd",,,,,Япония,1,2025-11-14,2025-11-14,1
 OOMURAYA SHUZO,OOMURAYA SHUZO,Oomuraya Shuzo,,"Oomuraya Shuzo Co., LTD","Оомурая Сюдзо Ко., ЛТД",,,,Япония,1,2022-09-06,2022-09-06,1
-OOO KOZHIYA SANZAEMON,OOO KOZHIYA SANZAEMON,Ooo Kozhiya Sanzaemon,,Ooo Kozhiya Sanzaemon,ООО КОЖИЯ САНЗАЕМОН,,,,Япония,1,2025-05-24,2025-05-24,1
 OPEN YOUR EYES,OPEN YOUR EYES,OPEN YOUR EYES,,"OPEN YOUR EYES Co., Ltd",,,,,Япония,6,2024-04-11,2024-04-11,1
 OPTEX,OPTEX,Optex,オプテックス,Optex Co. LTD,,オプテックス株式会社,7160001019629,25,Япония,12,2021-12-08,2026-06-04,2
 OPTEX FA,OPTEX FA,Optex FA,オプテックス・エフエー,"Optex FA Co., LTD",,オプテックス・エフエー株式会社,8130001024003,26,Япония,1,2025-02-25,2025-02-25,1
@@ -2937,11 +2922,10 @@ RICE TECHNO PRODUCTS,RICE TECHNO PRODUCTS,RICE Techno Products,,"RICE Techno Pro
 RICH,RICH,RICH,,"THE RICH Co., Ltd",,,,,Япония,6,2025-07-17,2025-12-08,2
 RICHELL,RICHELL,Richell,リッチェル,Richell Corporation,,株式会社リッチェル,9230001003524,16,Япония,3,2026-07-21,2026-07-21,1
 RICOH,RICOH,Ricoh,リコー,Ricoh Company Ltd,,株式会社リコー,2010801012579,13,Япония,71,2021-12-23,2026-10-12,9
-RICOH IMAGING,RICOH,Ricoh,リコー,"Ricoh Imaging Company, LTD",,リコーイメージング株式会社,8011401015834,13,Япония,17,2022-06-28,2026-08-27,4
+RICOH IMAGING,RICOH,Ricoh,リコー,"Ricoh Imaging Company, LTD",,リコーイメージング株式会社,8011401015834,13,Япония,18,2022-06-28,2026-08-27,4
 RICOH EUROPE SCM,RICOH,Ricoh,リコー,Ricoh Europe SCM B.V,,,,,Нидерланды,4,2023-05-24,2025-07-17,1
 RICOH MFG CHINA,RICOH,Ricoh,リコー,Ricoh Manufacturing China Ltd,,,,,Китай,3,2024-06-03,2024-11-15,1
 RICOH CHINA,RICOH,Ricoh,リコー,"Ricoh China Co., LTD",,,,,Китай,2,2024-08-16,2024-08-16,1
-RICOH LMAGING,RICOH,Ricoh,リコー,"RICOH lmaging Company, Ltd",,,,,Япония,1,2025-09-30,2025-09-30,1
 RICOH UK,RICOH,Ricoh,リコー,Ricoh UK Ltd,,,,,Великобритания,1,2023-09-22,2023-09-22,1
 RICOH EUROPE,RICOH,Ricoh,リコー,Ricoh Europe Holdings PLC,РИКО ЮРОП ХОЛДИНГС ПИЭЛСИ,,,,Великобритания,0,,,1
 RIEJU,RIEJU,Rieju,,"Rieju, S.a",,,,,Япония,1,2026-07-04,2026-07-04,1
@@ -2996,12 +2980,11 @@ RYOBI,RYOBI,Ryobi,,RYOBI Limited,,,,,Япония,1,2026-02-27,2026-02-27,1
 RYOMA NO SATO,RYOMA NO SATO,Ryoma No Sato,,Ryoma No Sato,,,,,Япония,1,2026-06-23,2026-06-23,1
 RYUSHOBO,RYUSHOBO,Ryushobo,,"Ryushobo, Co., LTD",,,,,Япония,4,2022-11-23,2026-03-30,2
 RYUTSU SERVICE,RYUTSU SERVICE,Ryutsu Service,流通サービス,"Ryutsu Service Co.,Ltd",,株式会社流通サービス,9030001035744,11,Япония,1,2025-07-18,2025-07-18,1
-S IK S N R TI N,S IK S N R TI N,Sеikо Ерsоn Соrроrаtiоn,,Sеikо Ерsоn Соrроrаtiоn,,,,,Япония,3,2024-11-11,2026-01-12,1
-S R I N,S R I N,Sмс Соrроrатiоn,,Sмс Соrроrатiоn,,,,,Япония,2,2025-03-11,2025-03-13,1
 SACAI,SACAI,Sacai,,"SACAI Co., ltd",,,,,Япония,5,2024-10-02,2025-10-09,1
 SAGAMI RUBBER INDUSTRIES,SAGAMI RUBBER INDUSTRIES,Sagami Rubber Industries,相模ゴム工業,"Sagami Rubber Industries Co., Ltd",,相模ゴム工業株式会社,7021001019772,14,Япония,1,2010-02-05,2010-02-05,1
 SAGINOMIYA SEISAKUSHO,SAGINOMIYA SEISAKUSHO,Saginomiya Seisakusho,鷺宮製作所,"Saginomiya Seisakusho, INC",,株式会社鷺宮製作所,6011201002019,13,Япония,6,2023-09-01,2026-06-02,3
 SAIKYOMISO,SAIKYOMISO,Saikyo-Miso,,"Saikyo-Miso Co.,Ltd",,,,,Япония,1,2025-02-20,2025-02-20,1
+SAINTE NEIGE WINE,SAINTE NEIGE WINE,Sainte Neige Wine,,"Sainte Neige Wine CO.,LTD","Санте Неже Вайн Ко.,лтд",,,,Япония,4,2023-03-09,2024-12-02,1
 SAJI UCHIHAMONO,SAJI UCHIHAMONO,SAJI Uchihamono,,"SAJI UCHIHAMONO Co.,Ltd",,,,,Япония,1,2023-11-23,2023-11-23,1
 SAKAE TSUSHIN KOGYO,SAKAE TSUSHIN KOGYO,Sakae Tsushin Kogyo,,"Sakae Tsushin Kogyo Co., Ltd",,,,,Япония,2,2023-11-17,2025-07-31,1
 SAKAI HEAVY INDUSTRIES,SAKAI HEAVY INDUSTRIES,Sakai Heavy Industries,酒井重工業,"Sakai Heavy Industries, LTD",,酒井重工業株式会社,1010401011081,13,Япония,1,2023-07-03,2023-07-03,1
@@ -3017,9 +3000,9 @@ SAKURA FINETEK,SAKURA FINETEK,Sakura Finetek,,"Sakura Finetek Japan Co., Ltd",,,
 SAKURA SEIKI,SAKURA SEIKI,Sakura Seiki,,"Sakura Seiki Co., Ltd",,,,,Япония,9,2012-06-29,2022-04-27,2
 SAKURA SPC,SAKURA SPC,Sakura SPC,,Sakura SPC,,,,,Япония,1,2025-04-20,2025-04-20,1
 SAKURAGAWA PUMP MFG,SAKURAGAWA PUMP MFG,Sakuragawa PUMP MFG,桜川ポンプ製作所,"Sakuragawa Pump MFG.Co., Ltd",,株式会社櫻川ポンプ製作所,9120901000870,27,Япония,1,2024-07-01,2024-07-01,1
-SAKURAO BREWERY AND DISTILLERY,SAKURAO BREWERY AND DISTILLERY,Sakurao Brewery and Distillery,サクラオブルワリーアンドディスティラリー,"Sakurao Brewery and Distillery Co., Ltd","САКУРАО Брюэри энд Дистиллери Ко., Лтд",株式会社サクラオブルワリーアンドディスティラリー,4240001028021,34,Япония,2,2023-11-01,2025-07-07,2
+SAKURAO BREWERY AND DISTILLERY,SAKURAO BREWERY AND DISTILLERY,SAKURAO Brewery and Distillery,サクラオブルワリーアンドディスティラリー,"SAKURAO Brewery and Distillery Co., Ltd","САКУРАО Брюэри энд Дистиллери Ко., Лтд",株式会社サクラオブルワリーアンドディスティラリー,4240001028021,34,Япония,7,2023-06-26,2025-07-07,2
 SAMYANG FOODS,SAMYANG FOODS,Samyang Foods,,"Samyang Foods Co., Ltd",,,,,Япония,1,2026-09-26,2026-09-26,1
-SAN FOODS,SAN FOODS,San Foods,,"San Foods CO.,LTD","САН ФУДЗ ко., лтд",,,,Япония,5,2022-12-08,2023-06-21,1
+SAN FOODS,SAN FOODS,San Foods,,"San Foods CO.,LTD","САН ФУДЗ ко., лтд",,,,Япония,10,2022-12-08,2026-03-23,1
 SAN NIPOROS,SAN NIPOROS,San Niporos,,San Niporos Corporation,САН НИПОРОС КОРПОРЭЙШН,,,,Япония,0,,,1
 SANADA SEIKO,SANADA SEIKO,Sanada Seiko,,"Sanada Seiko Co.,Ltd",,,,,Япония,1,2023-12-12,2023-12-12,1
 SANAI,SANAI,Sanai,,"Sanai Co.,ltd",,,,,Япония,1,2024-08-16,2024-08-16,1
@@ -3053,11 +3036,10 @@ SANRITSU CONFECTIONERY,SANRITSU CONFECTIONERY,Sanritsu Confectionery,三立製�
 SANSHA ELECTRIC MFG,SANSHA ELECTRIC MFG,Sansha Electric Mfg,三社電機製作所,"Sansha Electric Mfg Co., Ltd",,株式会社三社電機製作所,7120001051882,27,Япония,5,2023-11-29,2025-05-29,3
 SANSHA ELECTRONIC MFG,SANSHA ELECTRONIC MFG,Sansha Electronic Mfg,,"Sansha Electronic Mfg. CO., LTD",,,,,Япония,1,2014-06-05,2014-06-05,1
 SANSO ELECTRIC,SANSO ELECTRIC,Sanso Electric,三相電機株式会社,"Sanso Electric Co., Ltd",,三相電機株式会社,5140001059091,28,Япония,5,2022-12-14,2026-08-21,2
-SANTE NEZHE VAYN KO,SANTE NEZHE VAYN KO,"Sante Nezhe Vayn Ko.,ltd",,"Sante Nezhe Vayn Ko.,ltd","Санте Неже Вайн Ко.,лтд",,,,Япония,4,2023-03-09,2024-12-02,1
 SANTEC,SANTEC,Santec,ｓａｎｔｅｃ　Ｈｏｌｄｉｎｇｓ株式会社,Santec Corporation,,ｓａｎｔｅｃ　Ｈｏｌｄｉｎｇｓ株式会社,9180001075866,23,Япония,7,2025-02-10,2026-06-18,2
 SANTEC OIS,SANTEC OIS,santec OIS,,santec OIS CORPORATION,,,,,Япония,1,2026-02-02,2026-02-02,1
 SANTEN PHARMACEUTICAL,SANTEN,Santen,参天製薬,Santen Pharmaceutical,,参天製薬株式会社,5120001051819,27,Япония,5,2008-04-17,2026-10-19,2
-SANTORI SPIRITS,SANTORI SPIRITS,Santori Spirits,,Santori Spirits Limited,Сантори Спиритс Лимитед,,,,Япония,9,2024-12-28,2026-08-10,1
+SANTORI SPIRITS,SANTORI SPIRITS,Santori Spirits,,Santori Spirits Limited,Сантори Спиритс Лимитед,,,,Япония,2,2026-08-10,2026-08-10,1
 SANUKI SHINSEI,SANUKI SHINSEI,Sanuki Shinsei,,"Sanuki Shinsei Co., Ltd",,,,,Япония,1,2024-07-15,2024-07-15,1
 SANWA,SANWA,Sanwa,,Sanwa Company Limited,,,,,Япония,1,2025-06-25,2025-06-25,1
 SANWA ELECTRIC INSTRUMENT,SANWA ELECTRIC INSTRUMENT,Sanwa Electric Instrument,三和電気計器,"Sanwa Electric Instrument Co.,ltd",,三和電気計器株式会社,8010001016994,13,Япония,2,2023-12-13,2025-12-26,2
@@ -3109,7 +3091,6 @@ SEAWINGS INTERNATIONAL,SEAWINGS INTERNATIONAL,Seawings International,,"Seawings 
 SEED,SEED,SEED,,"SEED Co., Ltd",,,,,Япония,2,2026-01-27,2026-01-27,1
 SEGA AMUSEMENTS INTERNATIONAL,SEGA,SEGA,セガグループ,SEGA Amusements International LTD,,,,,Великобритания,3,2015-11-16,2022-09-07,2
 SEGA,SEGA,SEGA,セガグループ,Sega,Сега,株式会社セガグループ,4010701030662,13,Япония,1,2022-08-24,2022-08-24,1
-SEICO EPSON,SEICO EPSON,Seico Epson,,Seico Epson CORP,,,,,Япония,1,2026-08-10,2026-08-10,1
 SEIKATSU NO KI,SEIKATSU NO KI,Seikatsu no Ki,,"Seikatsu no Ki Co., Ltd",,,,,Япония,2,2024-04-23,2024-04-26,1
 SEIKEN CHEMICAL INDUSTRY,SEIKEN CHEMICAL INDUSTRY,Seiken Chemical Industry,,"Seiken Chemical Industry Co., LTD",,,,,Япония,10,2022-07-05,2026-06-01,3
 SEIKI,SEIKI,Seiki,成基,"Seiki Co.,Ltd",,株式会社成基,1130001003203,26,Япония,18,2022-09-29,2026-06-30,8
@@ -3134,6 +3115,7 @@ SEKIGUCHI MACHINE SALES,SEKIGUCHI MACHINE SALES,Sekiguchi Machine Sales,,"Sekigu
 SEKIKAWA,SEKIKAWA,Sekikawa,,"SEKIKAWA Co.,Ltd",,,,,Япония,1,2023-11-23,2023-11-23,1
 SEKIMOTO FOODS,SEKIMOTO FOODS,Sekimoto foods,,"Sekimoto foods CO.,LTD","Секимото Фудс Ко., ЛТД",,,,Япония,1,2024-04-23,2024-04-23,1
 SEKONIC,SEKONIC,Sekonic,セコニック,Sekonic Corporation,,株式会社セコニック,8011601003630,13,Япония,2,2024-03-11,2025-12-01,1
+SEKUREN KHOKKAYDO,SEKUREN KHOKKAYDO,Sekuren Khokkaydo,,Sekuren Khokkaydo,АО СЁКУРЕН ХОККАЙДО,,,,Япония,1,2024-12-03,2024-12-03,1
 SEMBA HOHSOH,SEMBA HOHSOH,Semba Hohsoh,,"Semba Hohsoh Co., LTD",,,,,Япония,1,2024-09-09,2024-09-09,1
 SEMITEC,SEMITEC,Semitec,ＳＥＭＩＴＥＣ株式会社,SEMITEC Corporation,,ＳＥＭＩＴＥＣ株式会社,5010601008733,13,Япония,1,2024-10-19,2024-10-19,1
 SENCHASOU,SENCHASOU,Senchasou,,Senchasou,,,,,Япония,3,2022-12-15,2025-02-26,2
@@ -3247,7 +3229,6 @@ SHISEIDO PHARMACEUTICAL,SHISEIDO,Shiseido,資生堂,"Shiseido Pharmaceutical Co.
 SHITARA,SHITARA,Shitara,,"Shitara Co., LTD",,,,,Япония,1,2025-12-16,2025-12-16,1
 SHIZU HAMONO,SHIZU HAMONO,Shizu Hamono,有限会社志津刃物製作所,"SHIZU HAMONO Co.,Ltd",,有限会社志津刃物製作所,5200002018750,21,Япония,1,2026-09-14,2026-09-14,1
 SHIZU WASABI,SHIZU WASABI,Shizu Wasabi,,"Shizu Wasabi Co., LTD",,,,,Япония,2,2024-09-26,2025-06-26,2
-SHIZUOKA FACTORY 1015 TATSUKICHO AOIKU SHIZUOKASHI SHIZUOKA 4200874,SHIZUOKA FACTORY 1015 TATSUKICHO AOIKU SHIZUOKASHI SHIZUOKA 4200874,"Shizuoka Factory 10-15 Tatsuki-cho, Aoi-ku, Shizuoka-shi, Shizuoka 420-0874",,"Shizuoka Factory 10-15 Tatsuki-cho, Aoi-ku, Shizuoka-shi, Shizuoka 420-0874",,,,,Япония,1,2022-05-21,2022-05-21,1
 SHIZUOKA WORKS,SHIZUOKA WORKS,Shizuoka Works,,Shizuoka Works,,,,,Япония,1,2025-08-08,2025-08-08,1
 SHIZUOKAKENSAN SOY SAUCE,SHIZUOKAKENSAN SOY SAUCE,Shizuoka-ken-san Soy Sauce,,"Shizuoka-ken-san Soy Sauce Co., Ltd",,,,,Япония,1,2024-09-25,2024-09-25,1
 SHODA IRON WORKS,SHODA IRON WORKS,Shoda Iron Works,,"Shoda Iron Works Co., Ltd",,,,,Япония,1,2022-04-28,2022-04-28,1
@@ -3275,7 +3256,7 @@ SHOWA SHELL SEKIYU,SHOWA SHELL SEKIYU,Showa Shell Sekiyu,昭和シェル石油,"
 SHOWA SHIKO,SHOWA SHIKO,Showa Shiko,,"Showa Shiko Co., Ltd",,,,,Япония,1,2025-06-27,2025-06-27,1
 SHOWA WATER INDUSTRIES,SHOWA WATER INDUSTRIES,Showa Water Industries.co.ltd,,Showa Water Industries.co.ltd,,,,,Япония,1,2026-04-28,2026-04-28,1
 SHOYAKU KENKYUSHO,SHOYAKU KENKYUSHO,Shoyaku Kenkyusho,,Shoyaku Kenkyusho Inc,,,,,Япония,1,2022-09-08,2022-09-08,1
-SHUSEI,SHUSEI,Shusei,合同酒精株式会社,"GODO Shusei Co., LTD","Годо Шуcе Ко., Лтд",合同酒精株式会社,8010001083622,12,Япония,7,2024-02-15,2025-12-11,2
+SHUSEI,SHUSEI,Shusei,合同酒精株式会社,"GODO Shusei Co., LTD","Годо Шусе КО., ЛТД",合同酒精株式会社,8010001083622,12,Япония,11,2023-05-22,2026-06-22,2
 SIBATA SCIENTIFIC TECHOLOGY,SIBATA SCIENTIFIC TECHOLOGY,Sibata Scientific Techology,,Sibata Scientific Techology LTD,,,,,Япония,1,2026-10-06,2026-10-06,1
 SICK,SICK,SICK,ジック,"Sick, Japan",,ジック株式会社,7011101008998,13,Япония,9,2015-02-12,2026-03-19,4
 SICK OPTEX,SICK OPTEX,SICK Optex,ジックオプテックス株式会社,"SICK OPTEX Co., Ltd",,ジックオプテックス株式会社,7130001017544,26,Япония,1,2025-01-22,2025-01-22,1
@@ -3295,7 +3276,7 @@ SINTERED METAL,SINTERED METAL,Sintered Metal,,Sintered Metal Company,,,,,Япо�
 SION COSMETIC,SION COSMETIC,SION Cosmetic,,"SION Cosmetic Co.,ltd",,,,,Япония,1,2024-08-08,2024-08-08,1
 SKF,SKF,SKF,,SKF,,,,,Япония,1,2024-02-02,2024-02-02,1
 SKINCARE SCIENCE RESEARCH CENTER,SKINCARE SCIENCE RESEARCH CENTER,Skincare Science Research Center,,"Skincare Science Research Center Co., Ltd",,,,,Япония,1,2024-09-12,2024-09-12,1
-SMC,SMC,SMC,ＳＭＣ株式会社,SMC Corporation,SMC,ＳＭＣ株式会社,3010001097635,13,Япония,1061,2013-05-30,2026-10-23,21
+SMC,SMC,SMC,ＳＭＣ株式会社,SMC Corporation,SMC,ＳＭＣ株式会社,3010001097635,13,Япония,1063,2013-05-30,2026-10-23,21
 SMC AUTOMATION CHINA,SMC,SMC,ＳＭＣ株式会社,"SMC Automation China Co., Ltd",,,,,Китай,56,2021-12-15,2026-10-26,3
 SMC PNEUMATIC,SMC,SMC,ＳＭＣ株式会社,SMC Pneumatic,,,,,Япония,46,2021-12-20,2026-08-25,6
 SMC AUTOMATION,SMC,SMC,ＳＭＣ株式会社,"SMC Automation Co., Ltd",,,,,Китай,17,2022-12-19,2026-05-26,3
@@ -3354,12 +3335,11 @@ SOMPO JAPAN INSURANCE,SOMPO JAPAN INSURANCE,Sompo Japan Insurance,損害保険�
 SONNET GIKEN,SONNET GIKEN,Sonnet Giken,,"Sonnet Giken Co., Ltd",,,,,Япония,1,2026-05-22,2026-05-22,1
 SONTON,SONTON,Sonton,,"Sonton Co., Ltd",,,,,Япония,1,2025-04-17,2025-04-17,1
 SONY,SONY,Sony,ソニーグループ,Sony Corporation,,ソニーグループ株式会社,5010401067252,13,Япония,652,2013-10-10,2026-10-23,9
-SONY INTERACTIVE ENTERTAINMENT,SONY,Sony,ソニーグループ,Sony Interactive Entertainment Inc,,株式会社ソニー・インタラクティブエンタテインメント,3010401087161,13,Япония,305,2021-11-17,2026-10-23,5
+SONY INTERACTIVE ENTERTAINMENT,SONY,Sony,ソニーグループ,Sony Interactive Entertainment Inc,,株式会社ソニー・インタラクティブエンタテインメント,3010401087161,13,Япония,312,2021-11-17,2026-10-23,5
 SONY GROUP,SONY,Sony,ソニーグループ,Sony Group Corporation,,ソニーグループ株式会社,5010401067252,13,Япония,20,2022-08-24,2026-10-08,1
 SONY MIDDLE EAST AND AFRICA FZE,SONY,Sony,ソニーグループ,Sony Middle East and Africa FZE,,,,,Япония,18,2024-10-09,2026-07-14,2
 SONY EUROPE,SONY,Sony,ソニーグループ,Sony Europe B.V,,,,,Великобритания,8,2022-12-27,2025-09-10,1
 SONY COMPUTER ENTERTAINMENT,SONY,Sony,ソニーグループ,SONY Computer Entertainment Inc,,,,,Япония,7,2014-06-10,2023-02-02,2
-SONY LNTERACTIVE ENTERTAINMENT LNC,SONY,Sony,ソニーグループ,Sony lnteractive Entertainment lnc,,,,,Япония,7,2022-10-11,2023-01-09,1
 SONY DIGITAL PRODUCTS,SONY,Sony,ソニーグループ,"Sony Digital Products Co., Ltd",,,,,Китай,5,2023-10-26,2025-04-01,1
 SONY ELECTRONICS,SONY,Sony,ソニーグループ,Sony Electronics Ltd,,,,,Япония,5,2018-02-09,2026-02-22,4
 SONY INTERACTIVE ENTERTAIMENT,SONY,Sony,ソニーグループ,Sony Interactive Entertaiment Inc,,,,,Япония,5,2023-09-25,2024-02-27,1
@@ -3465,7 +3445,7 @@ SUNPALKO,SUNPALKO,Sunpalko,,Sunpalko Co. LTD,,,,,Япония,1,2024-01-24,2024-
 SUNRISE,SUNRISE,Sunrise,,"Sunrise Japan Co.,Ltd",,,,,Япония,9,2025-06-30,2025-06-30,1
 SUNSORIT,SUNSORIT,Sunsorit,,"Sunsorit Co., Ltd",,,,,Япония,3,2022-05-31,2024-08-08,2
 SUNSTAR,SUNSTAR,Sunstar,サンスター,Sunstar Inc,Санстар Инк,サンスター株式会社,8120901011027,27,Япония,2,2023-03-29,2025-04-01,2
-SUNTORY SPIRITS,SUNTORY,Suntory,サントリー,Suntory Spirits Limited,Сантори Спиритс Лимитед,,,,Япония,48,2022-09-07,2026-10-19,2
+SUNTORY SPIRITS,SUNTORY,Suntory,サントリー,Suntory Spirits Limited,Сантори Спиритс Лимитед,,,,Япония,55,2022-09-07,2026-10-19,2
 SUNTORY,SUNTORY,Suntory,サントリー,Suntory Holdings Limited,,サントリー株式会社,4010401081444,13,Япония,23,2021-12-28,2026-09-08,6
 SUNTORY FOODS,SUNTORY,Suntory,サントリー,Suntory Foods Limited,,,,,Япония,13,2022-04-26,2026-08-28,5
 SUNTORY BEER,SUNTORY,Suntory,サントリー,Suntory Beer Ltd,,,,,Япония,12,2021-12-23,2026-09-30,3
@@ -3496,7 +3476,6 @@ SYSMEX,SYSMEX,Sysmex,シスメックス,Sysmex Corporation,,シスメックス�
 SYSMEX EUROPE,SYSMEX,Sysmex,シスメックス,Sysmex Europe GMBH,,,,,Германия,1,2017-11-22,2017-11-22,1
 SYSMEX ASIA PACIFIC,SYSMEX,Sysmex,シスメックス,Sysmex ASIA Pacific Pte. LTD,,,,,Сингапур,0,,,1
 SYSTEM SQUARE,SYSTEM SQUARE,System Square,株式会社システムスクエア,System Square Inc,,株式会社システムスクエア,8110001025804,15,Япония,1,2026-09-17,2026-09-17,1
-TA HE NATTO,TA HE NATTO,Taіheі Natto K.k,,Taіheі Natto K.k,,,,,Япония,1,2023-09-27,2023-09-27,1
 TABATA,TABATA,Tabata,株式会社タバタ,"Tabata Co., LTD",,株式会社タバタ,9010601013382,13,Япония,2,2026-05-25,2026-05-25,1
 TABLEMARK,TABLEMARK,TableMark,テーブルマーク,"TableMark Co., Ltd",,テーブルマーク株式会社,8470001010919,13,Япония,1,2026-06-18,2026-06-18,1
 TABUCHI SEIFUN SEIMEN,TABUCHI SEIFUN SEIMEN,Tabuchi Seifun Seimen,,"Tabuchi Seifun Seimen Co., Ltd",,,,,Япония,1,2025-12-24,2025-12-24,1
@@ -3505,6 +3484,7 @@ TADANO,TADANO,Tadano,タダノ,Tadano Ltd,ТАДАНО ЛТД.,株式会社タ�
 TAHARA MACHINERY,TAHARA MACHINERY,Tahara Machinery,,Tahara Machinery Ltd,,,,,Япония,1,2023-05-30,2023-05-30,1
 TAIHEI BOEKI,TAIHEI BOEKI,Taihei Boeki,,"Taihei Boeki Co., Ltd",,,,,Япония,1,2025-03-27,2025-03-27,1
 TAIHEI FOODS,TAIHEI FOODS,Taihei Foods,,"Taihei Foods Co., Ltd",,,,,Япония,1,2024-06-17,2024-06-17,1
+TAIHEI NATTO,TAIHEI NATTO,Taihei Natto,,Taihei Natto K.k,,,,,Япония,1,2023-09-27,2023-09-27,1
 TAIHO,TAIHO,Taiho,,"Taiho Co., Ltd",,,,,Япония,1,2024-05-21,2024-05-21,1
 TAIHO KOGYO,TAIHO KOGYO,Taiho Kogyo,大豊工業,"Taiho Kogyo Co., LTD",,大豊工業株式会社,7180301018584,23,Япония,1,2024-02-19,2024-02-19,1
 TAIHO PHARMACEUTICAL,TAIHO PHARMACEUTICAL,Taiho Pharmaceutical,大鵬薬品工業,Taiho Pharmaceutical,,大鵬薬品工業株式会社,1010001021927,13,Япония,3,2025-11-13,2026-04-29,1
@@ -3576,7 +3556,7 @@ TANAKA FOODS,TANAKA FOODS,Tanaka Foods,田中食品,"Tanaka Foods Co., Ltd",,田
 TANAKA SCIENTIFIC,TANAKA SCIENTIFIC,Tanaka Scientific,,Tanaka Scientific Limited,,,,,Япония,2,2022-10-14,2025-11-27,1
 TANAKABUSSAN,TANAKABUSSAN,Tanaka-Bussan,,Tanaka-Bussan Ltd,,,,,Япония,1,2026-04-22,2026-04-22,1
 TANAKI,TANAKI,Tanaki,,Tanaki,,,,,Япония,4,2023-07-01,2025-01-20,1
-TANIGUCHI T L UM FI I G,TANIGUCHI T L UM FI I G,"Taniguchi реtгоlеum геfiпiпg co,, ltd",,"Taniguchi реtгоlеum геfiпiпg co,, ltd",,,,,Япония,1,2024-07-17,2024-07-17,1
+TANIGUCHI PETROLEUM REFINING,TANIGUCHI PETROLEUM REFINING,Taniguchi petroleum refining,,"Taniguchi petroleum refining co,, ltd",,,,,Япония,1,2024-07-17,2024-07-17,1
 TANIKAWA YUKA KOGYO,TANIKAWA YUKA KOGYO,Tanikawa YUKA Kogyo,,"Tanikawa YUKA Kogyo Co., LTD",,,,,Япония,8,2024-02-21,2026-06-10,3
 TANITA,TANITA,Tanita,タニタ,Tanita Corporation,,株式会社タニタ,4011401004072,13,Япония,3,2023-09-22,2025-05-27,3
 TANIZAWA SEISAKUSHO,TANIZAWA SEISAKUSHO,Tanizawa Seisakusho,,"Tanizawa Seisakusho, LTD",,,,,Япония,1,2025-07-02,2025-07-02,1
@@ -3584,11 +3564,11 @@ TARAMI,TARAMI,Tarami,たらみ,TARAMI Co. Ltd,,株式会社たらみ,53100010049
 TASK,TASK,TASK,,"Task, INC",,,,,Япония,1,2020-06-25,2020-06-25,1
 TATENOKAWA,TATENOKAWA,Tatenokawa,,"Tatenokawa, Inc","Татенокава, Инк",,,,Япония,1,2022-09-20,2022-09-20,1
 TATSUNO,TATSUNO,Tatsuno,,Tatsuno Corporation,,,,,Япония,1,2022-11-22,2022-11-22,1
+TATSUUMAHONKE BREWING,TATSUUMAHONKE BREWING,Tatsuuma-Honke Brewing,,Tatsuuma-Honke Brewing Co. LTD,Татсуума-Хонке Брюинг Ко. ЛТД,,,,Япония,3,2024-02-13,2024-04-08,1
 TAU,TAU,TAU,,TAU Corporation,,,,,Япония,3,2025-03-21,2025-04-28,1
 TAWADA HYDRAULIC,TAWADA HYDRAULIC,Tawada Hydraulic,,"Tawada Hydraulic Co., Ltd",,,,,Япония,1,2025-12-30,2025-12-30,1
 TAYRIKU TRADING KO,TAYRIKU TRADING KO,"Tayriku Trading Ko.,ltd",,"Tayriku Trading Ko.,ltd","ТАЙРИКУ ТРЕЙДИНГ КО.,ЛТД",,,,Япония,0,,,1
 TCM,TCM,TCM,,TCM Corporation,,,,,Япония,3,2024-03-21,2026-03-30,2
-TCYKACA KO,TCYKACA KO,Tcykaca KO,,"Имаё Tcykaca Сакэ Брюэри Ko., Лтд","Имаё Тсукаса Сакэ Брюэри Ко., Лтд",,,,Япония,2,2023-12-15,2025-07-11,1
 TDK,TDK,TDK,ＴＤＫ株式会社,TDK Corporation,,ＴＤＫ株式会社,7010001034849,13,Япония,57,2017-08-11,2026-10-09,9
 TDK ELECTRONICS,TDK,TDK,ＴＤＫ株式会社,TDK Electronics AG,,,,,Япония,35,2021-12-01,2026-10-28,5
 TDK CHINA,TDK,TDK,ＴＤＫ株式会社,"TDK China Co., LTD",,,,,Китай,9,2017-04-20,2025-08-19,3
@@ -3669,7 +3649,7 @@ TLV,TLV,TLV,テイエルブイ,"TLV Co., Ltd",,株式会社テイエルブイ,31
 TLV INTERNATIONAL,TLV INTERNATIONAL,TLV International,,TLV International Inc,,,,,Япония,7,2021-11-11,2026-08-28,3
 TMEIC,TMEIC,Tmeic,株式会社ＴＭＥＩＣ,TMEIC Corporation,,株式会社ＴＭＥＩＣ,1010401041839,13,Япония,1,2026-10-05,2026-10-05,1
 TOA,TOA,TOA,,TOA Corporation,,,,,Япония,35,2021-11-25,2026-10-06,1
-TOA SHCHUDZO KOLTD,TOA SHCHUDZO KOLTD,Toa Shchudzo Ko.ltd,,Toa Shchudzo Ko.ltd,ТОА ЩУДЗО КО.ЛТД,,,,Япония,2,2023-02-02,2023-11-13,1
+TOA SHUZO,TOA SHUZO,TOA Shuzo,,"TOA Shuzo Co., LTD",ТОА ЩУДЗО КО.ЛТД,,,,Япония,2,2023-02-02,2023-11-13,1
 TOBISHI KOSAN,TOBISHI KOSAN,Tobishi Kosan,,Tobishi Kosan CO LTD,,,,,Япония,1,2026-03-02,2026-03-02,1
 TOCAD ENERGY,TOCAD ENERGY,Tocad Energy,,"Tocad Energy Co., LTD",,,,,Япония,5,2022-11-18,2024-04-01,2
 TOEIHENSEIKI,TOEIHENSEIKI,Toeihenseiki.Co.Ltd,,Toeihenseiki.Co.Ltd,,,,,Япония,1,2024-07-16,2024-07-16,1
@@ -3703,7 +3683,7 @@ TOKYO BOEKI MEDISYS,TOKYO BOEKI MEDISYS,Tokyo Boeki Medisys,,Tokyo Boeki Medisys
 TOKYO ELECTRON,TOKYO ELECTRON,Tokyo Electron,東京エレクトロン,Tokyo Electron Ltd,,東京エレクトロン株式会社,4010401020757,13,Япония,13,2022-01-26,2025-10-02,3
 TOKYO ELECTRON KYUSHU,TOKYO ELECTRON KYUSHU,Tokyo Electron Kyushu,東京エレクトロン九州,Tokyo Electron Kyushu Limited,,東京エレクトロン九州株式会社,9330001010080,43,Япония,1,2023-12-08,2023-12-08,1
 TOKYO FOOD,TOKYO FOOD,Tokyo Food,東京フード,"Tokyo Food Co., Ltd",,東京フード株式会社,6050001015945,08,Япония,2,2022-11-08,2023-11-30,1
-TOKYO KEIKI,TOKYO KEIKI,Tokyo Keiki,東京計器,Tokyo Keiki INC,,東京計器株式会社,3010801008436,13,Япония,19,2023-04-11,2026-05-25,3
+TOKYO KEIKI,TOKYO KEIKI,Tokyo Keiki,東京計器,Tokyo Keiki INC,,東京計器株式会社,3010801008436,13,Япония,19,2023-04-11,2026-05-25,2
 TOKYO KEISO,TOKYO KEISO,Tokyo Keiso,,"Tokyo Keiso Co., LTD",,,,,Япония,2,2026-08-25,2026-09-14,1
 TOKYO KIKAKU HANBAI,TOKYO KIKAKU HANBAI,Tokyo Kikaku Hanbai,,"TOKYO KIKAKU HANBAI Co., Ltd",ТОКИО КИКАКУ ХАНБАЙ Ко. Лтд,,,,Япония,5,2023-04-17,2026-03-31,1
 TOKYO MACHINE AND TOOL,TOKYO MACHINE AND TOOL,Tokyo Machine & Tool,,"Tokyo Machine & Tool Co., Ltd",,,,,Япония,1,2024-10-21,2024-10-21,1
@@ -3846,6 +3826,7 @@ TOYOTA MOTOR INVESTMENT,TOYOTA,Toyota,トヨタ自動車,"Toyota Motor Investmen
 TOYOTA MOTOR SALES USA,TOYOTA,Toyota,トヨタ自動車,"Toyota Motor Sales, U.S.A., Inc",,,,,США,3,2024-12-17,2025-10-15,1
 TOYOTA TSUSHO,TOYOTA,Toyota,トヨタ自動車,Toyota Tsusho Corporation,ТОЙОТА ЦУСЕ КОРПОРЕЙШН,豊田通商株式会社,6180001031731,23,Япония,3,2021-12-22,2026-06-26,2
 TOYOTA MATERIAL HANDLING EUROPE LOGISTICS AB,TOYOTA,Toyota,トヨタ自動車,Toyota Material Handling Europe Logistics AB,,,,,Швеция,2,2026-06-03,2026-06-03,1
+TOYOTA MATERIAL HANDLING MFG FRANCE,TOYOTA,Toyota,トヨタ自動車,Toyota Material Handling Manufacturing France S.A.S,,,,,Франция,2,2023-03-03,2023-10-09,1
 TOYOTA MOTOR MFG FRANCE,TOYOTA,Toyota,トヨタ自動車,Toyota Motor Manufacturing France S.A.S,,,,,Франция,2,2026-01-23,2026-08-31,2
 TOYOTA MOTOR MFG INDIANA,TOYOTA,Toyota,トヨタ自動車,"Toyota Motor Manufacturing Indiana, Inc",,,,,США,2,2023-03-22,2024-06-26,1
 TOYOTA MOTOR MFG TEXAS,TOYOTA,Toyota,トヨタ自動車,"Toyota Motor Manufacturing, Texas, Inc",,,,,США,2,2025-12-19,2026-10-14,2
@@ -3854,8 +3835,6 @@ TOYOTA GERMANY,TOYOTA,Toyota,トヨタ自動車,TOYOTA Germany GmbH,,,,,Герм
 TOYOTA INDUSTRIAL,TOYOTA,Toyota,トヨタ自動車,Toyota Industrial Corporation,,,,,Япония,1,2018-10-29,2018-10-29,1
 TOYOTA INDUSTRIAL EQUIPMENT,TOYOTA,Toyota,トヨタ自動車,"Toyota Industrial Equipment, S.A",,,,,Франция,1,2017-01-24,2017-01-24,1
 TOYOTA MATERIAL HANDLING DEUTSCHLAND,TOYOTA,Toyota,トヨタ自動車,Toyota Material Handling Deutschland GmbH,,,,,Германия,1,2022-12-24,2022-12-24,1
-TOYOTA MATERIAL HANDLING MFG F ANCE,TOYOTA,Toyota,トヨタ自動車,Toyota Material Handling Manufacturing Fгance S.A.S,,,,,Франция,1,2023-03-03,2023-03-03,1
-TOYOTA MATERIAL HANDLING MFG FRANCE,TOYOTA,Toyota,トヨタ自動車,Toyota Material Handling Manufacturing France S.A.S,,,,,Франция,1,2023-10-09,2023-10-09,1
 TOYOTA MATERIAL HANDLING MFG ITALY SPA,TOYOTA,Toyota,トヨタ自動車,Toyota Material Handling Manufacturing Italy S.p.A,,,,,Италия,1,2016-10-05,2016-10-05,1
 TOYOTA MOTOR AZIA PACIFIC,TOYOTA,Toyota,トヨタ自動車,Toyota Motor AZIA Pacific PTE LTD,,,,,Таиланд,1,2022-12-21,2022-12-21,1
 TOYOTA MOTOR KYUSHU,TOYOTA,Toyota,トヨタ自動車,"Toyota Motor Kyushu Co., Ltd",,,,,Китай,1,2025-08-28,2025-08-28,1
@@ -3922,6 +3901,7 @@ ULVAC TECHNOLOGIES,ULVAC,Ulvac,アルバック,"ULVAC Technologies, Inc",,,,,С�
 ULVAC KIKOINC,ULVAC,Ulvac,アルバック,ULVAC Kiko.Inc,,,,,Япония,1,2023-08-23,2023-08-23,1
 ULVACKIKO,ULVACKIKO,Ulvac-kiko,,"ULVAC-KIKO, Inc",,,,,Япония,3,2022-07-20,2022-09-29,2
 UMAJIMURA AGRICULTURAL COOPERATIVE ASSOCIATION,UMAJIMURA AGRICULTURAL COOPERATIVE ASSOCIATION,Umajimura Agricultural Cooperative Association,,Umajimura Agricultural Cooperative Association,,,,,Япония,1,2025-05-21,2025-05-21,1
+UMENISHIKI YAMAKAWA,UMENISHIKI YAMAKAWA,Umenishiki Yamakawa,,"Umenishiki Yamakawa Co., LTD","Умэнисики Ямакава Ко., ЛТД",,,,Япония,3,2024-02-12,2024-02-12,1
 UMENOYADO BREWERY,UMENOYADO BREWERY,Umenoyado Brewery,,"Umenoyado Brewery Co., Ltd","Уменоядо Брюэри Ко., ЛТД",,,,Япония,1,2025-08-06,2025-08-06,1
 UNBOX,UNBOX,UnBox,,"UnBox Co., Ltd",,,,,Япония,1,2023-12-05,2023-12-05,1
 UNDER COVER,UNDER COVER,Under Cover,,"Under Cover Co., LTD",,,,,Япония,12,2022-11-23,2026-09-07,1
@@ -3969,7 +3949,7 @@ VARIVAS,VARIVAS,Varivas,,"VARIVAS Co., Ltd",,,,,Япония,1,2023-03-14,2023-0
 VELAS,VELAS,Velas,,VELAS Corporation,,,,,Япония,7,2023-10-16,2023-10-16,1
 VELLSHEENA,VELLSHEENA,Vellsheena,,Kabushiki Gaisha Vellsheena Inc,,,,,Япония,7,2023-02-09,2026-03-24,2
 VENN,VENN,VENN,,"VENN Co., Ltd",,,,,Япония,1,2025-07-28,2025-07-28,1
-VENTURE VISKI,VENTURE VISKI,Venture Viski,,Venture Viski Ltd,Вентуре Виски Лтд,,,,Япония,1,2026-02-10,2026-02-10,1
+VENTURE WHISKY,VENTURE WHISKY,Venture Whisky,,Venture Whisky Ltd,Вентуре Виски Лтд,,,,Япония,1,2026-02-10,2026-02-10,1
 VESS,VESS,VESS,,"VESS Co, LTD",,,,,Япония,2,2026-09-22,2026-09-22,1
 VESSEL,VESSEL,Vessel,ベッセル,"Vessel Co., INC",,株式会社ベッセル,7120001016167,27,Япония,2,2024-02-16,2026-06-30,2
 VICKO ELECTRONICS TECHNOLOGY,VICKO ELECTRONICS TECHNOLOGY,Vicko Electronics Technology,,"Vicko Electronics Technology Co., Limited",,,,,Япония,1,2023-10-20,2023-10-20,1
@@ -4014,8 +3994,6 @@ WITA INDUSTRIAL,WITA INDUSTRIAL,WITA Industrial,,WITA Industrial ltd,,,,,Япо�
 WORK STE,WORK STE,WORK STE,,"Work Ste-Co., Ltd",,,,,Япония,1,2025-03-26,2025-03-26,1
 WORLD CHEMICAL,WORLD CHEMICAL,World Chemical,,"World Chemical Co.,Ltd",,,,,Япония,1,2024-07-16,2024-07-16,1
 WORLD KOUGEI,WORLD KOUGEI,World Kougei,,"World Kougei Co.,ltd",,,,,Япония,6,2024-11-18,2026-10-05,1
-XAKYPO KO,XAKYPO KO,Xakypo KO,,"Xakypo Сакэ Брюэри Ko., Лтд","Хакуро Сакэ Брюэри Ко., Лтд",,,,Япония,2,2023-12-15,2025-07-21,1
-Y MOTOR L D,Y MOTOR L D,"Yамана Motor Со., Lтd",,"Yамана Motor Со., Lтd",,,,,Япония,1,2023-03-16,2023-03-16,1
 YAESU,YAESU,Yaesu,八重洲無線,Yaesu,,八重洲無線株式会社,9010701026094,13,Япония,1,2026-09-07,2026-09-07,1
 YAESU MUSEN,YAESU MUSEN,Yaesu Musen,,"Yaesu Musen Co., Ltd",,,,,Япония,16,2022-01-27,2026-10-01,3
 YAKULT HEALTH FOODS,YAKULT HEALTH FOODS,Yakult Health Foods,ヤクルトヘルスフーズ,"Yakult Health Foods Co., LTD",,ヤクルトヘルスフーズ株式会社,9320001008118,44,Япония,1,2026-04-09,2026-04-09,1
@@ -4036,7 +4014,7 @@ YAMAGEN JOUZOU,YAMAGEN JOUZOU,Yamagen Jouzou,,"Yamagen Jouzou Co., Ltd",,,,,Яп
 YAMAGUCHI ABURAYA FUKUTARO,YAMAGUCHI ABURAYA FUKUTARO,Yamaguchi Aburaya Fukutaro,山口油屋福太郎,"Yamaguchi Aburaya Fukutaro Co., Ltd",,株式会社山口油屋福太郎,6290001017100,40,Япония,10,2026-07-03,2026-07-03,1
 YAMAGUCHI ELECTRONICS SOLUTIONS,YAMAGUCHI ELECTRONICS SOLUTIONS,Yamaguchi Electronics Solutions,,"Yamaguchi Electronics Solutions Co., Ltd",,,,,Япония,70,2023-02-08,2026-10-16,2
 YAMAHA,YAMAHA,Yamaha,,Yamaha Corporation,,,,,Япония,132,2014-04-11,2026-10-21,5
-YAMAHA MOTOR,YAMAHA MOTOR,Yamaha Motor,ヤマハ発動機,"Yamaha Motor Co., LTD",,ヤマハ発動機株式会社,2080401016040,22,Япония,81,2015-07-08,2026-10-22,10
+YAMAHA MOTOR,YAMAHA MOTOR,Yamaha Motor,ヤマハ発動機,"Yamaha Motor Co., LTD",,ヤマハ発動機株式会社,2080401016040,22,Япония,82,2015-07-08,2026-10-22,10
 YAMAHA MOTOR ASIA,YAMAHA MOTOR ASIA,Yamaha Motor ASIA,,Yamaha Motor ASIA PTE LTD,,,,,Сингапур,1,2022-08-01,2022-08-01,1
 YAMAHA MOTOR EUROPE,YAMAHA MOTOR EUROPE,Yamaha Motor Europe,,Yamaha Motor Europe N.v,,,,,Нидерланды,1,2020-10-27,2020-10-27,1
 YAMAHA MOTOR POWERED PRODUCTS,YAMAHA MOTOR POWERED PRODUCTS,Yamaha Motor Powered Products,ヤマハモーターパワープロダクツ,"Yamaha Motor Powered Products Co., Ltd",,ヤマハモーターパワープロダクツ株式会社,1080401014375,22,Япония,4,2018-05-08,2023-03-27,1
@@ -4093,7 +4071,7 @@ YANOEN,YANOEN,Yanoen,,"Yanoen CO., LTD",,,,,Япония,15,2021-12-17,2026-06-2
 YAOKIN,YAOKIN,Yaokin,やおきん,"Yaokin Co., Ltd",,株式会社やおきん,3010601016143,13,Япония,14,2023-07-10,2026-09-03,6
 YASHU TAKAMURA,YASHU TAKAMURA,Yashu Takamura,,"Yashu Takamura Co.,Ltd",,,,,Япония,3,2025-02-25,2026-05-22,2
 YASKAWA ELECTRIC,YASKAWA,Yaskawa,安川電機,Yaskawa Electric Corporation,,株式会社安川電機,5290801010767,40,Япония,235,2013-11-22,2026-10-19,17
-YASKAWA,YASKAWA,Yaskawa,安川電機,"Yaskawa, Japan",,,,,Япония,21,2015-02-11,2026-10-19,5
+YASKAWA,YASKAWA,Yaskawa,安川電機,"Yaskawa, Japan",,,,,Япония,21,2015-02-11,2026-10-19,4
 YASKAWA EUROPE,YASKAWA,Yaskawa,安川電機,Yaskawa Europe GmbH,,,,,Германия,16,2014-10-15,2026-08-04,4
 YASKAWA ROBOTICS,YASKAWA,Yaskawa,安川電機,"Yaskawa Robotics Co., LTD",,,,,Китай,16,2021-10-14,2026-10-02,4
 YASKAWA CHINA,YASKAWA,Yaskawa,安川電機,"Yaskawa, China",,,,,Китай,5,2023-04-11,2025-01-22,1
