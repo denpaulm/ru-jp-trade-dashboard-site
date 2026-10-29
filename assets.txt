@@ -4,7 +4,7 @@ makers.3ebb315d.js
 refs.4266582c.js
 style.3d72fe9d.css
 texts.9b771b38.js
-data/autos.25d86fd6.csv
+data/autos.9ebf359c.csv
 data/basemap.c82f4e77.json
 data/companies.329b9504.csv
 data/dfomap.8999ccdf.json
