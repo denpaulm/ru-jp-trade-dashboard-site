@@ -7,7 +7,7 @@
 <meta name="googlebot" content="noindex, nofollow">
 <title>Торговля Россия — Япония</title>
 <script src="d3.min.js?v=a029baa9"></script>
-<link rel="stylesheet" href="style.css?v=f2e4b45e">
+<link rel="stylesheet" href="style.css?v=c962a30e">
 <style>
   /* токены, которые на платформе Claude задаёт оболочка дашборда */
   :root {
@@ -429,6 +429,7 @@
       <h2 data-i18n="compTitle">—</h2>
       <p class="rj-take" data-i18n="compIntro">—</p>
     </div>
+    <p class="rj-flag rj-cstale" id="comp-stale" hidden></p>
     <div class="rj-kpis rj-ckpis" id="comp-kpis" data-src="companies"></div>
     <div class="rj-tools rj-ctools">
       <div class="rj-seg" role="group" data-i18n-aria="compDir" id="comp-flow" data-src="companies">
@@ -590,7 +591,7 @@
 </div>
 
 <script src="refs.js?v=4266582c"></script>
-<script src="texts.js?v=df483d00"></script>
+<script src="texts.js?v=a2ecc551"></script>
 <script src="makers.js?v=3ebb315d"></script>
 <script src="autos.js?v=8cd8027b"></script>
 
@@ -599,7 +600,7 @@
   // Замена объекта `dash` платформы Claude: те же методы, данные — из файлов site/data/. Набор грузится при первом
   // обращении к нему (dash.data), расчёт (dash.calc) — когда загружены его входы; после каждого файла — перерисовка.
   (function () {
-    const files = {trade: 'trade.csv', products: 'products.csv', ports: 'ports.csv', offices: 'offices.csv', basemap: 'basemap.json', companies: 'companies.csv', settlements: 'settlements.csv', makers: 'makers.csv', maker_links: 'maker_links.csv', autos: 'autos.csv', dfomap: 'dfomap.json'}, ver = {trade: 'e1f1a601', products: 'ac2af64f', ports: '3c42e14f', offices: '71b7bc91', basemap: 'c82f4e77', companies: '6e5ec217', settlements: '5fd1d049', makers: '6aca7552', maker_links: '6ca82268', autos: '3feee6c8', dfomap: '8999ccdf'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4944705, settlements: 139551, makers: 553160, maker_links: 1330148, autos: 4722767, dfomap: 224211};  // ver — метки версий файлов: новый файл не берётся из кэша браузера; size — байты (для полоски)
+    const files = {trade: 'trade.csv', products: 'products.csv', ports: 'ports.csv', offices: 'offices.csv', basemap: 'basemap.json', companies: 'companies.csv', settlements: 'settlements.csv', makers: 'makers.csv', maker_links: 'maker_links.csv', autos: 'autos.csv', dfomap: 'dfomap.json'}, ver = {trade: 'e1f1a601', products: 'ac2af64f', ports: '3c42e14f', offices: '71b7bc91', basemap: 'c82f4e77', companies: '959bfb46', settlements: '5fd1d049', makers: '6aca7552', maker_links: '6ca82268', autos: 'f92300b7', dfomap: '8999ccdf'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4945376, settlements: 139551, makers: 553160, maker_links: 1330148, autos: 4722912, dfomap: 224211};  // ver — метки версий файлов: новый файл не берётся из кэша браузера; size — байты (для полоски)
     const store = {}, status = {}, calcs = {}, order = [], handlers = [], loads = {}, got = {};
     const run = () => handlers.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
     // полоска загрузки: доля полученных байтов у файлов, которые сейчас идут
@@ -1336,6 +1337,23 @@
     const total = d3.sum(by.values());
     return { total, list: [...by.entries()].sort((a, b) => b[1] - a[1]).map(([c, v]) => ({ custom: c, v, share: total ? v / total : 0, off: pIdx.off.get(c) })) };
   }
+  // посты и итоги — две таблицы e-Stat: за месяц суммы совпадают до иены, но часть сумм у постов записана под другими
+  // кодами (СПГ 271111000 за 2022-10: $85 млн у постов — под кодом реимпорта 000000099; ферросплавы 47 месяцев — под 720299090,
+  // которого в итогах нет). Расхождение больше 0,5 % — подпись у карты, а если у выбранного HS9 сходится его HS4 — и это
+  function portGap(test, flow, monthsSet, portsTotal) {
+    if (!tIdx || !pIdx) return '';
+    const vf = F('value'), months = new Set([...monthsSet].filter((m) => m >= pIdx.months[0]));
+    const sum = (rows, t) => rows.reduce((v, r) => (months.has(r.month) && t(r) ? v + +r[vf] : v), 0);
+    const off = (a, b) => Math.abs(a - b) > 0.005 * Math.max(a, b);
+    const tradeTotal = sum(tIdx.byFlow[flow], test);
+    if (!off(portsTotal, tradeTotal)) return '';
+    let whole = '';
+    if (st.sel && st.sel.code.length > 4) {
+      const c4 = st.sel.code.slice(0, 4), t4 = (r) => r.hs9.startsWith(c4);
+      if (!off(sum(pIdx.byFlow[flow], t4), sum(tIdx.byFlow[flow], t4))) whole = L().portsGap4(c4);
+    }
+    return L().portsGap(fmtMoney(portsTotal), fmtMoney(tradeTotal)) + whole;
+  }
   function drawItem() {
     const body = $('#item-body');
     body.replaceChildren();
@@ -1433,6 +1451,7 @@
     if (!covered) { map.append(el('div', 'rj-empty', L().portsNone(y0))); return; }
     const test = scopeTest(flow);
     const ps = portShares(test, flow, monthsSet);
+    $('#port-note').textContent += portGap(test, flow, monthsSet, ps.total);
     // map
     const proj = bd.data.find((r) => r.country === '_proj');
     const lon0 = +proj.lon0, lon1 = +proj.lon1, lat0 = +proj.lat0, lat1 = +proj.lat1;
@@ -1686,6 +1705,7 @@
 
   // ---- companies page ----
   const COMP_PAGE = 300;  // строк таблицы за раз: импортёров тысячи
+  const COMP_STALE_DAYS = 60;  // реестры обновляются вручную: выгрузка старше — строка над таблицей (как check_data.REGISTRY_DAYS)
   // по умолчанию — по уровню, внутри уровня свежие сверху: таблица сразу идёт в порядке обзвона;
   // only — признак цифры в шапке, по которой оставлены только эти компании
   // keys — ссылка с листа «Поставщики из Японии»: только строки с этими ключами (keysLabel — японская компания и годы)
@@ -1749,11 +1769,14 @@
     return parts.length ? `${name} (${parts.join(', ')})` : name;
   }).join('; ');
   // подсказка у буквы уровня (уровень и коды причин why считает company_levels.py): почему A, чего не хватает до A, почему C
+  // у экспортёра давность записи Цербера на уровень не влияет (статус допуска не продлевают) — год давней записи в подсказке
   const levelTip = (r) => {
     const name = L().levelName[r.level] || r.level, why = (r.why || '').split(';').filter(Boolean)
       .map((c) => (c === 'noflow' ? L().whyT[r.flow === 'jp_ru' ? 'noflowIm' : 'noflowEx'] : L().whyT[c] || c)).join('; ');
-    if (r.level === 'A') return `${name}: ${L().levelOk[r.flow]}`;
-    return why ? `${name}${r.level === 'B' ? `; ${L().levelMiss}` : ''}: ${why}` : name;
+    const y = r.source === 'cerberus' && r.last && r.captured && +r.captured.slice(0, 4) - +r.last.slice(0, 4) >= 2 ? r.last.slice(0, 4) : '';
+    const old = y ? L().lastRec(y) : '';
+    if (r.level === 'A') return `${name}: ${L().levelOk[r.flow]}${old}`;
+    return why ? `${name}${r.level === 'B' ? `; ${L().levelMiss}` : ''}: ${why}${old}` : name;
   };
   // код компании может быть главой (03 — «рыба и морепродукты» без уточнения): такая компания входит в любую категорию главы
   const hasCat = (r, cat) => !cat || codesOf(r).some((h) => (h.length === 2 ? cat.startsWith(h) : h.startsWith(cat)));
@@ -1839,6 +1862,12 @@
     // у строк только с РУ captured — последняя дата изменения РУ в выгрузке, у строк только из ГРЛС — дата загрузки реестра
     const rznDate = captured('rzn'), rafpDate = captured('rafp'), subDate = captured('jpsub'), rxDate = captured('grls');
     if (captured('cerberus') && captured('fsa')) $('#comp-sources-list').prepend(source(L().dataDateK, L().dataDate(L().day(captured('cerberus')), L().day(captured('fsa')), finYear, rznDate && L().day(rznDate), rafpDate && L().day(rafpDate), subDate && L().day(subDate), rxDate && L().day(rxDate))));
+    // уровни и «документы за 12 мес.» считаются до даты выгрузки реестров и сами не стареют: давняя выгрузка — видна сразу
+    // (Росаккредитация и Цербер; у реестра медизделий captured — дата последнего изменения РУ, она отстаёт и при свежей выгрузке)
+    const regDate = ['fsa', 'cerberus'].map(captured).filter(Boolean).sort()[0] || '';
+    const regAge = regDate ? Math.floor((Date.now() - Date.parse(regDate)) / 864e5) : 0;
+    $('#comp-stale').hidden = regAge <= COMP_STALE_DAYS;
+    $('#comp-stale').textContent = regAge > COMP_STALE_DAYS ? L().compStale(L().day(regDate), fmtInt(regAge)) : '';
     // direction: the buttons count companies of each kind; the lists below come from the chosen kind only
     $('#comp-flow').querySelectorAll('button').forEach((b) => {
       const v = b.dataset.v;

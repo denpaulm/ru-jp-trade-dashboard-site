@@ -205,6 +205,7 @@
   /* Компании: шапка в две строки на ноутбуке, уровни A–C, пояснения под кнопкой */
   /* цифры — ровной сеткой, подпись не шире своей колонки (до двух строк); на ноутбуке столько колонок, чтобы вышло
      не больше двух рядов: --kpi-cols ставит drawCompanies по числу цифр в направлении */
+  .rj-cstale { color: var(--color-warn); }
   .rj-ckpis { display: grid; gap: var(--cds-gap-md) var(--cds-gap-lg); grid-template-columns: repeat(3, minmax(0, 1fr)); }
   @container comp (min-width: 600px) { .rj-ckpis { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } }
   @container comp (min-width: 1100px) { .rj-ckpis { grid-template-columns: repeat(var(--kpi-cols, 7), minmax(0, 1fr)); } }
