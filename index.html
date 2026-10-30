@@ -594,7 +594,7 @@
 <script src="refs.4266582c.js"></script>
 <script src="texts.9d99a5d7.js"></script>
 <script src="makers.249098eb.js"></script>
-<script src="autos.d3034d09.js"></script>
+<script src="autos.f2f35733.js"></script>
 
 </main>
 <script src="d3.min.a029baa9.js"></script>
@@ -602,7 +602,7 @@
   // Замена объекта `dash` платформы Claude: те же методы, данные — из файлов site/data/. Набор грузится при первом
   // обращении к нему (dash.data), расчёт (dash.calc) — когда загружены его входы; после каждого файла — перерисовка.
   (function () {
-    const files = {trade: 'trade.e1f1a601.csv', products: 'products.ac2af64f.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.01a6b871.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.9e557359.csv', maker_links: 'maker_links.0c170320.csv', autos: 'autos.9ebf359c.csv', dfomap: 'dfomap.176b8862.json'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4942707, settlements: 139551, makers: 553165, maker_links: 1330151, autos: 4718013, dfomap: 224664};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
+    const files = {trade: 'trade.e1f1a601.csv', products: 'products.ac2af64f.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.01a6b871.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.9e557359.csv', maker_links: 'maker_links.0c170320.csv', autos: 'autos.731b2629.csv', dfomap: 'dfomap.176b8862.json'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4942707, settlements: 139551, makers: 553165, maker_links: 1330151, autos: 4724379, dfomap: 224664};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
     const store = {}, status = {}, calcs = {}, order = [], handlers = [], loads = {}, got = {};
     const run = () => handlers.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
     // полоска загрузки: доля полученных байтов у файлов, которые сейчас идут
@@ -2451,7 +2451,8 @@
         cars: (r.okved || '').startsWith('45.1'),  // торговля машинами, а не запчастями
       };
       // «сигналы» — сколько признаков работы с Японией и с ввозом; страна другая в названии (Корея, Китай) — минус один
-      const score = Math.max(0, AU_POS.filter((k) => sig[k]).length - (['kr', 'cn'].includes(r.country) ? 1 : 0));
+      // нулевая отчётность два года (dormant) — сигналов 0: по реестрам компания действует, по проверке 2026-10-30 обычно уже нет
+      const score = f.has('dormant') ? 0 : Math.max(0, AU_POS.filter((k) => sig[k]).length - (['kr', 'cn'].includes(r.country) ? 1 : 0));
       return { r, f, rev, start, yb: auYb(start || AU_MINY), sig, score, ck: r.region_code + '|' + r.city,
         text: [r.name, r.name_full, r.name_lat, r.inn, r.city, translit(r.city || ''), r.okved].join(' ').toLowerCase() };
     });
@@ -2462,7 +2463,7 @@
   // признаки цифр шапки: клик оставляет в таблице только эти строки (как на листе «Компании»)
   const AU_ONLY = {
     agent: (x) => x.f.has('agent'), jp: (x) => x.sig.country, broker: (x) => x.sig.broker, sheet: (x) => x.f.has('sheet'),
-    grew: (x) => x.f.has('grew'), big: (x) => +x.r.revenue >= 1e6, nonsme: (x) => x.f.has('nonsme'),
+    grew: (x) => x.f.has('grew'), big: (x) => +x.r.revenue >= 1e6, nonsme: (x) => x.f.has('nonsme'), dormant: (x) => x.f.has('dormant'),
   };
   // фильтры листа; skip — какие не применять (кнопки и цифры считают строки без своего фильтра)
   function auFilter(items, ...skip) {
@@ -2628,7 +2629,7 @@
     const K = L().auK;
     const tiles = [kpi(rows.length, K.all, '', 'all'), kpi(n('agent'), K.agent, L().auFlagTip.agent, 'agent'), kpi(n('jp'), K.jp, L().auFlagTip.jp, 'jp'),
       kpi(n('broker'), K.broker, L().auFlagTip.broker, 'broker'), kpi(n('sheet'), K.sheet, L().auFlagTip.sheet, 'sheet'),
-      kpi(n('grew'), K.grew, L().auFlagTip.grew, 'grew'), kpi(n('big'), K.big, L().kBigTip, 'big'), kpi(n('nonsme'), K.nonsme, L().auFlagTip.nonsme, 'nonsme'),
+      kpi(n('grew'), K.grew, L().auFlagTip.grew, 'grew'), kpi(n('big'), K.big, L().kBigTip, 'big'), kpi(n('nonsme'), K.nonsme, L().auFlagTip.nonsme, 'nonsme'), kpi(n('dormant'), K.dormant, L().auFlagTip.dormant, 'dormant'),
       kpi(new Set(rows.map((x) => x.r.region_code)).size, L().kRegions), kpi(new Set(rows.filter((x) => x.r.city).map((x) => x.ck)).size, K.cities)];
     $('#au-kpis').style.setProperty('--kpi-cols', tiles.length);
     $('#au-kpis').classList.toggle('rj-picked', !!only);
@@ -2694,7 +2695,7 @@
     const c7 = td('l c-marks');
     const mark = (k, text, tip) => { const s = el('span', 'rj-status au-' + k, text); s.title = tip; c7.append(s); };
     if (r.country) mark(r.country, L().auFlagT[r.country], L().auFlagTip[r.country]);
-    for (const k of ['agent', 'broker', 'aeo', 'grew', 'foreign', 'nonsme', 'confirmed', 'invalid']) if (x.f.has(k)) mark(k, L().auFlagT[k], L().auFlagTip[k]);
+    for (const k of ['agent', 'broker', 'aeo', 'grew', 'foreign', 'nonsme', 'dormant', 'confirmed', 'invalid']) if (x.f.has(k)) mark(k, L().auFlagT[k], L().auFlagTip[k]);
     for (const s of (r.sheet || '').split(';').filter(Boolean)) { const [role, lv] = s.split(':'); mark('sheet', L().auSheetT(role, lv), L().auFlagTip.sheet); }
     for (const t of (r.tax || '').split(';').filter(Boolean)) mark('tax', L().auTaxT[t] || t, L().auTaxTip);
     if (!c7.childNodes.length) c7.textContent = '—';
