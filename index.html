@@ -603,8 +603,8 @@
   </section>
 </div>
 
-<script src="refs.4266582c.js"></script>
-<script src="texts.9d99a5d7.js"></script>
+<script src="refs.1cff1309.js"></script>
+<script src="texts.c999d5ca.js"></script>
 <script src="makers.249098eb.js"></script>
 <script src="autos.9fa5bb4e.js"></script>
 
@@ -614,7 +614,7 @@
   // Замена объекта `dash` платформы Claude: те же методы, данные — из файлов site/data/. Набор грузится при первом
   // обращении к нему (dash.data), расчёт (dash.calc) — когда загружены его входы; после каждого файла — перерисовка.
   (function () {
-    const files = {trade: 'trade.e1f1a601.csv', products: 'products.ac2af64f.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.01a6b871.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.9e557359.csv', maker_links: 'maker_links.0c170320.csv', autos: 'autos.98fa6652.csv', dfomap: 'dfomap.176b8862.json', jp_exporters: 'jp_exporters.83a482d8.csv'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4942707, settlements: 139551, makers: 553165, maker_links: 1330151, autos: 4737687, dfomap: 224664, jp_exporters: 11610};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
+    const files = {trade: 'trade.e1f1a601.csv', products: 'products.ac2af64f.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.99ed6fd7.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.9e557359.csv', maker_links: 'maker_links.0c170320.csv', autos: 'autos.a47c1420.csv', dfomap: 'dfomap.176b8862.json', jp_exporters: 'jp_exporters.83a482d8.csv'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4945249, settlements: 139551, makers: 553165, maker_links: 1330151, autos: 4737687, dfomap: 224664, jp_exporters: 11610};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
     const store = {}, status = {}, calcs = {}, order = [], handlers = [], loads = {}, got = {};
     const run = () => handlers.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
     // полоска загрузки: доля полученных байтов у файлов, которые сейчас идут
@@ -1754,6 +1754,15 @@
     if (all.length > max) shown.push(L().more(all.length - max));
     return shown.join(st.lang === 'ja' ? '、' : '; ');
   };
+  // сертификаты JAS экспортёра древесины (fetch_jas.py): «вид (номер, дата[, до даты])», вид — ключ OBJ_KINDS
+  const jasText = (r, max = 3) => {
+    const until = st.lang === 'ru' ? ', до ' : st.lang === 'ja' ? '、終了 ' : ', until ';
+    const all = [...(r.evidence || '').matchAll(/(^|; )([^;()]+) \(([^()]+)\)(?=; |$)/g)]
+      .filter((m) => OBJ_KINDS[m[2]]).map((m) => `${OBJ_KINDS[m[2]][li()]} (${m[3].replace(', до ', until)})`);
+    const shown = all.slice(0, max);
+    if (all.length > max) shown.push(L().more(all.length - max));
+    return shown.join(st.lang === 'ja' ? '、' : '; ');
+  };
   // изготовители из деклараций Росаккредитации: «название (деклараций)», «+N» — ещё N изготовителей; в EN/JA — без кириллицы:
   // русские пояснения в скобках убираются, названия только по-русски уходят в «ещё N»
   const makersText = (r, max = 3, src = r.evidence) => {
@@ -1879,8 +1888,8 @@
     const year = (captured('fsa') || captured('cerberus')).slice(0, 4);  // «этот год» — год последних данных реестров
     const finYear = every.reduce((m, r) => (r.revenue_year > m ? String(r.revenue_year) : m), '');  // последний год бухотчётности ФНС
     // у строк только с РУ captured — последняя дата изменения РУ в выгрузке, у строк только из ГРЛС — дата загрузки реестра
-    const rznDate = captured('rzn'), rafpDate = captured('rafp'), subDate = captured('jpsub'), rxDate = captured('grls');
-    if (captured('cerberus') && captured('fsa')) $('#comp-sources-list').prepend(source(L().dataDateK, L().dataDate(L().day(captured('cerberus')), L().day(captured('fsa')), finYear, rznDate && L().day(rznDate), rafpDate && L().day(rafpDate), subDate && L().day(subDate), rxDate && L().day(rxDate))));
+    const rznDate = captured('rzn'), rafpDate = captured('rafp'), subDate = captured('jpsub'), rxDate = captured('grls'), jasDate = captured('jas');
+    if (captured('cerberus') && captured('fsa')) $('#comp-sources-list').prepend(source(L().dataDateK, L().dataDate(L().day(captured('cerberus')), L().day(captured('fsa')), finYear, rznDate && L().day(rznDate), rafpDate && L().day(rafpDate), subDate && L().day(subDate), rxDate && L().day(rxDate), jasDate && L().day(jasDate))));
     // уровни и «документы за 12 мес.» считаются до даты выгрузки реестров и сами не стареют: давняя выгрузка — видна сразу
     // (Росаккредитация и Цербер; у реестра медизделий captured — дата последнего изменения РУ, она отстаёт и при свежей выгрузке)
     const regDate = ['fsa', 'cerberus'].map(captured).filter(Boolean).sort()[0] || '';
@@ -2055,7 +2064,7 @@
       if (off) c6.append(clamp(L().evidRafp(r.nza), 'rj-evmain'));
       // у дочерней компании — японские учредители-юрлица по ЕГРЮЛ; без них учредитель — гражданин Японии
       else if (sub) c6.append(clamp(foundersText(r) ? L().evidSub(foundersText(r)) : L().evidSubPerson, 'rj-evmain'));
-      else if (!imp) c6.append(clamp(L().evid({ ...r, objectsText: objectsText(r) }), 'rj-evmain'));
+      else if (!imp) c6.append(clamp(r.source === 'jas' ? L().evidJas(jasText(r)) : L().evid({ ...r, objectsText: objectsText(r) }) + (hasFlag(r, 'jas') ? '; ' + L().evidJas(jasText(r)) : ''), 'rj-evmain'));
       if (imp && (nd || nc)) c6.append(clamp(L().evidFsa(nd, nc, makersText(r)), 'rj-evmain'));
       if (nr) c6.append(clamp(L().evidRzn(nr, makersText(r, 3, r.ru_makers)), 'rj-evmain' + (nd || nc ? ' rj-evru' : '')));
       if (nx) c6.append(clamp(L().evidRx(nx, makersText(r, 3, r.rx_makers)), 'rj-evmain' + (nd || nc || nr ? ' rj-evru' : '')));
@@ -2065,7 +2074,7 @@
         const kinds = [nd && 'decl', nc && 'cert', nr && 'ru', nx && 'rx'].filter(Boolean);
         const kind = kinds.length === 1 ? kinds[0] : kinds.length === 2 && nd && nc ? 'both' : kinds.length ? 'mix' : 'decl';
         const [pre, post] = off ? L().datesRafp(L().day(r.since || r.last)) : sub ? L().datesSub(L().day(r.since || r.last))
-          : imp ? L().datesFsa(yrs, +r.n_recent || 0, kind) : L().datesCer(yrs);
+          : imp ? L().datesFsa(yrs, +r.n_recent || 0, kind) : r.source === 'jas' ? L().datesJas(yrs) : L().datesCer(yrs);
         const dates = el('small');
         if (off) dates.title = L().datesRafpTip;
         dates.append(document.createTextNode(pre), el('b', r.last.startsWith(year) ? 'rj-fresh' : '', L().day(r.last)), document.createTextNode(post));
@@ -2088,7 +2097,7 @@
       // «японская группа — держатель РУ» уже говорит о японской группе: отдельной отметки «японская группа» в такой строке
       // нет, её пояснение и учредители — в подсказке отметки о лекарствах
       const rxJp = rx[0] === 'rxjp' && hasFlag(r, 'jpgroup');
-      for (const f of ['contract', 'mdrep', rx[0], 'pp353', 'abroad', 'aeo', 'broker'].filter((x) => x && hasFlag(r, x))) {
+      for (const f of ['jas', 'contract', 'mdrep', rx[0], 'pp353', 'abroad', 'aeo', 'broker'].filter((x) => x && hasFlag(r, x))) {
         const fx = el('span', 'rj-status ' + f, L().flagT[f]);
         fx.title = (f === rx[0] ? rx : [f]).map((x) => L().flagTip[x]).join('\n') + (f === rx[0] && rxJp ? '\n' + L().flagTip.jpgroup + owners : '');
         c7.append(fx);
