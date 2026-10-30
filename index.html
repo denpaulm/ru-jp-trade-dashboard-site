@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
 <meta name="googlebot" content="noindex, nofollow">
 <title>Торговля Россия — Япония</title>
-<link rel="stylesheet" href="style.3d72fe9d.css">
+<link rel="stylesheet" href="style.2019820e.css">
 <style>
   /* токены, которые на платформе Claude задаёт оболочка дашборда */
   :root {
@@ -584,6 +584,18 @@
       </table>
     </div>
     <button type="button" class="rj-btn rj-more" id="au-more" data-src="autos" hidden>—</button>
+    <!-- японские экспортёры подержанных машин для русскоязычных покупателей (fetch_jp_exporters.py): кому платит российский агент -->
+    <div class="rj-card rj-auexp" id="au-exp" data-src="jp_exporters autos">
+      <h2 data-i18n="auExpTitle">—</h2>
+      <p class="rj-note" id="au-exp-intro">—</p>
+      <div class="rj-tablebox">
+        <table class="rj-table rj-ctable" id="au-exp-table">
+          <thead><tr><th class="l"></th><th class="l"></th><th class="l opt"></th><th class="l"></th><th class="l nw"></th><th class="l"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="rj-note" data-i18n="auExpNote">—</p>
+    </div>
     <div class="rj-card rj-sources">
       <h2 data-i18n="srcTitle">—</h2>
       <ul id="au-sources"></ul>
@@ -594,7 +606,7 @@
 <script src="refs.4266582c.js"></script>
 <script src="texts.9d99a5d7.js"></script>
 <script src="makers.249098eb.js"></script>
-<script src="autos.f2f35733.js"></script>
+<script src="autos.9fa5bb4e.js"></script>
 
 </main>
 <script src="d3.min.a029baa9.js"></script>
@@ -602,7 +614,7 @@
   // Замена объекта `dash` платформы Claude: те же методы, данные — из файлов site/data/. Набор грузится при первом
   // обращении к нему (dash.data), расчёт (dash.calc) — когда загружены его входы; после каждого файла — перерисовка.
   (function () {
-    const files = {trade: 'trade.e1f1a601.csv', products: 'products.ac2af64f.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.01a6b871.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.9e557359.csv', maker_links: 'maker_links.0c170320.csv', autos: 'autos.731b2629.csv', dfomap: 'dfomap.176b8862.json'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4942707, settlements: 139551, makers: 553165, maker_links: 1330151, autos: 4724379, dfomap: 224664};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
+    const files = {trade: 'trade.e1f1a601.csv', products: 'products.ac2af64f.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.01a6b871.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.9e557359.csv', maker_links: 'maker_links.0c170320.csv', autos: 'autos.98fa6652.csv', dfomap: 'dfomap.176b8862.json', jp_exporters: 'jp_exporters.83a482d8.csv'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4942707, settlements: 139551, makers: 553165, maker_links: 1330151, autos: 4737687, dfomap: 224664, jp_exporters: 11610};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
     const store = {}, status = {}, calcs = {}, order = [], handlers = [], loads = {}, got = {};
     const run = () => handlers.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
     // полоска загрузки: доля полученных байтов у файлов, которые сейчас идут
@@ -2418,7 +2430,7 @@
   // признаки, которые складываются в «сигналы». Проверка по открытым источникам (2026-10-30, reports/autos_precision_*.csv):
   // японское в названии, агентская схема, брокер/УЭО и торговля машинами (45.1) предсказывают японский след, «на листе «Компании»»
   // и «рост выручки» — нет: они остались отметками, но в счёт не входят
-  const AU_POS = ['country', 'agent', 'broker', 'cars'];
+  const AU_POS = ['jpexp', 'country', 'agent', 'broker', 'cars'];  // jpexp — структура японского экспортёра (fetch_jp_exporters.py)
   const auTr = { а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i', й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o',
     п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'shch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya' };
   const translit = (s) => s.replace(/[А-Яа-яЁё]/g, (ch) => { const lo = ch.toLowerCase(), t = auTr[lo] ?? ch; return ch === lo ? t : t.charAt(0).toUpperCase() + t.slice(1); });
@@ -2447,7 +2459,7 @@
       const rev = Object.fromEntries((r.rev || '').split(';').filter(Boolean).map((x) => { const [y, v] = x.split(':'); return [y, +v]; }));
       const start = +(r.ip_since || r.reg_year) || 0;
       const sig = {
-        country: ['jp', 'jpbrand'].includes(r.country), agent: f.has('agent'), broker: f.has('broker') || f.has('aeo'), sheet: f.has('sheet'), grew: f.has('grew'),
+        jpexp: f.has('jpexp'), country: ['jp', 'jpbrand'].includes(r.country), agent: f.has('agent'), broker: f.has('broker') || f.has('aeo'), sheet: f.has('sheet'), grew: f.has('grew'),
         cars: (r.okved || '').startsWith('45.1'),  // торговля машинами, а не запчастями
       };
       // «сигналы» — сколько признаков работы с Японией и с ввозом; страна другая в названии (Корея, Китай) — минус один
@@ -2462,7 +2474,7 @@
   }
   // признаки цифр шапки: клик оставляет в таблице только эти строки (как на листе «Компании»)
   const AU_ONLY = {
-    agent: (x) => x.f.has('agent'), jp: (x) => x.sig.country, broker: (x) => x.sig.broker, sheet: (x) => x.f.has('sheet'),
+    agent: (x) => x.f.has('agent'), jpexp: (x) => x.f.has('jpexp'), jp: (x) => x.sig.country, broker: (x) => x.sig.broker, sheet: (x) => x.f.has('sheet'),
     grew: (x) => x.f.has('grew'), big: (x) => +x.r.revenue >= 1e6, nonsme: (x) => x.f.has('nonsme'), dormant: (x) => x.f.has('dormant'),
   };
   // фильтры листа; skip — какие не применять (кнопки и цифры считают строки без своего фильтра)
@@ -2580,6 +2592,7 @@
     $('#au-intro').textContent = sh && sh.t ? L().auIntro(fmtMoney(sh.u), fmtPct(sh.u / sh.t, 0), L().range(sh.first, sh.last), fmtMoney(sh.p), fmtPct(sh.p / sh.t, 0)) : L().auIntroNoData;
     const src = (k, t) => { const item = el('li'); item.append(el('b', '', k + ': '), document.createTextNode(t)); return item; };
     $('#au-sources').replaceChildren(...L().auSources.map(([k, t]) => src(k, t)));
+    drawAuExporters(src);
     if (ad.status !== 'ok') { if (ad.status === 'error') failed($('#au-kpis')); return; }
     const X = autosIndex(ad.data), items = X.items;
     const y0 = ast.y0 ?? X.y0, y1 = ast.y1 ?? X.y1;
@@ -2627,7 +2640,7 @@
     };
     const n = (k) => rows.filter(AU_ONLY[k]).length;
     const K = L().auK;
-    const tiles = [kpi(rows.length, K.all, '', 'all'), kpi(n('agent'), K.agent, L().auFlagTip.agent, 'agent'), kpi(n('jp'), K.jp, L().auFlagTip.jp, 'jp'),
+    const tiles = [kpi(rows.length, K.all, '', 'all'), kpi(n('jpexp'), K.jpexp, L().auFlagTip.jpexp, 'jpexp'), kpi(n('agent'), K.agent, L().auFlagTip.agent, 'agent'), kpi(n('jp'), K.jp, L().auFlagTip.jp, 'jp'),
       kpi(n('broker'), K.broker, L().auFlagTip.broker, 'broker'), kpi(n('sheet'), K.sheet, L().auFlagTip.sheet, 'sheet'),
       kpi(n('grew'), K.grew, L().auFlagTip.grew, 'grew'), kpi(n('big'), K.big, L().kBigTip, 'big'), kpi(n('nonsme'), K.nonsme, L().auFlagTip.nonsme, 'nonsme'), kpi(n('dormant'), K.dormant, L().auFlagTip.dormant, 'dormant'),
       kpi(new Set(rows.map((x) => x.r.region_code)).size, L().kRegions), kpi(new Set(rows.filter((x) => x.r.city).map((x) => x.ck)).size, K.cities)];
@@ -2664,6 +2677,54 @@
     more.textContent = L().showMore(fmtInt(Math.min(ast.limit, rows.length)), fmtInt(rows.length));
   }
 
+  // японские экспортёры подержанных машин для русскоязычных покупателей (jp_exporters.csv): название и японское название,
+  // город и год, виды деятельности по JUMVEA, сайт (с отметкой русской версии), номер юрлица, российские структуры —
+  // юрлица по документам (ИНН) и компании листа с признаком jpexp (их число)
+  function drawAuExporters(src) {
+    const ed = dash.data('jp_exporters'), box = $('#au-exp'), tb = $('#au-exp-table tbody');
+    const H = L().auExpCols;
+    [H.name, H.city, H.types, H.site, H.corp, H.arms].forEach((t, i) => { $('#au-exp-table thead th:nth-child(' + (i + 1) + ')').textContent = t; });
+    tb.replaceChildren();
+    if (ed.status !== 'ok') { if (ed.status === 'error') failed(tb); return; }
+    const ad = dash.data('autos'), onSheet = new Map();
+    if (ad.status === 'ok') for (const r of ad.data) if (r.exporter) onSheet.set(r.exporter, (onSheet.get(r.exporter) || 0) + 1);
+    const rows = ed.data, groups = {};
+    rows.forEach((r) => { groups[r.group] = (groups[r.group] || 0) + 1; });
+    const armInns = new Set(rows.flatMap((r) => (r.ru_inn || '').split(';').filter(Boolean)));
+    const sheetInns = ad.status === 'ok' ? new Set(ad.data.filter((r) => r.exporter).map((r) => r.inn)) : new Set();
+    const arms = [...onSheet.values()].reduce((a, b) => a + b, 0) + [...armInns].filter((i) => !sheetInns.has(i)).length;
+    $('#au-exp-intro').textContent = L().auExpIntro(fmtInt(rows.filter((r) => r.jumvea).length), fmtInt(rows.filter((r) => r.ru_site === '1').length), fmtInt(arms));
+    $('#au-sources').prepend(src(L().dataDateK, L().auExpDate(L().day(rows.reduce((m, r) => (r.captured > m ? r.captured : m), '')))));
+    for (const r of rows) {
+      const tr = el('tr');
+      const td = (cls) => { const c = el('td', cls); tr.append(c); return c; };
+      const c1 = td('l'); c1.append(el('b', '', r.name));
+      if (r.name_ja && r.name_ja !== r.name) c1.append(el('small', '', r.name_ja));
+      if (L().auExpRole[r.role]) c1.append(el('small', '', L().auExpRole[r.role]));
+      if (groups[r.group] > 1) c1.append(el('small', '', L().auExpGroup(rows.find((g) => g.group === r.group && g.role === 'exporter')?.name || r.group)));
+      const c2 = td('l'); c2.append(document.createTextNode(r.city || '—'));
+      if (r.since) c2.append(el('small', '', L().auExpSince(r.since)));
+      const c3 = td('l opt'); c3.append(el('span', 'rj-clamp2', r.types || '—'));
+      if (r.safe_trade === '1') c3.append(el('small', '', L().auExpSafe));
+      const c4 = td('l');
+      if (r.website) { const a = el('a', '', r.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/.*$/, '')); a.href = r.website; a.target = '_blank'; a.rel = 'noopener'; c4.append(a); }
+      else c4.textContent = '—';
+      if (r.ru_site === '1') c4.append(el('small', '', L().auExpRuSite));
+      const c5 = td('l nw');
+      if (r.corp_no) { const a = el('a', '', r.corp_no); a.href = 'https://www.houjin-bangou.nta.go.jp/henkorireki-johoto.html?selHouzinNo=' + r.corp_no; a.target = '_blank'; a.rel = 'noopener'; a.title = L().auExpCorpTip; c5.append(a); }
+      else c5.textContent = '—';
+      const c6 = td('l'), names = (r.ru_names || '').split(';').filter(Boolean), inns = (r.ru_inn || '').split(';');
+      names.forEach((nm, i) => {
+        const d = el('div'); d.append(document.createTextNode(nm + ' '));
+        if (inns[i]) { const a = el('a', '', inns[i]); a.href = 'https://www.rusprofile.ru/search?query=' + encodeURIComponent(inns[i]); a.target = '_blank'; a.rel = 'noopener'; a.title = L().innLink; d.append(a); }
+        c6.append(d);
+      });
+      if (onSheet.get(r.name)) c6.append(el('small', '', L().auExpOnSheet(fmtInt(onSheet.get(r.name)))));
+      if (!c6.childNodes.length) c6.textContent = '—';
+      tb.append(tr);
+    }
+  }
+
   // строка таблицы; на узком листе (меньше 900 px) те же ячейки складываются в карточку — классы c-* задают её места
   function auRow(x) {
     const r = x.r, tr = el('tr'); tr.dataset.key = r.key;
@@ -2694,6 +2755,7 @@
     if (x.rev['2021'] > 0 && hasRevenue(r) && r.revenue_year > '2021') c6.append(el('small', '', L().auGrowth(((g) => (g >= 10 ? fmtInt(g) : g.toFixed(1).replace('.', st.lang === 'ru' ? ',' : '.')))(+r.revenue / x.rev['2021']))));
     const c7 = td('l c-marks');
     const mark = (k, text, tip) => { const s = el('span', 'rj-status au-' + k, text); s.title = tip; c7.append(s); };
+    if (x.f.has('jpexp')) mark('jpexp', L().auFlagT.jpexp + (r.exporter ? ': ' + r.exporter : ''), L().auFlagTip.jpexp);
     if (r.country) mark(r.country, L().auFlagT[r.country], L().auFlagTip[r.country]);
     for (const k of ['agent', 'broker', 'aeo', 'grew', 'foreign', 'nonsme', 'dormant', 'confirmed', 'invalid']) if (x.f.has(k)) mark(k, L().auFlagT[k], L().auFlagTip[k]);
     for (const s of (r.sheet || '').split(';').filter(Boolean)) { const [role, lv] = s.split(':'); mark('sheet', L().auSheetT(role, lv), L().auFlagTip.sheet); }
