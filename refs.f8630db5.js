@@ -460,6 +460,11 @@
     '07.10.1': ['Подземная добыча железной руды', 'Underground iron ore mining', '鉄鉱石の坑内採掘'],
     '14.19': ['Производство прочей одежды и аксессуаров', 'Manufacture of other wearing apparel and accessories', 'その他衣服・付属品製造'],
     '14.19.2': ['Производство детской и спортивной одежды', 'Manufacture of children’s and sports clothing', '子供服・スポーツウェア製造'],
+    '16.10': ['Распиловка и строгание древесины', 'Sawmilling and planing of wood', '製材・木材加工'],
+    '16.10.1': ['Производство пиломатериалов, кроме профилированных', 'Manufacture of sawn wood, other than profiled', '製材品製造'],
+    '16.21': ['Производство шпона, фанеры, деревянных плит и панелей', 'Manufacture of veneer sheets and wood-based panels', '単板・合板・木質ボード製造'],
+    '16.21.11': ['Производство фанеры', 'Manufacture of plywood', '合板製造'],
+    '46.73.2': ['Торговля оптовая пиломатериалами', 'Wholesale of sawn wood', '製材品卸売'],
     '16.10.2': ['Производство пиломатериалов и щепы', 'Manufacture of profiled sawn wood and wood chips', '製材品・木材チップ製造'],
     '16.23.1': ['Производство деревянных конструкций и столярных изделий', 'Manufacture of wooden building structures and joinery', '木造建築部材・建具製造'],
     '17.2': ['Производство изделий из бумаги и картона', 'Manufacture of articles of paper and paperboard', '紙・板紙製品製造'],
@@ -489,7 +494,8 @@
     '61.30.1': ['Спутниковый доступ в интернет', 'Satellite internet access services', '衛星インターネット接続サービス'],
     '77.39': ['Аренда и лизинг прочего транспорта и оборудования', 'Rental and leasing of other machinery, equipment and goods', 'その他機械・設備のリース・レンタル'],
     '82.20': ['Колл-центры', 'Activities of call centres', 'コールセンター業務'],
-    '86.10': ['Деятельность больниц', 'Hospital activities', '病院']
+    '86.10': ['Деятельность больниц', 'Hospital activities', '病院'],
+    '20.30': ['Производство красок, лаков и мастик', 'Manufacture of paints, varnishes and mastics', '塗料・ワニス・マスチックの製造'], '20.52': ['Производство клеев', 'Manufacture of glues', '接着剤の製造'], '20.59.5': ['Производство прочих химических продуктов', 'Manufacture of other chemical products', 'その他化学製品の製造'], '22.19.4': ['Производство конвейерных лент и приводных ремней из резины', 'Manufacture of rubber conveyor and transmission belts', 'ゴム製コンベヤベルト・伝動ベルトの製造'],
   };
   const REGION_T = {
     2: ['Республика Башкортостан', 'Bashkortostan', 'バシコルトスタン共和国'], 3: ['Республика Бурятия', 'Buryatia', 'ブリヤート共和国'],
@@ -549,6 +555,10 @@
     'розница': ['розничная торговля', 'retail', '小売'], 'обработка шерсти': ['обработка шерсти', 'wool processing', '羊毛加工'],
     'ветпрепараты': ['производство ветпрепаратов', 'veterinary drugs production', '動物用医薬品製造'], 'ветсанутильзавод': ['утилизационный завод', 'rendering plant', 'レンダリング工場'],
     'объект': ['объект', 'facility', '施設'],
+    // виды продукции JAS у экспортёров древесины (fetch_jas.PRODUCTS)
+    'клеёный брус': ['клеёный брус', 'glulam', '集成材'], 'фанера': ['фанера', 'plywood', '合板'], 'пиломатериалы': ['пиломатериалы', 'sawn wood', '製材'],
+    'LVL': ['LVL', 'LVL', '単板積層材'], 'CLT': ['CLT', 'CLT', '直交集成板'], 'паркет': ['паркет', 'flooring', 'フローリング'],
+    'плиты OSB': ['плиты OSB', 'structural panels', '構造用パネル'], 'пеллеты': ['пеллеты', 'wood pellets', '木質ペレット'], 'древесина': ['лесная продукция', 'wood product', '林産物'],
   };
   const SME = { 1: ['Микро', 'Micro', '零細'], 2: ['Малое', 'Small', '小規模'], 3: ['Среднее', 'Medium', '中規模'] };
   // страны иностранных учредителей (короткие названия — fetch_founders.country_short)
