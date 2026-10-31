@@ -6,11 +6,11 @@ style.2019820e.css
 texts.d5d47b94.js
 data/autos.4ef78fea.csv
 data/basemap.c82f4e77.json
-data/companies.4472bb61.csv
+data/companies.53a70af7.csv
 data/dfomap.176b8862.json
 data/jp_exporters.83a482d8.csv
-data/maker_links.8a029f26.csv
-data/makers.68561e92.csv
+data/maker_links.7f3c6132.csv
+data/makers.dde0b290.csv
 data/offices.71b7bc91.csv
 data/ports.3c42e14f.csv
 data/products.ac2af64f.csv
