@@ -604,7 +604,7 @@
 </div>
 
 <script src="refs.f8630db5.js"></script>
-<script src="texts.94c5c916.js"></script>
+<script src="texts.d5d47b94.js"></script>
 <script src="makers.a4c48a5e.js"></script>
 <script src="autos.9fa5bb4e.js"></script>
 
@@ -614,7 +614,7 @@
   // Замена объекта `dash` платформы Claude: те же методы, данные — из файлов site/data/. Набор грузится при первом
   // обращении к нему (dash.data), расчёт (dash.calc) — когда загружены его входы; после каждого файла — перерисовка.
   (function () {
-    const files = {trade: 'trade.e1f1a601.csv', products: 'products.ac2af64f.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.67330957.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.8510fd79.csv', maker_links: 'maker_links.c55495a1.csv', autos: 'autos.4ef78fea.csv', dfomap: 'dfomap.176b8862.json', jp_exporters: 'jp_exporters.83a482d8.csv'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4987245, settlements: 139551, makers: 594415, maker_links: 1414753, autos: 4737707, dfomap: 224664, jp_exporters: 11610};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
+    const files = {trade: 'trade.e1f1a601.csv', products: 'products.ac2af64f.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.4472bb61.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.68561e92.csv', maker_links: 'maker_links.8a029f26.csv', autos: 'autos.4ef78fea.csv', dfomap: 'dfomap.176b8862.json', jp_exporters: 'jp_exporters.83a482d8.csv'}, size = {trade: 4751004, products: 1292191, ports: 5090817, offices: 12002, basemap: 22954, companies: 4986363, settlements: 139551, makers: 600531, maker_links: 1414672, autos: 4737707, dfomap: 224664, jp_exporters: 11610};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
     const store = {}, status = {}, calcs = {}, order = [], handlers = [], loads = {}, got = {};
     const run = () => handlers.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
     // полоска загрузки: доля полученных байтов у файлов, которые сейчас идут
