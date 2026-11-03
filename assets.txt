@@ -4,13 +4,13 @@ makers.a4c48a5e.js
 refs.974832df.js
 style.7699b6e0.css
 texts.7ce945e9.js
-data/autos.8f894ea3.csv
+data/autos.d95a8fbb.csv
 data/basemap.c82f4e77.json
-data/companies.72d10757.csv
+data/companies.5d8b2366.csv
 data/dfomap.176b8862.json
 data/jp_exporters.83a482d8.csv
-data/maker_links.31d3bd50.csv
-data/makers.dd7cff8a.csv
+data/maker_links.6d3b91ff.csv
+data/makers.050ac501.csv
 data/offices.71b7bc91.csv
 data/ports.3c42e14f.csv
 data/products.223763fb.csv
