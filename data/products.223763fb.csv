@@ -175,6 +175,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 1205,4,,2,Рапс,Rapeseed,なたね
 1206,4,,2,Семена подсолнечника,Sunflower Seeds,ひまわりの種
 1207,4,,2,Прочие масличные семена,Other Oily Seeds,その他の油糧種子
+1208,4,,2,Мука масличных культур,Oil Seed Flower,採油用種子の粉・ミール
 1209,4,,2,Семена для посева,Sowing Seeds,播種用の種子
 1211,4,,2,Лекарственные и душистые растения,Perfume Plants,香料・医薬用植物
 1212,4,,2,"Рожки, водоросли, сахарный тростник","Locust beans, seaweed, sugar cane",海藻・いなご豆・砂糖原料作物
@@ -776,6 +777,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 7609,4,,15,Алюминиевые фитинги,Aluminium Pipe Fittings,アルミニウム製管継手
 7610,4,,15,Алюминиевые конструкции,Aluminium Structures,アルミニウム構造物
 7611,4,,15,Алюминиевые резервуары,Large Aluminium Containers,大型アルミニウム容器
+7613,4,,15,Алюминиевые баллоны для газа,Aluminium Gas Containers,アルミニウム製ガス容器
 7615,4,,15,Алюминиевая посуда,Aluminium Housewares,アルミニウム製食卓・台所用品
 7616,4,,15,Прочие алюминиевые изделия,Other Aluminium Products,その他のアルミニウム製品
 7806,4,,15,Прочие свинцовые изделия,Other Lead Products,その他の鉛製品
@@ -2400,7 +2402,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 640420,6,,12,Обувь с текстильным верхом на кожаной подошве,"Textile footwear, leather sole",繊維製甲靴（革底）
 640510,6,,12,Прочая обувь с кожаным верхом,"Other footwear, leather uppers",その他の靴（革製甲）
 640520,6,,12,Прочая обувь с текстильным верхом,"Other footwear, textile uppers",その他の靴（繊維製甲）
-640590,6,,12,,"Footwear, nes",
+640590,6,,12,Прочая обувь с верхом из прочих материалов,"Other footwear, other uppers",その他の靴（その他の甲）
 640620,6,,12,Подошвы и каблуки резиновые или пластмассовые,Rubber or plastic soles and heels,ゴム・プラスチック製の靴底・かかと
 640690,6,,12,Прочие детали обуви,Other footwear parts,その他の靴部分品
 650400,6,,12,Шляпы плетёные,Plaited hats,帽子（編組製）
@@ -7757,7 +7759,7 @@ code,level,flow,section,name_ru,name_en,name_ja
 640419290,9,ru_jp,12,Неспортивная обувь с текстильным верхом на резине: прочая,"Non-sports footwear, textile uppers, rubber soles, other",履物（紡織用繊維製の甲、ゴム底、スポーツ用以外、その他）
 640420229,9,ru_jp,12,Обувь с текстильным верхом на кожаной подошве: прочая,"Footwear, textile uppers, leather soles, other",履物（紡織用繊維製の甲、革底、その他）
 640520000,9,ru_jp,12,Прочая обувь с текстильным верхом,Other footwear with textile uppers,その他の履物（紡織用繊維製の甲）
-640590200,9,ru_jp,12,,,
+640590200,9,ru_jp,12,Прочая обувь с верхом из прочих материалов,"Other footwear, other uppers",その他の履物（その他の甲）
 640690290,9,ru_jp,12,Прочие детали обуви: из прочих материалов,"Other footwear parts, other materials",履物のその他の部分品（その他の材料製）
 650500900,9,ru_jp,12,"Головные уборы из кружев, фетра, трикотажа: прочие","Headgear of lace, felt or knit, other",帽子類（レース、フェルト、ニット製、その他）
 650500910,9,ru_jp,12,Головные уборы трикотажные,Knitted headgear,帽子類（ニット製）

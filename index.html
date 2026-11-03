@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
 <meta name="googlebot" content="noindex, nofollow">
 <title>Торговля Россия — Япония</title>
-<link rel="stylesheet" href="style.2019820e.css">
+<link rel="stylesheet" href="style.7699b6e0.css">
 <style>
   /* токены, которые на платформе Claude задаёт оболочка дашборда */
   :root {
@@ -53,7 +53,7 @@
 <style>
 @supports not (container-type: inline-size) {
 @media (min-width: 1112px) { .rj-main { grid-template-columns: minmax(240px, 280px) minmax(0, 1fr); } }
-@media (min-width: 652px) { .rj-maps-grid { grid-template-columns: 1fr 1fr; } .rj-legend { grid-column: 1 / -1; } }
+@media (min-width: 652px) { .rj-maps-grid { grid-template-columns: 1fr 1fr; } .rj-legend, .rj-marks { grid-column: 1 / -1; } }
 @media (min-width: 932px) { .rj-row2-grid { grid-template-columns: minmax(0, 3fr) minmax(280px, 2fr); } }
 @media (min-width: 852px) { .rj-ports-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
 @media (min-width: 632px) { .rj-ckpis { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } }
@@ -211,14 +211,34 @@
       <figure class="rj-map" id="map-ru-jp">
         <h3 class="m-title">—</h3>
         <div class="rj-total"><span class="m-total-label" data-i18n="total">Итого:</span> <b class="m-total dash-skeleton" data-src="views" data-field="value">—</b><span class="m-scope"></span></div>
+        <div class="rj-mrest m-rest" hidden></div>
         <div class="rj-tm" data-src="views"></div>
       </figure>
       <figure class="rj-map" id="map-jp-ru">
         <h3 class="m-title">—</h3>
         <div class="rj-total"><span class="m-total-label" data-i18n="total">Итого:</span> <b class="m-total dash-skeleton" data-src="views" data-field="value">—</b><span class="m-scope"></span></div>
+        <div class="rj-mrest m-rest" hidden></div>
         <div class="rj-tm" data-src="views"></div>
       </figure>
       <div class="rj-legend" id="legend" data-src="views"></div>
+      <div class="rj-marks" id="marks">
+        <p class="rj-mrest" id="mark-turn" hidden></p>
+        <button type="button" class="rj-linkbtn rj-mbtn" id="mark-btn" aria-expanded="false" aria-controls="mark-box">—</button>
+        <div class="rj-mbox" id="mark-box" hidden>
+          <p class="rj-hint" data-i18n="markHelp">—</p>
+          <div class="rj-mtools">
+            <span data-i18n="markModeL">—</span>
+            <div class="rj-seg" role="group" data-i18n-aria="markAria" id="mark-mode">
+              <button type="button" data-v="ex" data-i18n="markEx">—</button>
+              <button type="button" data-v="sel" data-i18n="markSel">—</button>
+            </div>
+            <button type="button" class="rj-btn" id="mark-hide" data-i18n="markHide">—</button>
+            <button type="button" class="rj-btn" id="mark-tap" data-i18n="markTap">—</button>
+          </div>
+          <div class="rj-mlist" id="mark-list"></div>
+          <div><button type="button" class="rj-btn" id="mark-clear" data-i18n="markClear">—</button></div>
+        </div>
+      </div>
     </div></section>
   </div></div>
 
@@ -604,7 +624,7 @@
 </div>
 
 <script src="refs.974832df.js"></script>
-<script src="texts.d5d47b94.js"></script>
+<script src="texts.7ce945e9.js"></script>
 <script src="makers.a4c48a5e.js"></script>
 <script src="autos.9fa5bb4e.js"></script>
 
@@ -614,7 +634,7 @@
   // Замена объекта `dash` платформы Claude: те же методы, данные — из файлов site/data/. Набор грузится при первом
   // обращении к нему (dash.data), расчёт (dash.calc) — когда загружены его входы; после каждого файла — перерисовка.
   (function () {
-    const files = {trade: 'trade.e1f1a601.csv', products: 'products.8a232229.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.72d10757.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.9aade73f.csv', maker_links: 'maker_links.3e4a64a3.csv', autos: 'autos.8f894ea3.csv', dfomap: 'dfomap.176b8862.json', jp_exporters: 'jp_exporters.83a482d8.csv'}, size = {trade: 4751004, products: 1292420, ports: 5090817, offices: 12002, basemap: 22954, companies: 5127670, settlements: 139551, makers: 652226, maker_links: 1503779, autos: 4737692, dfomap: 224664, jp_exporters: 11610};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
+    const files = {trade: 'trade.e1f1a601.csv', products: 'products.223763fb.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.72d10757.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.dd7cff8a.csv', maker_links: 'maker_links.31d3bd50.csv', autos: 'autos.8f894ea3.csv', dfomap: 'dfomap.176b8862.json', jp_exporters: 'jp_exporters.83a482d8.csv'}, size = {trade: 4751004, products: 1292696, ports: 5090817, offices: 12002, basemap: 22954, companies: 5127670, settlements: 139551, makers: 652229, maker_links: 1503712, autos: 4737692, dfomap: 224664, jp_exporters: 11610};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
     const store = {}, status = {}, calcs = {}, order = [], handlers = [], loads = {}, got = {};
     const run = () => handlers.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
     // полоска загрузки: доля полученных байтов у файлов, которые сейчас идут
@@ -828,7 +848,10 @@
   const { PREF_T } = window.RJ_MAKERS;
 
   // ---- page ----
-  const st = { lang: 'ru', cur: 'usd', level: 4, mode: 'value', unit: 'abs', period: null, filter: null, tab: 'ru_jp', sort: 'value', dir: -1, q: '', sel: null, portFlow: 'ru_jp', port: null };
+  // marks — отмеченные позиции «направление:код» (Cmd/Ctrl+клик), mmode — исключить (ex) или выбрать (sel), mhide — убрать отмеченное с карты,
+  // mtap — обычный клик тоже отмечает (телефон); массив marks не меняется на месте — только заменяется (ST0 и кэш отметок markIdx держат ссылку)
+  const st = { lang: 'ru', cur: 'usd', level: 4, mode: 'value', unit: 'abs', period: null, filter: null, tab: 'ru_jp', sort: 'value', dir: -1, q: '', sel: null, portFlow: 'ru_jp', port: null,
+    marks: [], mmode: 'ex', mhide: false, mtap: false };
   const LEVELS = [2, 4, 6, 9];
   const nextLevel = (n) => (n <= 2 ? 4 : n <= 4 ? 6 : 9);
   const prevLen = (level) => ({ 2: 0, 4: 2, 6: 4, 9: 6 }[level]);
@@ -912,7 +935,8 @@
       if (!by.has(k)) by.set(k, []);
       by.get(k).push(r);
     }
-    idx = { views, by, byKey: new Map(views.map((r) => [r.key, r])), periods: new Map(periods.map((p) => [p.period, p])), list: periods };
+    idx = { views, by, byKey: new Map(views.map((r) => [r.key, r])), periods: new Map(periods.map((p) => [p.period, p])), list: periods,
+      sec2: new Map(views.filter((r) => r.level === 2).map((r) => [r.code, r.section])) };
     return idx;
   }
   function tradeIndex(rows, products) {
@@ -946,6 +970,100 @@
     if (f.type === 'code') return (r) => flowOk(r) && r.hs9.startsWith(f.code);
     return (r) => flowOk(r) && tIdx && tIdx.sec.get(r.hs9.slice(0, 2)) === f.id;
   }
+  // ---- отметки: несколько позиций любого уровня, у каждого направления свои; исключены из потока или выбраны (st.mmode) ----
+  // Считаются только верхние отметки: позиция внутри отмеченной главы входит в неё и остаётся в списке, пока глава отмечена.
+  let markIdx = null;
+  function marks() {
+    if (markIdx && markIdx.src === st.marks) return markIdx;
+    const all = { ru_jp: [], jp_ru: [] };
+    st.marks.forEach((k) => { const [f, c] = k.split(':'); if (all[f] && c) all[f].push(c); });
+    const top = {}, sets = {}, lens = {};
+    for (const f of Object.keys(all)) {
+      top[f] = all[f].filter((c) => !all[f].some((o) => o !== c && c.startsWith(o)));
+      sets[f] = new Set(top[f]);
+      lens[f] = [...new Set(top[f].map((c) => c.length))].sort((a, b) => a - b);
+    }
+    markIdx = { src: st.marks, all, top, sets, lens, n: st.marks.length };
+    return markIdx;
+  }
+  const exMode = () => st.mmode === 'ex';
+  // отмеченный код, в который входит позиция (она сама или глава над ней), иначе null
+  const markedBy = (flow, code) => { const m = marks(); for (const n of m.lens[flow]) if (n <= code.length && m.sets[flow].has(code.slice(0, n))) return code.slice(0, n); return null; };
+  // верхние отметки внутри строки: итог потока (TOTAL), раздел (S5) или код
+  const marksIn = (flow, code) => marks().top[flow].filter((c) => (code === 'TOTAL' ? true : code[0] === 'S' ? idx.sec2.get(c.slice(0, 2)) === code.slice(1) : c.length > code.length && c.startsWith(code)));
+  function markSum(flow, codes) {
+    const o = { value: 0, value_jpy: 0, kg: 0, prev: 0, prev_jpy: 0 };
+    for (const c of codes) { const r = idx.byKey.get(`${st.period}|${flow}|${c}`); if (r) for (const f of Object.keys(o)) o[f] += r[f] || 0; }
+    return o;
+  }
+  // строка без отмеченных частей; остаток меньше погрешности сложения — ноль
+  const cut = (a, b) => { const v = (a || 0) - (b || 0); return v > Math.abs(a || 0) * 1e-9 ? v : 0; };
+  const minus = (r, s) => ({ value: cut(r.value, s.value), value_jpy: cut(r.value_jpy, s.value_jpy), kg: cut(r.kg, s.kg),
+    prev: r.prev === null ? null : cut(r.prev, s.prev), prev_jpy: r.prev_jpy === null ? null : cut(r.prev_jpy, s.prev_jpy) });
+  // строка с другими суммами: доля — от base (остаток или выбранное), изменение, рост и цена — заново
+  function markDerive(r, o, base, extra) {
+    const noPrev = r.prev === null;
+    const d = { ...r, ...extra, value: o.value, value_jpy: o.value_jpy, kg: o.kg, prev: noPrev ? null : o.prev, prev_jpy: noPrev ? null : o.prev_jpy };
+    d.change = noPrev ? null : d.value - d.prev; d.change_jpy = noPrev ? null : d.value_jpy - d.prev_jpy;
+    d.growth = d.prev ? d.value / d.prev - 1 : null; d.growth_jpy = d.prev_jpy ? d.value_jpy / d.prev_jpy - 1 : null;
+    d.price = d.kg > 0 ? d.value / d.kg : null; d.price_jpy = d.kg > 0 ? d.value_jpy / d.kg : null;
+    d.share = base.value ? d.value / base.value : 0; d.share_jpy = base.value_jpy ? d.value_jpy / base.value_jpy : 0;
+    return d;
+  }
+  // итог направления с отметками: без исключённых или только выбранное; направление без отметок — целиком
+  function markBase(flow) {
+    const t = idx.byKey.get(`${st.period}|${flow}|TOTAL`) || { value: 0, value_jpy: 0, kg: 0, prev: null, prev_jpy: null };
+    const top = marks().top[flow];
+    if (!top.length) return t;
+    const s = markSum(flow, top);
+    return exMode() ? minus(t, s) : s;
+  }
+  // строка таблицы с отметками: null — не показывается (исключена или не выбрана)
+  function markRow(flow, r, base) {
+    if (!marks().top[flow].length) return r;
+    const by = markedBy(flow, r.code), parts = by ? [] : marksIn(flow, r.code);
+    if (exMode()) return by ? null : markDerive(r, parts.length ? minus(r, markSum(flow, parts)) : r, base, { _parts: parts });
+    if (by) return markDerive(r, r, base, { _by: by });
+    return parts.length ? markDerive(r, markSum(flow, parts), base, { _parts: parts }) : null;
+  }
+  // отметки для помесячных строк (торговля и посты); у выбранного товара — только исключённые внутри него
+  function markTest(sel) {
+    const m = marks();
+    if (!m.n) return null;
+    if (sel) {
+      const inside = exMode() ? m.top[sel.flow].filter((c) => c.length > sel.code.length && c.startsWith(sel.code)) : [];
+      if (!inside.length) return null;
+      const t = (r) => !inside.some((c) => r.hs9.startsWith(c));
+      t.n = inside.length;
+      return t;
+    }
+    const ex = exMode();
+    const t = (r) => !m.top[r.flow].length || ex !== !!markedBy(r.flow, r.hs9);
+    t.n = m.top.ru_jp.length + m.top.jp_ru.length;
+    return t;
+  }
+  const withMarks = (test) => { const mt = markTest(st.sel); return mt ? (r) => test(r) && mt(r) : test; };
+  // подпись к графику и портам; у портов — отметки своего направления
+  const markNote = (flow) => { const mt = markTest(st.sel); return mt ? L().markScopeNote(exMode(), flow && !st.sel ? marks().top[flow].length : mt.n) : ''; };
+  const pctShort = (x) => fmtPct(x, x >= 0.1 || x === 0 ? 0 : x >= 0.01 ? 1 : 2);
+  function toggleMark(flow, code) {
+    const k = flow + ':' + code;
+    if (st.marks.includes(k)) st.marks = st.marks.filter((x) => x !== k);
+    else if (markedBy(flow, code) || st.marks.length >= 300) return;  // внутри отмеченной главы снимается только сама глава
+    else st.marks = [...st.marks, k];
+    draw();
+  }
+  // Cmd+клик (Mac) или Ctrl+клик; на Mac Ctrl+клик приходит как contextmenu, а иногда и click вслед — второй раз не считаем
+  let lastMark = null;
+  function markClick(flow, r) {
+    const id = flow + ':' + r.code, now = Date.now();
+    if (lastMark && lastMark.id === id && now - lastMark.t < 500) return;
+    lastMark = { id, t: now };
+    clearTimeout(clickTimer); clickTimer = null;
+    toggleMark(flow, r.code);
+  }
+  const isMarkClick = (e) => e.metaKey || e.ctrlKey || st.mtap;
+
   const codeName = (code, flow) => {
     const r = idx && (idx.byKey.get(`${st.period}|${flow || 'ru_jp'}|${code}`) || idx.byKey.get(`${st.period}|${flow === 'ru_jp' ? 'jp_ru' : 'ru_jp'}|${code}`));
     if (r) return nm(r);
@@ -1018,8 +1136,18 @@
     const tr = e.target.closest('tr[data-key]');
     const r = tr && idx && idx.byKey.get(tr.dataset.key);
     if (!r) return;
-    if (e.target.closest('button.rj-drill')) drill(r.code); else toggleSel(r.flow, r);
+    if (e.target.closest('button.rj-drill')) drill(r.code); else if (isMarkClick(e)) markClick(r.flow, r); else toggleSel(r.flow, r);
   });
+  $('#table').querySelector('tbody').addEventListener('contextmenu', (e) => {
+    const tr = e.target.closest('tr[data-key]'), r = tr && idx && idx.byKey.get(tr.dataset.key);
+    if (r && e.ctrlKey && !e.metaKey) { e.preventDefault(); markClick(r.flow, r); }
+  });
+  $('#mark-btn').addEventListener('click', () => { $('#mark-box').hidden = !$('#mark-box').hidden; drawMarkBox(); });
+  $('#mark-mode').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && b.dataset.v !== st.mmode) { st.mmode = b.dataset.v; draw(); } });
+  $('#mark-hide').addEventListener('click', () => { st.mhide = !st.mhide; draw(); });
+  $('#mark-tap').addEventListener('click', () => { st.mtap = !st.mtap; drawMarkBox(); });
+  $('#mark-clear').addEventListener('click', () => { st.marks = []; draw(); });
+  $('#mark-list').addEventListener('click', (e) => { const b = e.target.closest('button[data-k]'); if (b) { st.marks = st.marks.filter((x) => x !== b.dataset.k); draw(); } });
   $('#sel-clear').addEventListener('click', () => { st.sel = null; st.port = null; draw(); });
   $('#sel-drill').addEventListener('click', () => { if (st.sel) drill(st.sel.code); });
 
@@ -1161,31 +1289,57 @@
     box.replaceChildren();
     box.style.minHeight = H + 'px';
     const rows = rowsFor(flow, effLevel()).filter((r) => r.value > 0);
+    // отметки: отмеченное (_k = on) — серое со штриховкой при исключении или в рамке при выборе; у строки с отмеченными частями
+    // части — отдельными прямоугольниками рядом, сама строка — за их вычетом (пунктир); «убрать с карты» — раскладка без лишнего
+    const marked = marks().top[flow].length > 0, ex = exMode();
+    let leaves = rows;
+    if (marked) {
+      const base = st.mhide ? markBase(flow) : idx.byKey.get(`${st.period}|${flow}|TOTAL`);
+      leaves = [];
+      for (const r of rows) {
+        const by = markedBy(flow, r.code);
+        if (by) { leaves.push(markDerive(r, r, base, { _k: 'on', _by: by === r.code ? '' : by })); continue; }
+        const parts = marksIn(flow, r.code);
+        if (!parts.length) { leaves.push(markDerive(r, r, base, { _k: 'off' })); continue; }
+        const rest = minus(r, markSum(flow, parts));
+        if (rest.value > 0) leaves.push(markDerive(r, rest, base, { _k: 'off', _parts: parts }));
+        for (const c of parts) { const pr = idx.byKey.get(`${st.period}|${flow}|${c}`); if (pr && pr.value > 0) leaves.push(markDerive(pr, pr, base, { _k: 'on', _by: '' })); }
+      }
+      if (st.mhide) leaves = leaves.filter((d) => (d._k === 'on') !== ex);
+    }
     box.classList.remove('dash-skeleton');
-    if (!rows.length) {
-      const e = el('div', 'rj-empty', L().noTrade); e.style.height = H + 'px';
+    if (!leaves.length) {
+      const e = el('div', 'rj-empty', rows.length ? L().markEmpty(ex) : L().noTrade); e.style.height = H + 'px';
       box.append(e);
       return;
     }
-    const tree = d3.hierarchy({ children: d3.groups(rows, (r) => r.section).map(([section, items]) => ({ section, children: items })) })
+    const tree = d3.hierarchy({ children: d3.groups(leaves, (r) => r.section).map(([section, items]) => ({ section, children: items })) })
       .sum((d) => (d.children ? 0 : val(d, 'value'))).sort((a, b) => b.value - a.value);
     d3.treemap().size([W, H]).paddingInner(1).round(true).tile(d3.treemapSquarify.ratio(1.15))(tree);
     const selHere = st.sel && st.sel.flow === flow;
+    const out = (d) => marked && ex && d._k === 'on';
+    // исключённое — светлый оттенок своего цвета (не путать с серым разделом «Реэкспорт и прочее»), подписи тёмные в обеих темах
+    const fill = (d) => (out(d) ? d3.interpolateRgb(tileFill(d), '#f1eee8')(0.72) : tileFill(d));
+    const markCls = (d) => (!marked ? '' : (d._k === 'on' ? (ex ? ' mk-out' : ' mk-on') : !ex && !st.mhide ? ' mk-fade' : '') + (d._parts && d._parts.length ? ' mk-part' : ''));
     const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`)
       .attr('role', 'img').attr('aria-label', fig.querySelector('.m-title').textContent)
-      .classed('fresh', firstDraw).classed('dim', !!(selHere && rows.some((r) => r.code === st.sel.code)));
+      .classed('fresh', firstDraw).classed('dim', !!(selHere && leaves.some((r) => r.code === st.sel.code)));
+    const hatch = 'rj-hatch-' + flow;
+    svg.append('defs').append('pattern').attr('id', hatch).attr('width', 6).attr('height', 6).attr('patternUnits', 'userSpaceOnUse').attr('patternTransform', 'rotate(45)')
+      .append('line').attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 6).attr('stroke', 'rgba(0,0,0,.18)').attr('stroke-width', 2);
     const g = svg.selectAll('g').data(tree.leaves()).join('g')
-      .attr('class', (d) => 'rj-tile' + (selHere && d.data.code === st.sel.code ? ' sel' : ''))
+      .attr('class', (d) => 'rj-tile' + (selHere && d.data.code === st.sel.code ? ' sel' : '') + markCls(d.data))
       .attr('transform', (d) => `translate(${d.x0},${d.y0})`)
       .attr('tabindex', (d, i) => (i < 40 ? 0 : -1)).attr('role', 'button')
-      .attr('aria-label', (d) => `${d.data.code} ${nm(d.data)}: ${tileValue(d.data)}`);
-    g.append('rect').attr('width', (d) => Math.max(0, d.x1 - d.x0)).attr('height', (d) => Math.max(0, d.y1 - d.y0)).attr('fill', (d) => tileFill(d.data));
+      .attr('aria-label', (d) => `${d.data.code} ${nm(d.data)}: ${tileValue(d.data)}${d.data._k === 'on' ? L().sep + L().markTipOut(ex, d.data._by) : ''}`);
+    g.append('rect').attr('width', (d) => Math.max(0, d.x1 - d.x0)).attr('height', (d) => Math.max(0, d.y1 - d.y0)).attr('fill', (d) => fill(d.data));
+    g.filter((d) => out(d.data)).append('rect').attr('class', 'mk-hatch').attr('width', (d) => Math.max(0, d.x1 - d.x0)).attr('height', (d) => Math.max(0, d.y1 - d.y0)).attr('fill', `url(#${hatch})`);
     g.each(function (d) {
       const w = d.x1 - d.x0, h = d.y1 - d.y0;
       const val = tileValue(d.data);
       const lay = labelLayout(nm(d.data), val, w, h);
       if (!lay) return;
-      const ink = lum(tileFill(d.data)) > 0.6 ? '#1c1a14' : '#ffffff';
+      const ink = lum(fill(d.data)) > 0.6 ? '#1c1a14' : '#ffffff';
       const sel = d3.select(this);
       if (lay.lines.length) {
         const t = sel.append('text').attr('fill', ink).attr('font-size', lay.fs).attr('font-family', family);
@@ -1205,11 +1359,14 @@
       line('k', `HS${r.level}${L().sep}${r.code}${L().sep}${secName(r.section)}`);
       line('n', nm(r));
       pair(L().tValue, fmtMoney(val(r, 'value')));
-      pair(L().tShare, fmtPct(val(r, 'share'), 2));
+      pair(marked && st.mhide ? L().thShareMark(ex) : L().tShare, fmtPct(val(r, 'share'), 2));
       const pp = idx.periods.get(idx.periods.get(st.period).prev);
       if (pp) { pair(L().tPrev(periodLabel(pp)), fmtMoney(val(r, 'prev') || 0)); pair(L().tChange, val(r, 'prev') ? `${fmtSigned(val(r, 'change'))} (${fmtGrowth(val(r, 'growth'))})` : L().newItem); }
       if (r.kg > 0) { pair(L().tKg, L().tons(fmtInt(r.kg / 1000))); pair(L().tPrice, L().perKg(fmtPriceM(val(r, 'price')))); }
+      if (r._k === 'on') line('k', L().markTipOut(ex, r._by));
+      if (r._parts && r._parts.length) { const s = markSum(flow, r._parts); line('k', L().markTipPart(ex, r._parts.length, fmtMoney(s[F('value')]))); }
       line('k', L().clickHint(drillable(r.code)));
+      line('k', L().markTipClick(ex, r._by));
       tip.hidden = false;
       const bw = box.clientWidth, bh = H * scale, [mx, my] = at;
       const tw = tip.offsetWidth, th = tip.offsetHeight;
@@ -1218,9 +1375,12 @@
     };
     g.on('mousemove', show).on('mouseleave', () => { tip.hidden = true; })
       .on('focus', show).on('blur', () => { tip.hidden = true; })
-      .on('click', (event, d) => onTileClick(flow, d.data))
+      .on('click', (event, d) => (isMarkClick(event) ? markClick(flow, d.data) : onTileClick(flow, d.data)))
+      .on('contextmenu', (event, d) => { if (event.ctrlKey && !event.metaKey) { event.preventDefault(); markClick(flow, d.data); } })
       .on('keydown', (event, d) => {
-        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); if (event.shiftKey) drill(d.data.code); else toggleSel(flow, d.data); }
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        if (event.metaKey || event.ctrlKey) markClick(flow, d.data); else if (event.shiftKey) drill(d.data.code); else toggleSel(flow, d.data);
       });
   }
 
@@ -1244,6 +1404,69 @@
       b.addEventListener('click', () => { remember(); st.filter = st.filter && st.filter.id === id ? null : { type: 'section', id }; st.sel = null; draw(); });
       lg.append(b);
     });
+  }
+
+  // строка над картой: без исключённых или выбранное — сумма и доля от всего направления; в выбранном разделе или главе — и там
+  function drawMarkRest(fig, flow, fr, scope) {
+    const e = fig.querySelector('.m-rest'), m = marks(), ex = exMode();
+    e.hidden = !m.n;
+    if (!m.n) return;
+    if (!ex && !m.top[flow].length) { e.textContent = L().markFlowNone; return; }
+    const t = idx.byKey.get(`${st.period}|${flow}|TOTAL`), v = val(markBase(flow), 'value'), tv = t ? val(t, 'value') : 0;
+    const parts = [L().markRest(ex), el('b', '', fmtMoney(v)), L().markOf(pctShort(tv ? v / tv : 0), flow)];
+    if (fr && st.filter && m.top[flow].length) {
+      const code = st.filter.type === 'code' ? st.filter.code : 'S' + st.filter.id;
+      const by = st.filter.type === 'code' ? markedBy(flow, code) : null, inside = by ? [] : marksIn(flow, code);
+      if (by || inside.length) {
+        const s = by ? (ex ? { value: 0, value_jpy: 0 } : fr) : ex ? minus(fr, markSum(flow, inside)) : markSum(flow, inside);
+        const sv = val(s, 'value'), fv = val(fr, 'value');
+        parts.push(L().markScope(scope, fmtMoney(sv), pctShort(fv ? sv / fv : 0)));
+      }
+    }
+    compose(e, parts);
+  }
+  // товарооборот без исключённых или по выбранным — под картами
+  function drawMarkTurn() {
+    const e = $('#mark-turn'), m = marks(), ex = exMode();
+    e.hidden = !m.n;
+    if (!m.n) return;
+    let v = 0, tv = 0;
+    for (const flow of ['ru_jp', 'jp_ru']) {
+      const t = idx.byKey.get(`${st.period}|${flow}|TOTAL`);
+      tv += t ? val(t, 'value') : 0;
+      if (ex || m.top[flow].length) v += val(markBase(flow), 'value');
+    }
+    compose(e, [L().markTurn(ex), el('b', '', fmtMoney(v)), L().markOfTotal(pctShort(tv ? v / tv : 0), fmtMoney(tv))]);
+  }
+  // свёрнутый блок «Выбор нескольких позиций»: подсказка, режим, отметки списком по направлениям (крестик снимает)
+  function drawMarkBox() {
+    const box = $('#mark-box'), btn = $('#mark-btn'), m = marks(), ex = exMode();
+    btn.textContent = `${box.hidden ? '▸' : '▾'} ${L().markBtn}${m.n ? L().markCount(m.n, ex) : ''}`;
+    btn.setAttribute('aria-expanded', String(!box.hidden));
+    btn.classList.toggle('on', m.n > 0);
+    if (box.hidden) return;
+    $('#mark-mode').querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === st.mmode)));
+    $('#mark-hide').setAttribute('aria-pressed', String(st.mhide));
+    $('#mark-tap').setAttribute('aria-pressed', String(st.mtap));
+    $('#mark-clear').hidden = !m.n;
+    const list = $('#mark-list');
+    list.replaceChildren();
+    if (!m.n) { list.append(el('p', 'rj-note', L().markNone)); return; }
+    for (const flow of ['ru_jp', 'jp_ru']) {
+      if (!m.all[flow].length) continue;
+      const row = el('div', 'rj-mflow');
+      row.append(el('span', 'k', flowName(flow)));
+      for (const c of m.all[flow]) {
+        const by = markedBy(flow, c), r = idx.byKey.get(`${st.period}|${flow}|${c}`);
+        const b = el('button', 'rj-chip' + (by !== c ? ' mk-under' : '')); b.type = 'button'; b.dataset.k = flow + ':' + c;
+        const sw = el('i'); sw.style.background = secColor(idx.sec2.get(c.slice(0, 2)));
+        b.append(sw, document.createTextNode(`${c} ${codeName(c, flow)}${L().sep}${fmtMoney(r ? val(r, 'value') : 0)} ×`));
+        b.title = by !== c ? L().markUnder(by) : L().markRemove(c);
+        b.setAttribute('aria-label', L().markRemove(c));
+        row.append(b);
+      }
+      list.append(row);
+    }
   }
 
   function drawSelbar() {
@@ -1270,9 +1493,9 @@
     }
     box.classList.remove('dash-skeleton');
     tradeIndex(t.data, pr.data);
-    const test = scopeTest(null);
+    const test = withMarks(scopeTest(null));
     const flows = st.sel ? [st.sel.flow] : ['ru_jp', 'jp_ru'];
-    $('#trend-note').textContent = `${scopeLabel()}${st.sel ? L().sep + flowName(st.sel.flow) : ''}${L().perMonth(st.cur)}`;
+    $('#trend-note').textContent = `${scopeLabel()}${st.sel ? L().sep + flowName(st.sel.flow) : ''}${markNote()}${L().perMonth(st.cur)}`;
     const months = tIdx.months;
     const sums = Object.fromEntries(flows.map((f) => [f, new Map(months.map((x) => [x, 0]))]));
     const vf = F('value');
@@ -1463,9 +1686,9 @@
     const monthsSet = new Set(per.src.split(','));
     const covered = per.src.split(',').filter((m) => m >= pIdx.months[0]).length;
     const y0 = pIdx.months[0].slice(0, 4);
-    $('#port-note').textContent = L().portNote(scopeLabel(), flowName(flow), periodLabel(per)) + (covered < monthsSet.size ? L().portsFrom(y0, covered > 0) : '');
+    $('#port-note').textContent = L().portNote(scopeLabel() + (marks().top[flow].length || st.sel ? markNote(flow) : ''), flowName(flow), periodLabel(per)) + (covered < monthsSet.size ? L().portsFrom(y0, covered > 0) : '');
     if (!covered) { map.append(el('div', 'rj-empty', L().portsNone(y0))); return; }
-    const test = scopeTest(flow);
+    const test = withMarks(scopeTest(flow));
     const ps = portShares(test, flow, monthsSet);
     $('#port-note').textContent += portGap(test, flow, monthsSet, ps.total);
     // map
@@ -1566,6 +1789,9 @@
     if (!idx || !st.period) return;
     const level = effLevel();
     let rows = rowsFor(st.tab, level).filter((r) => r.value > 0 || st.mode === 'growth');
+    // отметки: исключённое скрыто, у строки с исключёнными частями — сумма без них; при выборе — только выбранное; доля — от остатка или выбранного
+    const mk = marks().top[st.tab].length > 0, ex = exMode();
+    if (mk) { const base = markBase(st.tab); rows = rows.map((r) => markRow(st.tab, r, base)).filter((r) => r && (r.value > 0 || st.mode === 'growth')); }
     if (st.q) rows = rows.filter((r) => r.code.toLowerCase().includes(st.q.toLowerCase()) || LANGS.some((l) => (r['name_' + l] || '').toLowerCase().includes(st.q.toLowerCase())));
     const key = st.sort, dir = st.dir;
     const money = ['value', 'share', 'prev', 'change', 'growth', 'price'];
@@ -1587,7 +1813,12 @@
       const sw = el('i', 'rj-sw'); sw.style.background = secColor(r.section);
       c0.append(sw, document.createTextNode(r.code));
       if (drillable(r.code)) { const d = el('button', 'rj-drill', '▸'); d.type = 'button'; d.setAttribute('aria-label', L().drillAria(r.code)); c0.append(d); }
-      td(nm(r), 'l name');
+      const nmc = td(nm(r), 'l name');
+      if (r._parts && r._parts.length) {
+        const s = el('small', 'rj-mpart', L().markRowPart(ex, r._parts.length));
+        s.title = r._parts.map((c) => `${c} ${codeName(c, r.flow)}`).join('\n');
+        nmc.append(s);
+      }
       const pv = val(r, 'prev'), cv = val(r, 'change');
       td(fmtMoney(val(r, 'value')));
       td(fmtPct(val(r, 'share'), 2));
@@ -1608,7 +1839,9 @@
     ['value', 'share', 'prev', 'change', 'growth', 'price'].forEach((k) => { $('#th-' + k).dataset.field = F(k); });
     $('#th-change button').textContent = L().thChange(curSym());
     $('#th-price button').textContent = L().thPrice(curSym());
-    $('#table-note').textContent = L().tableNote(flowName(st.tab), periodLabel(idx.periods.get(st.period)), fmtInt(shown.length), fmtInt(rows.length), st.mode === 'growth');
+    $('#th-share button').textContent = mk ? L().thShareMark(ex) : L().thShare;
+    const mkNote = mk ? L().markScopeNote(ex, marks().top[st.tab].length) : '';
+    $('#table-note').textContent = L().tableNote(flowName(st.tab) + mkNote, periodLabel(idx.periods.get(st.period)), fmtInt(shown.length), fmtInt(rows.length), st.mode === 'growth');
   }
 
   function failed(e) {
@@ -1663,9 +1896,12 @@
       if (fr) { setMark(tot, fr.key, F('value')); tot.textContent = fmtMoney(val(fr, 'value')); } else tot.textContent = '—';
       const scope = !st.filter ? '' : st.filter.type === 'section' ? secName(st.filter.id) : `${st.filter.code} ${codeName(st.filter.code, flow)}`;
       f.querySelector('.m-scope').textContent = scope ? `${L().sep}${scope}` : '';
+      drawMarkRest(f, flow, fr, scope);
       drawMap(f, flow, H);
     }
     firstDraw = false;
+    drawMarkTurn();
+    drawMarkBox();
     drawCrumbs();
     drawLegend();
     drawSelbar();
@@ -3475,7 +3711,7 @@
   const LINK = window.RJ_LINK || null;
   const ST0 = { ...st }, DST0 = { ...dst }, SST0 = { ...sst };
   const LINK_KEYS = {
-    trade: [st, ST0, ['period', 'level', 'mode', 'unit', 'tab', 'filter', 'sel', 'q']],
+    trade: [st, ST0, ['period', 'level', 'mode', 'unit', 'tab', 'filter', 'sel', 'q', 'marks', 'mmode', 'mhide']],
     dynamics: [dst, DST0, ['flow', 'level', 'a0', 'a1', 'base', 'b0', 'b1', 'n', 'sort', 'scope']],
     settlements: [sst, SST0, ['year', 'gran']],
     companies: [cst, CST0, ['flow', 'level', 'cat', 'region', 'q', 'sort', 'dir', 'only']],
@@ -3490,7 +3726,7 @@
   const vals = (sel, attr = 'v') => [...root.querySelectorAll(sel)].map((e) => e.dataset[attr]);
   const LINK_ALLOW = {
     'trade.level': () => vals('#seg-level button'), 'trade.mode': () => vals('#seg-mode button'), 'trade.unit': () => vals('#seg-unit button'),
-    'trade.tab': () => vals('#tabs button'), 'dynamics.flow': () => vals('#dy-flow button'), 'dynamics.level': () => vals('#dy-level button'),
+    'trade.tab': () => vals('#tabs button'), 'trade.mmode': () => vals('#mark-mode button'), 'dynamics.flow': () => vals('#dy-flow button'), 'dynamics.level': () => vals('#dy-level button'),
     'dynamics.n': () => vals('#dy-n button'), 'dynamics.sort': () => vals('#dy-sort button'), 'dynamics.base': () => [...$('#dy-base').options].map((o) => o.value),
     'settlements.gran': () => vals('#st-gran button'), 'companies.flow': () => vals('#comp-flow button'), 'companies.level': () => vals('#comp-level button'),
     'companies.sort': () => vals('#comp-table [data-csort]', 'csort'), 'makers.sort': () => vals('#mk-table [data-msort]', 'msort'),
@@ -3513,8 +3749,9 @@
       let v = obj[k];
       if (k === 'filter' || k === 'scope') v = pickOut(v);
       else if (k === 'sel') v = v ? `${v.flow}:${v.code}` : '';
+      else if (k === 'marks') v = v.join(',');
       else if (v === linkDefault(st.page, k, def[k]) || v === null || v === undefined) v = '';
-      if (v !== '' && String(v) !== String(def[k] ?? '')) q.push(`${k}=${encodeURIComponent(v).replace(/%3A/g, ':')}`);
+      if (v !== '' && String(v) !== String(def[k] ?? '')) q.push(`${k}=${encodeURIComponent(v).replace(/%3A/g, ':').replace(/%2C/g, ',')}`);
     }
     return '#' + st.page + (q.length ? '?' + q.join('&') : '');
   }
@@ -3537,6 +3774,8 @@
       if (raw === null) continue;
       if (k === 'filter' || k === 'scope') { obj[k] = pickIn(raw); continue; }
       if (k === 'sel') { const m = raw.match(/^(ru_jp|jp_ru):([\dX]{2,9}[A-Z]?)$/); obj[k] = m ? { flow: m[1], level: m[2].length, code: m[2] } : null; continue; }
+      if (k === 'marks') { obj[k] = [...new Set(raw.split(',').filter((x) => /^(ru_jp|jp_ru):[\dX]{2,9}[A-Z]?$/.test(x)))].slice(0, 300); continue; }
+      if (k === 'mhide') { obj[k] = raw === 'true'; continue; }
       if ((LINK_ALLOW[id] && !LINK_ALLOW[id]().includes(raw)) || (LINK_RE[id] && !LINK_RE[id].test(raw))) continue;
       const v = LINK_NUM.has(id) ? Number(raw) : raw.slice(0, 200);
       if (typeof v !== 'number' || Number.isFinite(v)) obj[k] = v;
@@ -3552,7 +3791,8 @@
     LINK.listen((hash) => { applyLink(hash); applyLang(); draw(); syncLink(false); root.scrollIntoView({ block: 'start' }); });
     // ссылка следует за каждым действием читателя (фильтры, язык, сортировка) — в той же записи истории
     const syncLater = later(() => syncLink(false), 250);
-    ['click', 'change', 'input', 'keyup'].forEach((t) => root.addEventListener(t, syncLater));
+    // contextmenu — Ctrl+клик на Mac, им ставят отметки на «Торговле»
+    ['click', 'change', 'input', 'keyup', 'contextmenu'].forEach((t) => root.addEventListener(t, syncLater));
   }
 
   applyLang();
