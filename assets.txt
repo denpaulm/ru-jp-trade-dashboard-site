@@ -3,10 +3,10 @@ autos.9fa5bb4e.js
 makers.a4c48a5e.js
 refs.974832df.js
 style.7699b6e0.css
-texts.7ce945e9.js
+texts.843962ff.js
 data/autos.d95a8fbb.csv
 data/basemap.c82f4e77.json
-data/companies.5d8b2366.csv
+data/companies.15b41255.csv
 data/dfomap.176b8862.json
 data/jp_exporters.83a482d8.csv
 data/maker_links.6d3b91ff.csv
