@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
 <meta name="googlebot" content="noindex, nofollow">
 <title>Торговля Россия — Япония</title>
-<link rel="stylesheet" href="style.7699b6e0.css">
+<link rel="stylesheet" href="style.908a0e55.css">
 <style>
   /* токены, которые на платформе Claude задаёт оболочка дашборда */
   :root {
@@ -58,6 +58,10 @@
 @media (min-width: 852px) { .rj-ports-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
 @media (min-width: 632px) { .rj-ckpis { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } }
 @media (min-width: 1132px) { .rj-ckpis { grid-template-columns: repeat(var(--kpi-cols, 7), minmax(0, 1fr)); } }
+@media (min-width: 1012px) {
+    .rj-cmgrid { grid-template-columns: minmax(0, 2.3fr) minmax(280px, 1fr); }
+    .rj-cplist { flex: 1 1 0; min-height: 0; max-height: none; }
+  }
 @media (max-width: 632px) { #comp-flow { grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); flex: 1 1 100%; border-radius: 18px; } #comp-flow button { line-height: 1.25; } }
 @media (max-width: 1131px) {
     #comp-table .opt { display: none; }
@@ -471,6 +475,18 @@
       <input class="rj-search" id="comp-search" type="search" data-i18n-ph="compSearch" data-i18n-aria="compSearch">
       <button type="button" class="rj-chip rj-keychip" id="comp-keys" data-i18n-title="mkFilterClear" hidden>—</button>
     </div>
+    <div class="rj-cmgrid">
+      <section class="rj-card rj-cmap">
+        <h2 data-i18n="cmTitle">—</h2>
+        <nav class="rj-crumbs" id="comp-map-crumbs" data-i18n-aria="cmTitle"></nav>
+        <div class="rj-cmbox" id="comp-map" data-src="companies rumap"></div>
+        <p class="rj-note" id="comp-map-note">—</p>
+      </section>
+      <section class="rj-card rj-cplaces">
+        <h2 id="comp-places-title">—</h2>
+        <div class="rj-plist rj-cplist" id="comp-places" data-src="companies" data-field="region_code city"></div>
+      </section>
+    </div>
     <div class="rj-cnote">
       <p class="rj-note" id="comp-cat-note" data-src="views">—</p>
       <button type="button" class="rj-linkbtn" id="comp-legend-btn" aria-expanded="false" aria-controls="comp-legend">—</button>
@@ -623,10 +639,10 @@
   </section>
 </div>
 
-<script src="refs.974832df.js"></script>
-<script src="texts.843962ff.js"></script>
+<script src="refs.6aa80f31.js"></script>
+<script src="texts.b37a000d.js"></script>
 <script src="makers.a4c48a5e.js"></script>
-<script src="autos.9fa5bb4e.js"></script>
+<script src="autos.1ad7166b.js"></script>
 
 </main>
 <script src="d3.min.a029baa9.js"></script>
@@ -634,7 +650,7 @@
   // Замена объекта `dash` платформы Claude: те же методы, данные — из файлов site/data/. Набор грузится при первом
   // обращении к нему (dash.data), расчёт (dash.calc) — когда загружены его входы; после каждого файла — перерисовка.
   (function () {
-    const files = {trade: 'trade.e1f1a601.csv', products: 'products.223763fb.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.15b41255.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.050ac501.csv', maker_links: 'maker_links.6d3b91ff.csv', autos: 'autos.d95a8fbb.csv', dfomap: 'dfomap.176b8862.json', jp_exporters: 'jp_exporters.83a482d8.csv'}, size = {trade: 4751004, products: 1292696, ports: 5090817, offices: 12002, basemap: 22954, companies: 5128087, settlements: 139551, makers: 652229, maker_links: 1503712, autos: 4737686, dfomap: 224664, jp_exporters: 11610};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
+    const files = {trade: 'trade.e1f1a601.csv', products: 'products.223763fb.csv', ports: 'ports.3c42e14f.csv', offices: 'offices.71b7bc91.csv', basemap: 'basemap.c82f4e77.json', companies: 'companies.a8e1efde.csv', settlements: 'settlements.5fd1d049.csv', makers: 'makers.050ac501.csv', maker_links: 'maker_links.6d3b91ff.csv', autos: 'autos.d95a8fbb.csv', dfomap: 'dfomap.176b8862.json', jp_exporters: 'jp_exporters.83a482d8.csv', rumap: 'rumap.22da63c7.json'}, size = {trade: 4751004, products: 1292696, ports: 5090817, offices: 12002, basemap: 22954, companies: 5126732, settlements: 139551, makers: 652229, maker_links: 1503712, autos: 4737686, dfomap: 224664, jp_exporters: 11610, rumap: 282820};  // files — имена с хэшем содержимого (новый файл не берётся из кэша браузера); size — байты (для полоски)
     const store = {}, status = {}, calcs = {}, order = [], handlers = [], loads = {}, got = {};
     const run = () => handlers.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
     // полоска загрузки: доля полученных байтов у файлов, которые сейчас идут
@@ -1962,7 +1978,8 @@
   // по умолчанию — по уровню, внутри уровня свежие сверху: таблица сразу идёт в порядке обзвона;
   // only — признак цифры в шапке, по которой оставлены только эти компании
   // keys — ссылка с листа «Поставщики из Японии»: только строки с этими ключами (keysLabel — японская компания и годы)
-  const CST0 = { flow: 'all', level: '', cat: '', region: '', q: '', sort: 'level', dir: 1, limit: COMP_PAGE, only: '', keys: null, keysLabel: '' };
+  // region — код региона, city — «регион|город»: выбор на карте, в списке мест или в поле «Регион»
+  const CST0 = { flow: 'all', level: '', cat: '', region: '', city: '', q: '', sort: 'level', dir: 1, limit: COMP_PAGE, only: '', keys: null, keysLabel: '' };
   const cst = { ...CST0 };
   // ссылки на лист с других листов: прежние настройки листа сбрасываются, остаются направление и категория ссылки —
   // так таблица совпадает с числом на кнопке
@@ -2066,7 +2083,15 @@
   $('#comp-level').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { cst.level = b.dataset.v; cst.limit = COMP_PAGE; drawCompanies(); } });
   $('#comp-legend-btn').addEventListener('click', () => { $('#comp-legend').hidden = !$('#comp-legend').hidden; drawCompLegend(); });
   $('#comp-cat').addEventListener('change', (e) => { cst.cat = e.target.value; cst.limit = COMP_PAGE; drawCompanies(); });
-  $('#comp-region').addEventListener('change', (e) => { cst.region = e.target.value; cst.limit = COMP_PAGE; drawCompanies(); });
+  $('#comp-region').addEventListener('change', (e) => cmPick(e.target.value));
+  // список мест рядом с картой и путь над картой: «Вся Россия › регион › город»
+  [$('#comp-places'), $('#comp-map-crumbs')].forEach((box) => box.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-region]');
+    if (!b) return;
+    cmPick(b.dataset.region, b.dataset.city || '');
+    // с клавиатуры (detail = 0) строки рисуются заново, фокус возвращается в список
+    if (!e.detail) { const first = $('#comp-places button'); if (first) first.focus({ preventScroll: true }); }
+  }));
   const drawCompaniesLater = later(() => drawCompanies());
   $('#comp-search').addEventListener('input', (e) => { cst.q = e.target.value.trim(); cst.limit = COMP_PAGE; drawCompaniesLater(); });
   $('#comp-more').addEventListener('click', () => { cst.limit += COMP_PAGE; drawCompanies(); });
@@ -2165,7 +2190,7 @@
     regions.sort((a, b) => regionName(a).localeCompare(regionName(b), st.lang));
     $('#comp-region').replaceChildren(new Option(L().compAllRegions, ''), ...regions.map((c) => new Option(regionName(c), c)));
     $('#comp-region').value = cst.region;
-    let rows = pool.filter((r) => (offices || hasCat(r, cst.cat)) && (!cst.region || r.region_code === cst.region));
+    let rows = pool.filter((r) => offices || hasCat(r, cst.cat));
     // search also covers the evidence (Japanese manufacturers of importers, register objects of exporters) and, in Russian, products
     if (cst.q) rows = rows.filter((r) => [r.name, r.name_full, r.name_lat, r.inn, r.evidence, r.ru_makers, r.rx_makers, r.sgr_makers, r.founders, st.lang === 'ru' ? r.products : '']
       .some((x) => (x || '').toLowerCase().includes(cst.q.toLowerCase())));
@@ -2181,6 +2206,12 @@
     };
     if (!ONLY[cst.only]) cst.only = '';
     const only = ONLY[cst.only];
+    // карта и список мест — по всем фильтрам листа, кроме самого места: цифры шапки и уровень перестраивают карту, а видно по-прежнему
+    // и другие регионы, куда можно перейти
+    if (cst.city.split('|')[0] !== cst.region) cst.city = '';  // город без своего региона (ссылка, смена региона)
+    drawCompMap(rows.filter((r) => (!only || only(r)) && (offices || !cst.level || r.level === cst.level)));
+    if (cst.region) rows = rows.filter((r) => r.region_code === cst.region);
+    if (cst.city) rows = rows.filter((r) => cmCity(r) === cst.city);
     // level buttons count the companies of the other filters, the chosen figure included, so they show how a category,
     // a region or a figure splits into A, B and C
     const forLevels = only ? rows.filter(only) : rows;
@@ -2357,6 +2388,138 @@
       const b = th.querySelector('button');  // у колонки «Роль и отметки» сортировки нет
       if (b && b.dataset.csort === cst.sort) th.setAttribute('aria-sort', cst.dir > 0 ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort');
     });
+  }
+
+  // ---- карта России листа «Компании» (rumap.json, build_rumap.py) ----
+  // регионы — цветом по числу компаний, города — кругами. Клик по региону или кругу в нём — регион крупно, на всём листе только он;
+  // в выбранном регионе клик по кругу — только этот город; повторный клик — на уровень выше. Цвет — по логарифму: Москва в сотни раз
+  // больше большинства регионов, в обычной шкале остальные были бы одного цвета.
+  const cmCity = (r) => (r.city && r.region_code ? `${r.region_code}|${r.city}` : '');
+  const CM_KMAX = 24;  // самое сильное увеличение: Москва и Петербург не раздуваются во весь экран
+  function cmPick(region, city = '') { cst.region = region; cst.city = city; cst.limit = COMP_PAGE; drawCompanies(); }
+  // короткое название для подписи на карте; в списке и подсказке — полное
+  const cmShort = (code) => {
+    const s = (AUTO_T.regShort[code] || [])[li()], n = regionName(code);
+    return s || (st.lang === 'ru' ? n.replace('Республика ', '').replace(' Республика', '').replace(' область', ' обл.').replace(/ автономный округ.*$/, ' АО') : n);
+  };
+  // список мест: регионы, а в выбранном регионе — его города; прокрутка остаётся на месте, пока не сменился уровень
+  let cmListAt = null;
+  function drawCompPlaces(byReg, byCity, total) {
+    const crumbs = [[L().cmAll, '', '']];
+    if (cst.region) crumbs.push([regionName(cst.region), cst.region, '']);
+    if (cst.city) crumbs.push([auCity(cst.city.split('|')[1]), cst.region, cst.city]);
+    $('#comp-map-crumbs').replaceChildren(...crumbs.flatMap(([t, region, city], i) => {
+      const last = i === crumbs.length - 1, n = el(last ? 'span' : 'button', '', t);
+      if (last) n.setAttribute('aria-current', 'true'); else { n.type = 'button'; n.dataset.region = region; n.dataset.city = city; }
+      return i ? [el('span', 'sep', '›'), n] : [n];
+    }));
+    $('#comp-places-title').textContent = cst.region ? L().cmCities : L().cmRegions;
+    const box = $('#comp-places'), top = cmListAt === cst.region ? box.scrollTop : 0;
+    const list = cst.region
+      ? [...byCity].map(([k, v]) => ({ label: auCity(k.split('|')[1]), v, region: cst.region, city: k, on: cst.city === k }))
+      : [...byReg].filter(([c]) => c).map(([c, v]) => ({ label: regionName(c), v, region: c, city: '' }));
+    list.sort((a, b) => b.v - a.v || a.label.localeCompare(b.label, st.lang));
+    // компании без города (ИП без адреса, сёла) и без региона — строкой без кнопки: их нельзя выбрать, но число должно сходиться
+    const rest = cst.region ? total - d3.sum(list, (x) => x.v) : byReg.get('') || 0;
+    if (rest) list.push({ label: cst.region ? L().cmNoCity : L().cmNoRegion, v: rest });
+    const max = d3.max(list, (x) => x.v) || 1;
+    box.replaceChildren(...list.map((x) => {
+      const clickable = x.region !== undefined, row = el(clickable ? 'button' : 'div', 'rj-prow'), bar = el('span', 'bar'), i = el('i');
+      if (clickable) {
+        // повторный клик по городу снимает его
+        row.type = 'button'; row.dataset.region = x.region; row.dataset.city = x.on ? '' : x.city;
+        if (cst.region) row.setAttribute('aria-pressed', String(!!x.on));
+      }
+      i.style.width = Math.max(2, (x.v / max) * 100) + '%'; i.style.background = dash.colors[0]; bar.append(i);
+      row.append(el('span', 'nm', x.label), bar, el('span', 'v', fmtInt(x.v)));
+      return row;
+    }));
+    if (!list.length) box.replaceChildren(el('p', 'rj-note', L().compEmpty));
+    box.scrollTop = top;
+    cmListAt = cst.region;
+  }
+  let cmSig = '', cmVb = null;
+  function drawCompMap(forMap) {
+    const box = $('#comp-map'), md = dash.data('rumap');
+    const byReg = d3.rollup(forMap, (v) => v.length, (r) => r.region_code);
+    const inReg = cst.region ? forMap.filter((r) => r.region_code === cst.region) : forMap;
+    const byCity = d3.rollup(inReg.filter(cmCity), (v) => v.length, cmCity);
+    drawCompPlaces(byReg, byCity, inReg.length);
+    if (md.status !== 'ok') { cmSig = ''; box.replaceChildren(); if (md.status === 'error') failed(box); else box.classList.add('dash-skeleton'); return; }
+    box.classList.remove('dash-skeleton');
+    // карта пересобирается, только когда меняются её числа, выбор, язык или ширина (не при сортировке и «показать ещё»)
+    const sig = [md.data.length, st.lang, box.clientWidth, cst.region, cst.city, [...byReg].join(), [...byCity].join()].join('|');
+    if (sig === cmSig && box.querySelector('svg')) return;
+    cmSig = sig;
+    box.replaceChildren();
+    const rows = md.data, proj = rows.find((r) => r.kind === 'proj'), W = proj.x, H = proj.y, cw = box.clientWidth || 800;
+    const sel = cst.region ? rows.find((r) => r.kind === 'region' && r.id === cst.region) : null;
+    // что видно: вся страна или рамка выбранного региона с полями; пропорции те же, поэтому высота карты не прыгает
+    let vb = [0, 0, W, H];
+    if (sel) {
+      const k = Math.min(W / ((sel.x1 - sel.x0) * 1.3 || 1), H / ((sel.y1 - sel.y0) * 1.3 || 1), CM_KMAX), vw = W / k, vh = H / k;
+      vb = [(sel.x0 + sel.x1 - vw) / 2, (sel.y0 + sel.y1 - vh) / 2, vw, vh];
+    }
+    const u = vb[2] / cw;  // сколько единиц карты в одном пикселе экрана: круги, шрифт и обводка подписей — в пикселях при любом увеличении
+    const moved = !!cmVb && cmVb.some((v, i) => Math.abs(v - vb[i]) > 0.5) && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const from = cmVb;
+    cmVb = vb;
+    const svg = d3.select(box).append('svg').attr('viewBox', (moved ? from : vb).join(' ')).attr('width', '100%').attr('role', 'img').attr('aria-label', L().cmAria);
+    if (moved) svg.transition().duration(450).ease(d3.easeCubicOut).attrTween('viewBox', () => { const f = d3.interpolateArray(from, vb); return (t) => f(t).join(' '); });
+    const tip = el('div', 'rj-tip'); tip.hidden = true; box.append(tip);
+    const showTip = (event, lines, xy) => {
+      tip.replaceChildren(el('div', 'n', lines[0]), ...lines.slice(1).map((t) => el('div', 'k', t)));
+      tip.hidden = false;
+      const [mx, my] = event.type === 'focus' ? [(xy[0] - vb[0]) / u, (xy[1] - vb[1]) / u] : d3.pointer(event, box);
+      tip.style.left = Math.max(0, Math.min(box.clientWidth - tip.offsetWidth, mx + 14)) + 'px';
+      tip.style.top = Math.max(0, Math.min(box.clientHeight - tip.offsetHeight, my + 14)) + 'px';
+    };
+    const press = (g, fn, focusable) => {
+      if (focusable) g.attr('tabindex', 0).attr('role', 'button');
+      return g.on('click', (event, d) => fn(d)).on('keydown', (event, d) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); fn(d); } })
+        .on('mouseleave blur', () => { tip.hidden = true; });
+    };
+    rows.filter((r) => r.kind === 'land').forEach((r) => svg.append('path').attr('class', 'rj-cmland').attr('d', r.d));
+    const maxR = d3.max(byReg.values()) || 1, land = canMix ? '' : getComputedStyle(box).getPropertyValue('--rj-land').trim() || '#fff';
+    const pct = (v) => Math.round(14 + 58 * Math.log1p(v) / Math.log1p(maxR));
+    const shade = (v) => (!v ? 'var(--rj-land)' : canMix ? `color-mix(in srgb, ${dash.colors[0]} ${pct(v)}%, var(--rj-land))` : d3.interpolateRgb(land, dash.colors[0])(pct(v) / 100));
+    const regs = rows.filter((r) => r.kind === 'region').map((r) => ({ ...r, n: byReg.get(r.id) || 0 }));
+    const regHint = (r) => (cst.region !== r.id ? L().cmRegionHint : cst.city ? L().cmCityOff : L().cmRegionOff);
+    const rg = svg.append('g').selectAll('path').data(regs).join('path').attr('d', (r) => r.d)
+      .attr('class', (r) => 'rj-cmreg' + (cst.region === r.id ? ' sel' : '')).style('fill', (r) => shade(r.n))
+      .attr('aria-label', (r) => `${regionName(r.id)}: ${fmtInt(r.n)}`);
+    press(rg, (r) => (cst.region !== r.id ? cmPick(r.id) : cmPick(cst.city ? r.id : '')), true)
+      .on('mousemove focus', (event, r) => showTip(event, [regionName(r.id), L().cmN(fmtInt(r.n)), regHint(r)], [r.x, r.y]));
+    rg.filter('.sel').raise();
+    // круги и подписи рассчитаны на итоговый масштаб и появляются, когда карта доехала
+    const layer = svg.append('g').attr('class', moved ? 'rj-cmfade' : null);
+    const pts = new Map(rows.filter((r) => r.kind === 'city').map((r) => [r.id, [r.x, r.y]]));
+    const cities = [...byCity].filter(([k]) => pts.has(k)).map(([k, v]) => ({ k, v, xy: pts.get(k), rc: k.split('|')[0], name: auCity(k.split('|')[1]) })).sort((a, b) => b.v - a.v);
+    const maxC = d3.max(cities, (c) => c.v) || 1, fit = Math.max(0.6, Math.min(1, cw / 760));
+    const radC = (v) => ((sel ? 4 : 1.6) + Math.sqrt(v / maxC) * (sel ? 26 : 15) * fit) * u;
+    const cg = layer.append('g').selectAll('g').data(cities).join('g').attr('class', (c) => 'rj-bubble rj-cmcity' + (cst.city === c.k ? ' sel' : ''))
+      .attr('aria-label', (c) => `${c.name}: ${fmtInt(c.v)}`);
+    cg.append('circle').attr('cx', (c) => c.xy[0]).attr('cy', (c) => c.xy[1]).attr('r', (c) => radC(c.v)).style('fill', dash.colors[0]).style('stroke', dash.colors[0]);
+    // в выбранном регионе круг — это город; на карте всей России точно попасть в город нельзя, поэтому круг выбирает его регион
+    const cityHint = (c) => (cst.region !== c.rc ? L().cmCityRegionHint : cst.city === c.k ? L().cmCityOff : L().cmCityHint);
+    press(cg, (c) => (cst.region !== c.rc ? cmPick(c.rc) : cmPick(c.rc, cst.city === c.k ? '' : c.k)), !!sel)
+      .on('mousemove focus', (event, c) => showTip(event, [c.name, regionName(c.rc), L().cmN(fmtInt(c.v)), cityHint(c)], c.xy));
+    // подписи: крупнейшие города, затем регионы, которым хватает места; подписи, которые наехали бы друг на друга, пропускаются
+    const px = cw < 560 ? 10 : 12, placed = [], view = [vb[0] + 2 * u, vb[1] + 2 * u, vb[0] + vb[2] - 2 * u, vb[1] + vb[3] - 2 * u];
+    const label = (text, x, y, cls, anchor = 'middle') => {
+      const w = textW(text, px, cls === 'rj-aulreg' ? 400 : 600) * u, h = (px + 3) * u;
+      const bb = anchor === 'middle' ? [x - w / 2, y - h / 2, x + w / 2, y + h / 2] : [x, y - h / 2, x + w, y + h / 2];
+      if (bb[0] < view[0] || bb[2] > view[2] || bb[1] < view[1] || bb[3] > view[3] || placed.some((q) => !(bb[2] < q[0] || bb[0] > q[2] || bb[3] < q[1] || bb[1] > q[3]))) return;
+      placed.push(bb);
+      layer.append('text').attr('class', cls).attr('x', x).attr('y', y).attr('dy', '0.35em').attr('text-anchor', anchor).style('font-size', px * u + 'px').style('stroke-width', 3 * u + 'px').text(text);
+    };
+    cities.slice(0, sel ? 12 : 9).forEach((c) => label(c.name, c.xy[0] + radC(c.v) + 3 * u, c.xy[1], 'rj-aulcity', 'start'));
+    regs.filter((r) => r.id !== cst.region).sort((a, b) => (b.x1 - b.x0) - (a.x1 - a.x0)).forEach((r) => {
+      const name = cmShort(r.id);
+      if (textW(name, px, 400) * u <= (r.x1 - r.x0) * 0.9) label(name, r.x, r.y, 'rj-aulreg');
+    });
+    const off = inReg.length - d3.sum(cities, (c) => c.v);
+    $('#comp-map-note').textContent = L().cmNote(off > 0 ? fmtInt(off) : '');
   }
 
   // ---- «Japanese suppliers» page: Japanese companies named in Russian companies' documents ----
@@ -3714,7 +3877,7 @@
     trade: [st, ST0, ['period', 'level', 'mode', 'unit', 'tab', 'filter', 'sel', 'q', 'marks', 'mmode', 'mhide']],
     dynamics: [dst, DST0, ['flow', 'level', 'a0', 'a1', 'base', 'b0', 'b1', 'n', 'sort', 'scope']],
     settlements: [sst, SST0, ['year', 'gran']],
-    companies: [cst, CST0, ['flow', 'level', 'cat', 'region', 'q', 'sort', 'dir', 'only']],
+    companies: [cst, CST0, ['flow', 'level', 'cat', 'region', 'city', 'q', 'sort', 'dir', 'only']],
     makers: [mst, MST0, ['y0', 'y1', 'cat', 'q', 'sort', 'dir', 'only']],
     autos: [ast, AST0, ['kind', 'okved', 'region', 'city', 'y0', 'y1', 'cut', 'q', 'only', 'sort', 'dir']],
   };

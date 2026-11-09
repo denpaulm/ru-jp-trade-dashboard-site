@@ -1,12 +1,12 @@
 d3.min.a029baa9.js
-autos.9fa5bb4e.js
+autos.1ad7166b.js
 makers.a4c48a5e.js
-refs.974832df.js
-style.7699b6e0.css
-texts.843962ff.js
+refs.6aa80f31.js
+style.908a0e55.css
+texts.b37a000d.js
 data/autos.d95a8fbb.csv
 data/basemap.c82f4e77.json
-data/companies.15b41255.csv
+data/companies.a8e1efde.csv
 data/dfomap.176b8862.json
 data/jp_exporters.83a482d8.csv
 data/maker_links.6d3b91ff.csv
@@ -14,5 +14,6 @@ data/makers.050ac501.csv
 data/offices.71b7bc91.csv
 data/ports.3c42e14f.csv
 data/products.223763fb.csv
+data/rumap.22da63c7.json
 data/settlements.5fd1d049.csv
 data/trade.e1f1a601.csv
