@@ -15,5 +15,5 @@ data/offices.71b7bc91.csv
 data/ports.3c42e14f.csv
 data/products.223763fb.csv
 data/rumap.22da63c7.json
-data/settlements.5fd1d049.csv
+data/settlements.16d5ee36.csv
 data/trade.e1f1a601.csv
