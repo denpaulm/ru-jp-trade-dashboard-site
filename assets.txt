@@ -12,8 +12,8 @@ data/jp_exporters.83a482d8.csv
 data/maker_links.de818828.csv
 data/makers.75b7af6b.csv
 data/offices.71b7bc91.csv
-data/ports.3c42e14f.csv
+data/ports.4b960752.csv
 data/products.223763fb.csv
 data/rumap.7aa717e0.json
-data/settlements.16d5ee36.csv
-data/trade.e1f1a601.csv
+data/settlements.ff68fb51.csv
+data/trade.f43dd7c0.csv
